@@ -6,13 +6,18 @@
   <title>Roma</title>
 
   <style>
+    /* =========================
+       CONFIGURAÇÃO GERAL
+    ========================= */
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
 
-    html, body {
+    html,
+    body {
       width: 100%;
       height: 100%;
     }
@@ -20,50 +25,687 @@
     body {
       background: #000;
       overflow: hidden;
+      font-family: Arial, sans-serif;
     }
 
     .container {
+      display: flex;
       width: 100%;
       height: 100vh;
-      display: flex;
-      background-color: #000;
+      height: 100dvh;
+      background: #000;
     }
 
-    /* Metade esquerda totalmente preta */
-    .lado-esquerdo {
-      height: 100%;
-flex: 1;
-      background-color: #000;
-    }
+    /* =========================
+       LADO ESQUERDO PRETO
+    ========================= */
 
-    /* Imagem vertical no lado direito */
+ .lado-esquerdo {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  background: #000;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+  padding: 0;
+}
+
+    /* =========================
+       LADO DIREITO COM IMAGEM
+    ========================= */
+
     .lado-direito {
-      width: 30%;
+      position: relative;
+      display: flex;
+      align-items: stretch;
+      justify-content: stretch;
+
+      width: 45%;
       height: 100%;
-flex-shrink: 0;
-      background-image: url("https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=1200&q=90");
+      flex-shrink: 0;
+      padding: 0;
+
+      background-image: url(
+        "https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=1600&q=90"
+      );
       background-position: center;
       background-size: cover;
       background-repeat: no-repeat;
     }
 
-    /* Em telas pequenas, mantém o preto à esquerda */
+    /* =========================
+       CAIXA DE CONVERSA
+    ========================= */
+
+    .chat {
+      display: flex;
+      flex-direction: column;
+
+      width: 100%;
+      height: 100%;
+      min-width: 0;
+      min-height: 0;
+      max-width: none;
+
+      overflow: hidden;
+
+      background: rgba(15, 15, 15, 0.78);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-radius: 0;
+
+      box-shadow: none;
+      color: #fff;
+    }
+
+    /* =========================
+       CABEÇALHO
+    ========================= */
+
+    .chat-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+
+      padding: 20px;
+
+      background: rgba(20, 20, 20, 0.75);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+
+      flex-shrink: 0;
+    }
+
+    .avatar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
+
+      border-radius: 50%;
+      background: #a33b32;
+
+      font-size: 23px;
+      font-weight: bold;
+    }
+
+    .contact {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .contact h3 {
+      margin-bottom: 5px;
+      font-size: 18px;
+    }
+
+    .contact span {
+      color: #b8b8b8;
+      font-size: 13px;
+    }
+
+    .header-icons {
+      color: #ddd;
+      font-size: 25px;
+      cursor: pointer;
+    }
+
+    /* =========================
+       ÁREA DAS MENSAGENS
+    ========================= */
+
+    .messages {
+      display: flex;
+      flex: 1;
+      flex-direction: column;
+      gap: 18px;
+
+      min-height: 0;
+      overflow-y: auto;
+
+      padding: 24px 20px;
+
+      background: rgba(0, 0, 0, 0.18);
+      scrollbar-width: thin;
+      scrollbar-color: #666 transparent;
+    }
+
+    .date {
+      align-self: center;
+
+      margin-bottom: 8px;
+      padding: 7px 14px;
+
+      border-radius: 8px;
+      background: rgba(40, 40, 40, 0.8);
+
+      color: #ddd;
+      font-size: 11px;
+    }
+
+    .message {
+      max-width: 85%;
+      padding: 13px 15px 9px;
+
+      border-radius: 13px;
+
+      font-size: 15px;
+      line-height: 1.5;
+      overflow-wrap: anywhere;
+    }
+
+    .message span {
+      display: block;
+      margin-top: 5px;
+
+      color: #c6c6c6;
+      font-size: 10px;
+      text-align: right;
+    }
+
+    .received {
+      align-self: flex-start;
+
+      background: rgba(45, 45, 45, 0.92);
+      border-top-left-radius: 3px;
+    }
+
+    .sent {
+      align-self: flex-end;
+
+      background: rgba(7, 94, 84, 0.94);
+      border-top-right-radius: 3px;
+    }
+
+    /* =========================
+       CAMPO DE TEXTO
+    ========================= */
+
+    .chat-input {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+
+      padding: 16px;
+
+      background: rgba(20, 20, 20, 0.82);
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+
+      flex-shrink: 0;
+    }
+
+    .chat-input input {
+      flex: 1;
+      min-width: 0;
+
+      padding: 14px 16px;
+
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      outline: none;
+      border-radius: 25px;
+
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+
+      font-size: 14px;
+    }
+
+    .chat-input input::placeholder {
+      color: #c0c0c0;
+    }
+
+    .chat-input button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      width: 46px;
+      height: 46px;
+      flex-shrink: 0;
+
+      border: none;
+      border-radius: 50%;
+
+      background: #a33b32;
+      color: #fff;
+
+      font-size: 21px;
+      cursor: pointer;
+
+      transition: background 0.2s;
+    }
+
+    .chat-input button:hover {
+      background: #c14a3f;
+    }
+
+    /* =========================
+       TELAS GRANDES
+    ========================= */
+
+    @media (min-width: 1200px) {
+      .lado-direito {
+        width: 45%;
+      }
+
+      .chat-header {
+        padding: 24px;
+      }
+
+      .avatar {
+        width: 52px;
+        height: 52px;
+        font-size: 25px;
+      }
+
+      .contact h3 {
+        font-size: 20px;
+      }
+
+      .messages {
+        padding: 28px 24px;
+        gap: 20px;
+      }
+
+      .message {
+        font-size: 16px;
+        padding: 15px 18px 10px;
+      }
+
+      .chat-input {
+        padding: 20px;
+      }
+    }
+
+    /* =========================
+       TABLETS E TELAS MÉDIAS
+    ========================= */
+
+    @media (min-width: 601px) and (max-width: 1199px) {
+      .lado-direito {
+        width: 45%;
+      }
+
+      .chat-header {
+        padding: 15px;
+      }
+
+      .messages {
+        padding: 18px 12px;
+        gap: 14px;
+      }
+
+      .message {
+        font-size: 14px;
+      }
+
+      .chat-input {
+        padding: 12px;
+      }
+    }
+
+    /* =========================
+       TELEMÓVEIS
+    ========================= */
+
     @media (max-width: 600px) {
       .lado-esquerdo {
+        flex: 0 0 25%;
         width: 25%;
       }
 
       .lado-direito {
-        width: 75%;
+        flex: 0 0 75%;
+        width: 45%;
+      }
+
+      .chat {
+        width: 100%;
+        height: 100%;
+        min-height: 0;
+      }
+
+      .chat-header {
+        gap: 9px;
+        padding: 12px 10px;
+      }
+
+      .avatar {
+        width: 38px;
+        height: 38px;
+        font-size: 19px;
+      }
+
+      .contact h3 {
+        font-size: 15px;
+      }
+
+      .contact span {
+        font-size: 11px;
+      }
+
+      .header-icons {
+        font-size: 21px;
+      }
+
+      .messages {
+        padding: 14px 8px;
+        gap: 12px;
+      }
+
+      .message {
+        max-width: 92%;
+        padding: 9px 10px 7px;
+        font-size: 12px;
+      }
+
+      .message span {
+        font-size: 9px;
+      }
+
+      .chat-input {
+        gap: 7px;
+        padding: 9px 7px;
+      }
+
+      .chat-input input {
+        padding: 11px 10px;
+        font-size: 12px;
+      }
+
+      .chat-input button {
+        width: 36px;
+        height: 36px;
+        font-size: 18px;
       }
     }
+
+.lado-esquerdo {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  background: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px;
+}
+
+.terminal {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+
+  color: #00ff88;
+  font-family: "Courier New", monospace;
+  font-size: 14px;
+
+  opacity: 0;
+  transform: translateY(20px);
+  animation: terminalOpen 0.8s ease forwards;
+}
+
+.terminal-top {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 12px;
+  background: #171717;
+  border: 1px solid #292929;
+  border-radius:0;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.red { background: #ff5f56; }
+.yellow { background: #ffbd2e; }
+.green { background: #27c93f; }
+
+.terminal-title {
+  margin-left: 10px;
+  color: #999;
+  font-size: 12px;
+}
+
+.terminal-content {
+  flex: 1;
+  min-height: 0;
+  padding: 20px 15px;
+
+  background: #050505;
+  border: 1px solid #292929;
+  border-top: none;
+  border-radius: 0;
+
+  line-height: 1.9;
+  overflow-y: hidden;
+  overflow-wrap: anywhere;
+}
+
+.terminal-line {
+  opacity: 0;
+  animation: lineAppear 0.3s ease forwards;
+}
+
+.terminal-line .prompt {
+  color: #00ff88;
+}
+
+.terminal-line .result {
+  color: #aaa;
+}
+
+.cursor {
+  display: inline-block;
+  width: 8px;
+  height: 16px;
+  margin-left: 3px;
+  vertical-align: middle;
+  background: #00ff88;
+  animation: blink 0.8s steps(2) infinite;
+}
+
+@keyframes terminalOpen {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes lineAppear {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes blink {
+  50% { opacity: 0; }
+}
+
+@media (max-width: 600px) {
+  .lado-esquerdo {
+    padding: 8px;
+  }
+
+  .terminal {
+    font-size: 10px;
+  }
+
+  .terminal-content {
+    min-height: 180px;
+    padding: 10px 7px;
+  }
+
+  .terminal-title {
+    font-size: 9px;
+  }
+}
   </style>
 </head>
 
 <body>
   <main class="container">
-    <div class="lado-esquerdo"></div>
-    <div class="lado-direito"></div>
+
+    <div class="lado-esquerdo">
+  <div class="terminal" id="terminal">
+    <div class="terminal-top">
+      <span class="dot red"></span>
+      <span class="dot yellow"></span>
+      <span class="dot green"></span>
+      <span class="terminal-title">roma@terminal:~</span>
+    </div>
+
+    <div class="terminal-content" id="terminalContent"></div>
+  </div>
+</div>
+
+    <section class="lado-direito">
+
+      <div class="chat">
+
+        <header class="chat-header">
+          <div class="avatar">R</div>
+
+          <div class="contact">
+            <h3>Roma</h3>
+            <span>online agora</span>
+          </div>
+
+          <div class="header-icons">⋮</div>
+        </header>
+
+        <div class="messages" id="messages">
+          <div class="date">HOJE</div>
+
+          <div class="message received">
+            Olá! Bem-vindo a Roma. 🇮🇹
+            <span>09:30</span>
+          </div>
+
+          <div class="message sent">
+            Estava à tua espera...
+            <span>09:31 ✓✓</span>
+          </div>
+
+          <div class="message received">
+            Temos muito para conversar.
+            <span>09:32</span>
+          </div>
+
+          <div class="message sent">
+            Então, vamos começar.
+            <span>09:33 ✓✓</span>
+          </div>
+        </div>
+
+        <form class="chat-input" id="chatForm">
+          <input
+            type="text"
+            id="chatMessage"
+            placeholder="Escreve uma mensagem..."
+            autocomplete="off"
+          >
+
+          <button type="submit" aria-label="Enviar">➤</button>
+        </form>
+
+      </div>
+
+    </section>
+
   </main>
+
+  <script>
+    const form = document.getElementById("chatForm");
+    const input = document.getElementById("chatMessage");
+    const messages = document.getElementById("messages");
+
+    form.addEventListener("submit", function(event) {
+      event.preventDefault();
+
+      const text = input.value.trim();
+
+      if (!text) return;
+
+      const message = document.createElement("div");
+      message.className = "message sent";
+
+      const content = document.createElement("div");
+      content.textContent = text;
+
+      const time = document.createElement("span");
+      time.textContent =
+        new Date().toLocaleTimeString("pt-BR", {
+          hour: "2-digit",
+          minute: "2-digit"
+        }) + " ✓✓";
+
+      message.appendChild(content);
+      message.appendChild(time);
+
+      messages.appendChild(message);
+
+      input.value = "";
+      messages.scrollTop = messages.scrollHeight;
+      input.focus();
+    });
+
+const terminalContent = document.getElementById("terminalContent");
+
+const terminalLines = [
+  { text: "Iniciando Roma Secure Messenger...", type: "command" },
+  { text: "[ OK ] Carregando módulo de mensagens", type: "success" },
+  { text: "[ OK ] Verificando integridade da sessão", type: "success" },
+  { text: "[ OK ] Protocolo de comunicação inicializado", type: "success" },
+  { text: "Gerando par de chaves criptográficas...", type: "command" },
+  { text: "[ OK ] Chave pública preparada", type: "success" },
+  { text: "[ OK ] Canal seguro preparado", type: "success" },
+  { text: "Estabelecendo conexão privada...", type: "command" },
+  { text: "[ OK ] Sistema de mensagens pronto", type: "success" },
+  { text: "Estado: AGUARDANDO MENSAGENS", type: "active" }
+];
+
+terminalLines.forEach((line, index) => {
+  const row = document.createElement("div");
+  row.className = "terminal-line";
+  row.style.animationDelay = `${0.5 + index * 0.65}s`;
+
+  const prompt = document.createElement("span");
+  prompt.className = "prompt";
+  prompt.textContent = "roma@secure:~$ ";
+
+  const content = document.createElement("span");
+  content.textContent = line.text;
+
+  if (line.type === "success") {
+    content.style.color = "#00ff88";
+  } else if (line.type === "active") {
+    content.style.color = "#4da6ff";
+  } else {
+    content.style.color = "#b8c7d9";
+  }
+
+  row.appendChild(prompt);
+  row.appendChild(content);
+  terminalContent.appendChild(row);
+});
+
+const cursor = document.createElement("span");
+cursor.className = "cursor";
+cursor.style.animationDelay = "4.3s";
+terminalContent.appendChild(cursor);
+  </script>
 </body>
 </html>
