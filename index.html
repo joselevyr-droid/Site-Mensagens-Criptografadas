@@ -46,7 +46,7 @@
     .green  { background: #27c93f; }
     .terminal-title { margin-left: 10px; color: #999; font-size: 12px; }
 
-    /* ---- Controles (apenas cifra + chave agora) ---- */
+    /* ---- Controles (cifra + chave) ---- */
     .terminal-controls {
       display: flex; flex-wrap: wrap; gap: 8px;
       padding: 9px 11px;
@@ -108,15 +108,8 @@
     }
     .terminal-entry .prompt { color: #00ff88; }
     .terminal-entry .result { color: #c7d4e4; }
-    .terminal-meta {
-      color: #6a6a6a;
-      font-size: 0.85em;
-      padding-left: 10px;
-      margin-top: 1px;
-      overflow-wrap: anywhere;
-    }
 
-    /* ---- Botão decifrar + resultados ---- */
+    /* ---- Botão decifrar ---- */
     .decrypt-btn {
       display: inline-block;
       margin-top: 6px;
@@ -134,12 +127,53 @@
       background: #00ff88;
       color: #000;
     }
-    .decrypt-results {
-      margin-top: 4px;
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
+
+    /* ---- Input inline de decifragem (NOVO) ---- */
+    .decrypt-input-row {
+      display: none;
+      gap: 5px;
+      margin-top: 6px;
+      align-items: center;
     }
+    .decrypt-input-row.active {
+      display: flex;
+    }
+    .decrypt-input-row input {
+      flex: 1;
+      min-width: 0;
+      padding: 4px 8px;
+      background: #000;
+      color: #00ff88;
+      border: 1px solid #00ff88;
+      border-radius: 3px;
+      font-family: inherit;
+      font-size: 11px;
+      outline: none;
+    }
+    .decrypt-input-row input::placeholder { color: #4a7a5e; }
+    .decrypt-input-row button {
+      padding: 4px 10px;
+      border-radius: 3px;
+      font-family: inherit;
+      font-size: 11px;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .decrypt-confirm {
+      background: #00ff88;
+      color: #000;
+      border: 1px solid #00ff88;
+    }
+    .decrypt-confirm:hover { background: #00cc6a; border-color: #00cc6a; }
+    .decrypt-cancel {
+      background: transparent;
+      color: #ff5f56;
+      border: 1px solid #ff5f56;
+    }
+    .decrypt-cancel:hover { background: #ff5f56; color: #000; }
+
+    /* ---- Resultado (só o texto, sem chave) ---- */
+    .decrypt-results { margin-top: 4px; }
     .decrypt-result {
       color: #ffb74d;
       font-size: 12px;
@@ -147,7 +181,6 @@
       border-left: 2px solid #ffb74d;
       overflow-wrap: anywhere;
     }
-    .decrypt-result .key-label { color: #999; }
 
     /* ---- Preview (live) ---- */
     .terminal-preview {
@@ -262,7 +295,6 @@
       background: rgba(7, 94, 84, 0.94);
       border-top-right-radius: 3px;
     }
-
     .chat-input {
       display: flex; align-items: center; gap: 12px;
       padding: 16px;
@@ -338,8 +370,20 @@
       .terminal-content { padding: 8px 6px; line-height: 1.6; }
       .terminal-preview { padding: 6px 8px; font-size: 10px; min-height: 26px; max-height: 50px; }
       .cursor { width: 6px; height: 11px; }
-      .decrypt-btn { font-size: 9px; padding: 2px 8px; }
-      .decrypt-result { font-size: 10px; }
+      .decrypt-btn { font-size: 10px; padding: 3px 10px; }
+      .decrypt-result { font-size: 11px; }
+
+      /* Input inline: 16px no mínimo para o iOS NÃO dar zoom automático */
+      .decrypt-input-row input {
+        font-size: 16px;
+        padding: 6px 8px;
+      }
+      .decrypt-input-row button {
+        font-size: 14px;
+        padding: 6px 12px;
+        min-height: 34px;
+        min-width: 40px;
+      }
 
       .chat-header { gap: 9px; padding: 12px 10px; }
       .avatar { width: 38px; height: 38px; font-size: 19px; }
@@ -370,7 +414,6 @@
           <span class="terminal-title">roma@terminal:~</span>
         </div>
 
-        <!-- Controles (apenas cifra + chave) -->
         <div class="terminal-controls">
           <div class="control-group">
             <label for="cipherSelect">Cifra</label>
@@ -382,10 +425,8 @@
           </div>
         </div>
 
-        <!-- Histórico -->
         <div class="terminal-content" id="terminalContent"></div>
 
-        <!-- Preview (live) -->
         <div class="terminal-preview">
           <span class="preview-label">live&gt;</span>
           <span class="preview-text" id="previewText"></span>
@@ -672,9 +713,10 @@
     }
 
     /* =====================================================
-       5) HISTÓRICO NO TERMINAL (com botão Decifrar)
+       5) HISTÓRICO NO TERMINAL
+       (sem meta, sem revelar original/chave)
     ===================================================== */
-    function adicionarAoTerminal(original, cifrado, cipherId, cipherName, keyUsada) {
+    function adicionarAoTerminal(cifrado, cipherId, cipherName) {
       const hora = new Date().toLocaleTimeString("pt-BR", {
         hour: "2-digit", minute: "2-digit", second: "2-digit"
       });
@@ -682,62 +724,112 @@
       const row = document.createElement("div");
       row.className = "terminal-entry";
 
-      const prompt = document.createElement("span");
-      prompt.className = "prompt";
-      prompt.textContent = `[${hora}] cifrado> `;
+      // Cabeçalho: [HH:MM:SS] cifrado (Cifra)> texto_cifrado
+      const header = document.createElement("div");
+      const promptSpan = document.createElement("span");
+      promptSpan.className = "prompt";
+      promptSpan.textContent = `[${hora}] cifrado (${cipherName})> `;
+      const resultSpan = document.createElement("span");
+      resultSpan.className = "result";
+      resultSpan.textContent = cifrado;
+      header.appendChild(promptSpan);
+      header.appendChild(resultSpan);
+      row.appendChild(header);
 
-      const result = document.createElement("span");
-      result.className = "result";
-      result.textContent = cifrado;
-
-      const meta = document.createElement("div");
-      meta.className = "terminal-meta";
-      meta.textContent = `↳ msg: "${original}" • ${cipherName}${keyUsada ? ` (k=${keyUsada})` : ""}`;
-
+      // Botão Decifrar
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "decrypt-btn";
       btn.textContent = "Decifrar";
+      row.appendChild(btn);
 
+      // Linha de input inline (oculta até clicar em Decifrar)
+      const inputRow = document.createElement("div");
+      inputRow.className = "decrypt-input-row";
+
+      const keyInput = document.createElement("input");
+      keyInput.type = "text";
+      keyInput.placeholder = "chave...";
+      keyInput.setAttribute("autocomplete", "off");
+      keyInput.setAttribute("autocapitalize", "off");
+      keyInput.setAttribute("spellcheck", "false");
+
+      const confirmBtn = document.createElement("button");
+      confirmBtn.type = "button";
+      confirmBtn.className = "decrypt-confirm";
+      confirmBtn.textContent = "OK";
+
+      const cancelBtn = document.createElement("button");
+      cancelBtn.type = "button";
+      cancelBtn.className = "decrypt-cancel";
+      cancelBtn.textContent = "×";
+
+      inputRow.appendChild(keyInput);
+      inputRow.appendChild(confirmBtn);
+      inputRow.appendChild(cancelBtn);
+      row.appendChild(inputRow);
+
+      // Área de resultado (mostra só o texto, sem chave)
       const resultsBox = document.createElement("div");
       resultsBox.className = "decrypt-results";
+      row.appendChild(resultsBox);
 
-      btn.addEventListener("click", () => {
+      function doDecrypt(key) {
         const cipher = Ciphers[cipherId];
-        let key = "";
-
-        if (cipher.keyType !== "none") {
-          // Sugere a chave original, mas o usuário pode digitar qualquer uma
-          const suggested = keyUsada || cipher.defaultKey || "";
-          const resposta = prompt(`Chave para decifrar (${cipher.name}):`, suggested);
-          if (resposta === null) return; // usuário cancelou
-          key = resposta;
-        }
-
         let textoDecifrado;
         try {
           textoDecifrado = cipher.decrypt(cifrado, key);
         } catch (e) {
           textoDecifrado = "[erro: " + e.message + "]";
         }
-
+        // Substitui o resultado anterior (mostra apenas a última tentativa)
+        resultsBox.innerHTML = "";
         const linha = document.createElement("div");
         linha.className = "decrypt-result";
-
-        const keyLabel = cipher.keyType === "none"
-          ? ""
-          : ` (k=${key})`;
-
-        linha.textContent = `decifrado${keyLabel}: ${textoDecifrado}`;
+        linha.textContent = `→ ${textoDecifrado}`;
         resultsBox.appendChild(linha);
         terminalContent.scrollTop = terminalContent.scrollHeight;
+      }
+
+      function showInput() {
+        inputRow.classList.add("active");
+        btn.style.display = "none";
+        keyInput.focus();
+      }
+
+      function hideInput() {
+        inputRow.classList.remove("active");
+        btn.style.display = "";
+        keyInput.value = "";
+        resultsBox.innerHTML = "";
+      }
+
+      btn.addEventListener("click", () => {
+        const cipher = Ciphers[cipherId];
+        if (cipher.keyType === "none") {
+          doDecrypt("");           // cifra sem chave → decifra direto
+        } else {
+          showInput();              // cifra com chave → pede inline
+        }
       });
 
-      row.appendChild(prompt);
-      row.appendChild(result);
-      row.appendChild(meta);
-      row.appendChild(btn);
-      row.appendChild(resultsBox);
+      confirmBtn.addEventListener("click", () => {
+        doDecrypt(keyInput.value);
+        keyInput.focus();
+        keyInput.select();          // próxima digitação substitui a chave
+      });
+
+      cancelBtn.addEventListener("click", hideInput);
+
+      keyInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          confirmBtn.click();
+        } else if (e.key === "Escape") {
+          hideInput();
+        }
+      });
+
       terminalContent.appendChild(row);
       terminalContent.scrollTop = terminalContent.scrollHeight;
     }
@@ -795,11 +887,10 @@
       if (!text) return;
 
       const cipher = Ciphers[currentCipher];
-      const keyText = cipher.keyType === "none" ? "" : cipherKeyInput.value;
       const cifrado = aplicarCifra(text);
 
-      // Terminal
-      adicionarAoTerminal(text, cifrado, currentCipher, cipher.name, keyText);
+      // Terminal — só o cifrado e o nome da cifra (SEM original, SEM chave)
+      adicionarAoTerminal(cifrado, currentCipher, cipher.name);
 
       // Chat
       const message = document.createElement("div");
