@@ -16,7 +16,7 @@
       background: #000;
     }
 
-    /* ============ TERMINAL (ESQUERDA) ============ */
+    /* ============ TERMINAL ============ */
     .lado-esquerdo {
       flex: 1; min-width: 0; height: 100%;
       background: #000;
@@ -46,7 +46,6 @@
     .green  { background: #27c93f; }
     .terminal-title { margin-left: 10px; color: #999; font-size: 12px; }
 
-    /* ---- Controles (cifra + chave) ---- */
     .terminal-controls {
       display: flex; flex-wrap: wrap; gap: 8px;
       padding: 9px 11px;
@@ -81,7 +80,6 @@
     .control-group input:focus { border-color: #00ff88; }
     .control-group input:disabled { color: #555; background: #050505; }
 
-    /* ---- Conteúdo / histórico ---- */
     .terminal-content {
       flex: 1; min-height: 0;
       padding: 16px 14px;
@@ -109,7 +107,6 @@
     .terminal-entry .prompt { color: #00ff88; }
     .terminal-entry .result { color: #c7d4e4; }
 
-    /* ---- Botão decifrar ---- */
     .decrypt-btn {
       display: inline-block;
       margin-top: 6px;
@@ -123,24 +120,17 @@
       cursor: pointer;
       transition: background 0.15s, color 0.15s;
     }
-    .decrypt-btn:hover {
-      background: #00ff88;
-      color: #000;
-    }
+    .decrypt-btn:hover { background: #00ff88; color: #000; }
 
-    /* ---- Input inline de decifragem (NOVO) ---- */
     .decrypt-input-row {
       display: none;
       gap: 5px;
       margin-top: 6px;
       align-items: center;
     }
-    .decrypt-input-row.active {
-      display: flex;
-    }
+    .decrypt-input-row.active { display: flex; }
     .decrypt-input-row input {
-      flex: 1;
-      min-width: 0;
+      flex: 1; min-width: 0;
       padding: 4px 8px;
       background: #000;
       color: #00ff88;
@@ -160,19 +150,14 @@
       flex-shrink: 0;
     }
     .decrypt-confirm {
-      background: #00ff88;
-      color: #000;
-      border: 1px solid #00ff88;
+      background: #00ff88; color: #000; border: 1px solid #00ff88;
     }
     .decrypt-confirm:hover { background: #00cc6a; border-color: #00cc6a; }
     .decrypt-cancel {
-      background: transparent;
-      color: #ff5f56;
-      border: 1px solid #ff5f56;
+      background: transparent; color: #ff5f56; border: 1px solid #ff5f56;
     }
     .decrypt-cancel:hover { background: #ff5f56; color: #000; }
 
-    /* ---- Resultado (só o texto, sem chave) ---- */
     .decrypt-results { margin-top: 4px; }
     .decrypt-result {
       color: #ffb74d;
@@ -182,7 +167,6 @@
       overflow-wrap: anywhere;
     }
 
-    /* ---- Preview (live) ---- */
     .terminal-preview {
       display: flex; align-items: flex-start; gap: 6px;
       padding: 8px 11px;
@@ -211,145 +195,237 @@
       margin-top: 1px;
     }
 
-    /* ============ CHAT (DIREITA) ============ */
+    /* ============ CHAT (REDESENHADO) ============ */
     .lado-direito {
       position: relative;
       display: flex; align-items: stretch; justify-content: stretch;
       width: 45%; height: 100%;
       flex-shrink: 0;
-      background-image: url("https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=1600&q=90");
-      background-position: center;
-      background-size: cover;
-      background-repeat: no-repeat;
+      overflow: hidden;
+      background:
+        linear-gradient(rgba(8, 8, 10, 0.94), rgba(8, 8, 10, 0.94)),
+        url("https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=1600&q=90")
+        center / cover no-repeat;
     }
+
+    /* Glow ambiente sutil */
+    .lado-direito::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -20%;
+      width: 80%;
+      height: 80%;
+      background: radial-gradient(circle, rgba(163, 59, 50, 0.09) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
     .chat {
+      position: relative;
       display: flex; flex-direction: column;
       width: 100%; height: 100%;
       min-width: 0; min-height: 0;
       overflow: hidden;
-      background: rgba(15, 15, 15, 0.78);
-      backdrop-filter: blur(5px);
-      -webkit-backdrop-filter: blur(5px);
-      border-left: 1px solid rgba(255, 255, 255, 0.18);
-      color: #fff;
+      background: rgba(10, 10, 12, 0.55);
+      backdrop-filter: blur(24px) saturate(120%);
+      -webkit-backdrop-filter: blur(24px) saturate(120%);
+      border-left: 1px solid rgba(255, 255, 255, 0.04);
+      color: #e8e8e8;
     }
+
+    /* Header */
     .chat-header {
-      display: flex; align-items: center; gap: 14px;
-      padding: 20px;
-      background: rgba(20, 20, 20, 0.75);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      display: flex; align-items: center; gap: 12px;
+      padding: 18px 22px;
+      background: rgba(12, 12, 14, 0.55);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
       flex-shrink: 0;
     }
     .avatar {
       display: flex; align-items: center; justify-content: center;
-      width: 48px; height: 48px;
+      width: 38px; height: 38px;
       flex-shrink: 0;
       border-radius: 50%;
-      background: #a33b32;
-      font-size: 23px; font-weight: bold;
+      background: linear-gradient(135deg, #a33b32 0%, #5c1e18 100%);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.12),
+        0 2px 8px rgba(163, 59, 50, 0.25);
     }
     .contact { flex: 1; min-width: 0; }
-    .contact h3 { margin-bottom: 5px; font-size: 18px; }
-    .contact span { color: #b8b8b8; font-size: 13px; }
-    .header-icons { color: #ddd; font-size: 25px; cursor: pointer; }
+    .contact h3 {
+      margin-bottom: 3px;
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.2px;
+      color: #f2f2f2;
+    }
+    .contact span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #6e6e73;
+      font-size: 11px;
+      letter-spacing: 0.3px;
+    }
+    .contact span::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #27c93f;
+      box-shadow: 0 0 6px rgba(39, 201, 63, 0.6);
+      animation: pulse 2.4s ease-in-out infinite;
+    }
 
+    /* Mensagens */
     .messages {
-      display: flex; flex: 1; flex-direction: column; gap: 18px;
+      display: flex; flex: 1; flex-direction: column; gap: 6px;
       min-height: 0;
       overflow-y: auto;
-      padding: 24px 20px;
-      background: rgba(0, 0, 0, 0.18);
+      padding: 24px 22px;
       scrollbar-width: thin;
-      scrollbar-color: #666 transparent;
+      scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
     }
+    .messages::-webkit-scrollbar { width: 4px; }
+    .messages::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 2px;
+    }
+
     .date {
       align-self: center;
-      margin-bottom: 8px;
-      padding: 7px 14px;
-      border-radius: 8px;
-      background: rgba(40, 40, 40, 0.8);
-      color: #ddd; font-size: 11px;
+      margin: 4px 0 10px;
+      padding: 3px 12px;
+      color: #4a4a4f;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 1.4px;
+      text-transform: uppercase;
     }
+
     .message {
-      max-width: 85%;
-      padding: 13px 15px 9px;
-      border-radius: 13px;
-      font-size: 15px;
-      line-height: 1.5;
+      max-width: 74%;
+      padding: 9px 13px 7px;
+      border-radius: 16px;
+      font-size: 13.5px;
+      line-height: 1.45;
       overflow-wrap: anywhere;
+      animation: msgIn 0.28s ease-out both;
     }
     .message span {
       display: block;
-      margin-top: 5px;
-      color: #c6c6c6;
-      font-size: 10px;
+      margin-top: 3px;
+      font-size: 9.5px;
+      letter-spacing: 0.3px;
       text-align: right;
+      opacity: 0.55;
     }
+
     .received {
       align-self: flex-start;
-      background: rgba(45, 45, 45, 0.92);
-      border-top-left-radius: 3px;
+      background: #1c1c1f;
+      color: #dedee3;
+      border-bottom-left-radius: 5px;
     }
     .sent {
       align-self: flex-end;
-      background: rgba(7, 94, 84, 0.94);
-      border-top-right-radius: 3px;
+      background: linear-gradient(135deg, #8b2f27 0%, #6b2119 100%);
+      color: #f4ece9;
+      border-bottom-right-radius: 5px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
     }
+
+    /* Input */
     .chat-input {
-      display: flex; align-items: center; gap: 12px;
-      padding: 16px;
-      background: rgba(20, 20, 20, 0.82);
-      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      display: flex; align-items: center; gap: 10px;
+      padding: 16px 20px 20px;
+      background: rgba(10, 10, 12, 0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
       flex-shrink: 0;
     }
     .chat-input input {
       flex: 1; min-width: 0;
-      padding: 14px 16px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 11px 18px;
+      border: 1px solid rgba(255, 255, 255, 0.06);
       outline: none;
-      border-radius: 25px;
-      background: rgba(255, 255, 255, 0.1);
-      color: #fff;
-      font-size: 14px;
+      border-radius: 22px;
+      background: rgba(255, 255, 255, 0.035);
+      color: #e8e8e8;
+      font-size: 13.5px;
+      letter-spacing: 0.1px;
+      transition: border-color 0.2s ease, background 0.2s ease;
     }
-    .chat-input input::placeholder { color: #c0c0c0; }
+    .chat-input input:focus {
+      border-color: rgba(163, 59, 50, 0.55);
+      background: rgba(255, 255, 255, 0.055);
+    }
+    .chat-input input::placeholder {
+      color: #4f4f54;
+      letter-spacing: 0.2px;
+    }
     .chat-input button {
       display: flex; align-items: center; justify-content: center;
-      width: 46px; height: 46px;
+      width: 38px; height: 38px;
       flex-shrink: 0;
       border: none;
       border-radius: 50%;
-      background: #a33b32;
+      background: linear-gradient(135deg, #a33b32 0%, #6d2420 100%);
       color: #fff;
-      font-size: 21px;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: transform 0.15s ease, box-shadow 0.2s ease;
     }
-    .chat-input button:hover { background: #c14a3f; }
+    .chat-input button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(163, 59, 50, 0.35);
+    }
+    .chat-input button:active {
+      transform: translateY(0);
+    }
+    .chat-input button svg {
+      width: 16px;
+      height: 16px;
+      display: block;
+    }
 
     /* ============ KEYFRAMES ============ */
     @keyframes terminalOpen { to { opacity: 1; transform: translateY(0); } }
     @keyframes lineAppear { to { opacity: 1; } }
     @keyframes blink { 50% { opacity: 0; } }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.45; }
+    }
+    @keyframes msgIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
 
     /* ============ TELAS GRANDES ============ */
     @media (min-width: 1200px) {
-      .chat-header { padding: 24px; }
-      .avatar { width: 52px; height: 52px; font-size: 25px; }
-      .contact h3 { font-size: 20px; }
-      .messages { padding: 28px 24px; gap: 20px; }
-      .message { font-size: 16px; padding: 15px 18px 10px; }
-      .chat-input { padding: 20px; }
+      .chat-header { padding: 22px 26px; }
+      .avatar { width: 42px; height: 42px; font-size: 16px; }
+      .contact h3 { font-size: 15px; }
+      .messages { padding: 30px 26px; gap: 7px; }
+      .message { font-size: 14px; padding: 10px 14px 8px; }
+      .chat-input { padding: 18px 24px 22px; }
       .terminal { font-size: 15px; }
     }
 
     /* ============ TABLETS ============ */
     @media (min-width: 601px) and (max-width: 1199px) {
       .lado-esquerdo { padding: 12px; }
-      .chat-header { padding: 15px; }
-      .messages { padding: 18px 12px; gap: 14px; }
-      .message { font-size: 14px; }
-      .chat-input { padding: 12px; }
+      .chat-header { padding: 14px 16px; }
+      .messages { padding: 18px 14px; gap: 5px; }
+      .message { font-size: 12.5px; }
+      .chat-input { padding: 12px 14px 14px; }
       .terminal { font-size: 12px; }
     }
 
@@ -372,30 +448,19 @@
       .cursor { width: 6px; height: 11px; }
       .decrypt-btn { font-size: 10px; padding: 3px 10px; }
       .decrypt-result { font-size: 11px; }
+      .decrypt-input-row input { font-size: 16px; padding: 6px 8px; }
+      .decrypt-input-row button { font-size: 14px; padding: 6px 12px; min-height: 34px; min-width: 40px; }
 
-      /* Input inline: 16px no mínimo para o iOS NÃO dar zoom automático */
-      .decrypt-input-row input {
-        font-size: 16px;
-        padding: 6px 8px;
-      }
-      .decrypt-input-row button {
-        font-size: 14px;
-        padding: 6px 12px;
-        min-height: 34px;
-        min-width: 40px;
-      }
-
-      .chat-header { gap: 9px; padding: 12px 10px; }
-      .avatar { width: 38px; height: 38px; font-size: 19px; }
-      .contact h3 { font-size: 15px; }
-      .contact span { font-size: 11px; }
-      .header-icons { font-size: 21px; }
-      .messages { padding: 14px 8px; gap: 12px; }
-      .message { max-width: 92%; padding: 9px 10px 7px; font-size: 12px; }
+      .chat-header { gap: 10px; padding: 12px 14px; }
+      .avatar { width: 32px; height: 32px; font-size: 12px; }
+      .contact h3 { font-size: 13px; }
+      .contact span { font-size: 10px; }
+      .messages { padding: 14px 12px; gap: 5px; }
+      .message { max-width: 82%; padding: 8px 11px 6px; font-size: 12.5px; }
       .message span { font-size: 9px; }
-      .chat-input { gap: 7px; padding: 9px 7px; }
-      .chat-input input { padding: 11px 10px; font-size: 12px; }
-      .chat-input button { width: 36px; height: 36px; font-size: 18px; }
+      .chat-input { gap: 7px; padding: 10px 12px 12px; }
+      .chat-input input { padding: 9px 14px; font-size: 13px; }
+      .chat-input button { width: 34px; height: 34px; }
     }
   </style>
 </head>
@@ -406,7 +471,6 @@
     <!-- ===================== TERMINAL ===================== -->
     <div class="lado-esquerdo">
       <div class="terminal" id="terminal">
-
         <div class="terminal-top">
           <span class="dot red"></span>
           <span class="dot yellow"></span>
@@ -432,7 +496,6 @@
           <span class="preview-text" id="previewText"></span>
           <span class="cursor"></span>
         </div>
-
       </div>
     </div>
 
@@ -443,9 +506,8 @@
           <div class="avatar">R</div>
           <div class="contact">
             <h3>Roma</h3>
-            <span>online agora</span>
+            <span>online</span>
           </div>
-          <div class="header-icons">⋮</div>
         </header>
 
         <div class="messages" id="messages">
@@ -458,7 +520,12 @@
 
         <form class="chat-input" id="chatForm">
           <input type="text" id="chatMessage" placeholder="Escreve uma mensagem..." autocomplete="off">
-          <button type="submit" aria-label="Enviar">➤</button>
+          <button type="submit" aria-label="Enviar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                 stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 19V5M5 12l7-7 7 7"/>
+            </svg>
+          </button>
         </form>
       </div>
     </section>
@@ -470,11 +537,8 @@
        1) REGISTRO DE CIFRAS
     ===================================================== */
     const Ciphers = {
-
       cesar: {
-        name: "César",
-        keyType: "number",
-        defaultKey: 3,
+        name: "César", keyType: "number", defaultKey: 3,
         encrypt(text, key) {
           const k = ((Number(key) || 0) % 26 + 26) % 26;
           return text.split('').map(c => {
@@ -492,17 +556,13 @@
           return this.encrypt(text, isNaN(n) ? 0 : -n);
         }
       },
-
       rot13: {
-        name: "ROT13",
-        keyType: "none",
+        name: "ROT13", keyType: "none",
         encrypt(text) { return Ciphers.cesar.encrypt(text, 13); },
         decrypt(text) { return Ciphers.cesar.encrypt(text, 13); }
       },
-
       atbash: {
-        name: "Atbash",
-        keyType: "none",
+        name: "Atbash", keyType: "none",
         encrypt(text) {
           return text.split('').map(c => {
             const l = c.toLowerCase();
@@ -515,11 +575,8 @@
         },
         decrypt(text) { return this.encrypt(text); }
       },
-
       vigenere: {
-        name: "Vigenère",
-        keyType: "text",
-        defaultKey: "roma",
+        name: "Vigenère", keyType: "text", defaultKey: "roma",
         encrypt(text, key) {
           const k = (key || "").toLowerCase().replace(/[^a-z]/g, '');
           if (!k) return text;
@@ -551,10 +608,8 @@
           }).join('');
         }
       },
-
       base64: {
-        name: "Base64",
-        keyType: "none",
+        name: "Base64", keyType: "none",
         encrypt(text) {
           try { return btoa(unescape(encodeURIComponent(text))); }
           catch(e) { return text; }
@@ -564,10 +619,8 @@
           catch(e) { return text; }
         }
       },
-
       hex: {
-        name: "Hexadecimal",
-        keyType: "none",
+        name: "Hexadecimal", keyType: "none",
         encrypt(text) {
           return Array.from(new TextEncoder().encode(text))
             .map(b => b.toString(16).padStart(2, '0')).join(' ');
@@ -579,10 +632,8 @@
           } catch(e) { return text; }
         }
       },
-
       binary: {
-        name: "Binário",
-        keyType: "none",
+        name: "Binário", keyType: "none",
         encrypt(text) {
           return Array.from(new TextEncoder().encode(text))
             .map(b => b.toString(2).padStart(8, '0')).join(' ');
@@ -594,35 +645,31 @@
           } catch(e) { return text; }
         }
       },
-
       reverse: {
-        name: "Inverter",
-        keyType: "none",
+        name: "Inverter", keyType: "none",
         encrypt(text) { return text.split('').reverse().join(''); },
         decrypt(text) { return text.split('').reverse().join(''); }
       },
-
       xor: {
-        name: "XOR",
-        keyType: "text",
-        defaultKey: "roma",
+        name: "XOR", keyType: "text", defaultKey: "roma",
         encrypt(text, key) {
           const kb = new TextEncoder().encode(key || "roma");
           const bytes = new TextEncoder().encode(text);
-          return Array.from(bytes).map((b, i) => (b ^ kb[i % kb.length]).toString(16).padStart(2, '0')).join(' ');
+          return Array.from(bytes).map((b, i) =>
+            (b ^ kb[i % kb.length]).toString(16).padStart(2, '0')).join(' ');
         },
         decrypt(text, key) {
           const kb = new TextEncoder().encode(key || "roma");
           try {
             const bytes = text.trim().split(/\s+/).map(h => parseInt(h, 16));
-            return new TextDecoder().decode(new Uint8Array(bytes.map((b, i) => b ^ kb[i % kb.length])));
+            return new TextDecoder().decode(
+              new Uint8Array(bytes.map((b, i) => b ^ kb[i % kb.length]))
+            );
           } catch(e) { return text; }
         }
       },
-
       morse: {
-        name: "Morse",
-        keyType: "none",
+        name: "Morse", keyType: "none",
         encrypt(text) {
           const m = {
             a:".-",b:"-...",c:"-.-.",d:"-..",e:".",f:"..-.",g:"--.",h:"....",
@@ -632,30 +679,23 @@
             "0":"-----","1":".----","2":"..---","3":"...--","4":"....-",
             "5":".....","6":"-....","7":"--...","8":"---..","9":"----."
           };
-          return text.toLowerCase().split('').map(c => m[c] || (c === ' ' ? '/' : c)).join(' ');
+          return text.toLowerCase().split('')
+            .map(c => m[c] || (c === ' ' ? '/' : c)).join(' ');
         },
         decrypt(text) {
           const m = {
-            ".-":"a","-...":"b","-.-.":"c","-..":"d",".":"e","..-.":"f","--.":"g","....":"h",
-            "..":"i",".---":"j","-.-":"k",".-..":"l","--":"m","-.":"n","---":"o",".--.":"p",
-            "--.-":"q",".-.":"r","...":"s","-":"t","..-":"u","...-":"v",".--":"w","-..-":"x",
+            ".-":"a","-...":"b","-.-.":"c","-..":"d",".":"e","..-.":"f",
+            "--.":"g","....":"h","..":"i",".---":"j","-.-":"k",".-..":"l",
+            "--":"m","-.":"n","---":"o",".--.":"p","--.-":"q",".-.":"r",
+            "...":"s","-":"t","..-":"u","...-":"v",".--":"w","-..-":"x",
             "-.--":"y","--..":"z",
             "-----":"0",".----":"1","..---":"2","...--":"3","....-":"4",
             ".....":"5","-....":"6","--...":"7","---..":"8","----.":"9"
           };
-          return text.split(/\s+/).map(c => c === '/' ? ' ' : (m[c] || c)).join('');
+          return text.split(/\s+/)
+            .map(c => c === '/' ? ' ' : (m[c] || c)).join('');
         }
       }
-
-      /* ➕ Adicione novas cifras aqui:
-         minhaCifra: {
-           name: "Minha Cifra",
-           keyType: "number" | "text" | "none",
-           defaultKey: "algo",
-           encrypt(text, key) { ... },
-           decrypt(text, key) { ... }
-         }
-      */
     };
 
     /* =====================================================
@@ -713,10 +753,9 @@
     }
 
     /* =====================================================
-       5) HISTÓRICO NO TERMINAL
-       (sem meta, sem revelar original/chave)
+       5) HISTÓRICO NO TERMINAL (sem meta, sem nome da cifra)
     ===================================================== */
-    function adicionarAoTerminal(cifrado, cipherId, cipherName) {
+    function adicionarAoTerminal(cifrado, cipherId) {
       const hora = new Date().toLocaleTimeString("pt-BR", {
         hour: "2-digit", minute: "2-digit", second: "2-digit"
       });
@@ -724,11 +763,10 @@
       const row = document.createElement("div");
       row.className = "terminal-entry";
 
-      // Cabeçalho: [HH:MM:SS] cifrado (Cifra)> texto_cifrado
       const header = document.createElement("div");
       const promptSpan = document.createElement("span");
       promptSpan.className = "prompt";
-      promptSpan.textContent = `[${hora}] cifrado (${cipherName})> `;
+      promptSpan.textContent = `[${hora}] cifrado> `;
       const resultSpan = document.createElement("span");
       resultSpan.className = "result";
       resultSpan.textContent = cifrado;
@@ -736,14 +774,12 @@
       header.appendChild(resultSpan);
       row.appendChild(header);
 
-      // Botão Decifrar
       const btn = document.createElement("button");
       btn.type = "button";
       btn.className = "decrypt-btn";
       btn.textContent = "Decifrar";
       row.appendChild(btn);
 
-      // Linha de input inline (oculta até clicar em Decifrar)
       const inputRow = document.createElement("div");
       inputRow.className = "decrypt-input-row";
 
@@ -769,7 +805,6 @@
       inputRow.appendChild(cancelBtn);
       row.appendChild(inputRow);
 
-      // Área de resultado (mostra só o texto, sem chave)
       const resultsBox = document.createElement("div");
       resultsBox.className = "decrypt-results";
       row.appendChild(resultsBox);
@@ -782,7 +817,6 @@
         } catch (e) {
           textoDecifrado = "[erro: " + e.message + "]";
         }
-        // Substitui o resultado anterior (mostra apenas a última tentativa)
         resultsBox.innerHTML = "";
         const linha = document.createElement("div");
         linha.className = "decrypt-result";
@@ -806,28 +840,21 @@
 
       btn.addEventListener("click", () => {
         const cipher = Ciphers[cipherId];
-        if (cipher.keyType === "none") {
-          doDecrypt("");           // cifra sem chave → decifra direto
-        } else {
-          showInput();              // cifra com chave → pede inline
-        }
+        if (cipher.keyType === "none") doDecrypt("");
+        else showInput();
       });
 
       confirmBtn.addEventListener("click", () => {
         doDecrypt(keyInput.value);
         keyInput.focus();
-        keyInput.select();          // próxima digitação substitui a chave
+        keyInput.select();
       });
 
       cancelBtn.addEventListener("click", hideInput);
 
       keyInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-          e.preventDefault();
-          confirmBtn.click();
-        } else if (e.key === "Escape") {
-          hideInput();
-        }
+        if (e.key === "Enter") { e.preventDefault(); confirmBtn.click(); }
+        else if (e.key === "Escape") hideInput();
       });
 
       terminalContent.appendChild(row);
@@ -835,7 +862,7 @@
     }
 
     /* =====================================================
-       6) EVENTOS DOS CONTROLES
+       6) EVENTOS
     ===================================================== */
     cipherSelect.addEventListener("change", () => {
       currentCipher = cipherSelect.value;
@@ -843,7 +870,6 @@
       atualizarKeyField();
       atualizarPreview();
     });
-
     cipherKeyInput.addEventListener("input", atualizarPreview);
     input.addEventListener("input", atualizarPreview);
 
@@ -857,7 +883,6 @@
       { text: "[ OK ] Canal privado estabelecido", type: "success" },
       { text: "Estado: AGUARDANDO MENSAGENS", type: "active" }
     ];
-
     bootLines.forEach((line, index) => {
       const row = document.createElement("div");
       row.className = "terminal-line";
@@ -886,11 +911,10 @@
       const text = input.value.trim();
       if (!text) return;
 
-      const cipher = Ciphers[currentCipher];
       const cifrado = aplicarCifra(text);
 
-      // Terminal — só o cifrado e o nome da cifra (SEM original, SEM chave)
-      adicionarAoTerminal(cifrado, currentCipher, cipher.name);
+      // Terminal (sem nome da cifra, sem original, sem chave)
+      adicionarAoTerminal(cifrado, currentCipher);
 
       // Chat
       const message = document.createElement("div");
