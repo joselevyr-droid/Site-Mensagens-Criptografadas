@@ -9,49 +9,32 @@
     /* ============ RESET / BASE ============ */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { width: 100%; height: 100%; }
-    body {
-      background: #000;
-      overflow: hidden;
-      font-family: Arial, sans-serif;
-    }
+    body { background: #000; overflow: hidden; font-family: Arial, sans-serif; }
     .container {
       display: flex;
-      width: 100%;
-      height: 100vh;
-      height: 100dvh;
+      width: 100%; height: 100vh; height: 100dvh;
       background: #000;
     }
 
     /* ============ TERMINAL (ESQUERDA) ============ */
     .lado-esquerdo {
-      flex: 1;
-      min-width: 0;
-      height: 100%;
+      flex: 1; min-width: 0; height: 100%;
       background: #000;
-      display: flex;
-      align-items: stretch;
-      justify-content: stretch;
+      display: flex; align-items: stretch; justify-content: stretch;
       padding: 24px;
     }
-
     .terminal {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
+      width: 100%; height: 100%;
+      display: flex; flex-direction: column;
       color: #00ff88;
       font-family: "Courier New", monospace;
       font-size: 14px;
-      opacity: 0;
-      transform: translateY(20px);
+      opacity: 0; transform: translateY(20px);
       animation: terminalOpen 0.8s ease forwards;
       min-height: 0;
     }
-
     .terminal-top {
-      display: flex;
-      align-items: center;
-      gap: 7px;
+      display: flex; align-items: center; gap: 7px;
       padding: 12px;
       background: #171717;
       border: 1px solid #292929;
@@ -61,17 +44,11 @@
     .red    { background: #ff5f56; }
     .yellow { background: #ffbd2e; }
     .green  { background: #27c93f; }
-    .terminal-title {
-      margin-left: 10px;
-      color: #999;
-      font-size: 12px;
-    }
+    .terminal-title { margin-left: 10px; color: #999; font-size: 12px; }
 
-    /* ---- Controles (cifra / chave / modo) ---- */
+    /* ---- Controles (apenas cifra + chave agora) ---- */
     .terminal-controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
+      display: flex; flex-wrap: wrap; gap: 8px;
       padding: 9px 11px;
       background: #0a0a0a;
       border: 1px solid #292929;
@@ -79,23 +56,18 @@
       flex-shrink: 0;
     }
     .control-group {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      flex: 1 1 100px;
+      display: flex; align-items: center; gap: 5px;
+      flex: 1 1 120px;
       min-width: 0;
     }
     .control-group label {
-      color: #777;
-      font-size: 10px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      color: #777; font-size: 10px;
+      text-transform: uppercase; letter-spacing: 0.5px;
       flex-shrink: 0;
     }
     .control-group select,
     .control-group input {
-      flex: 1;
-      min-width: 0;
+      flex: 1; min-width: 0;
       padding: 5px 7px;
       background: #000;
       color: #00ff88;
@@ -106,20 +78,12 @@
       outline: none;
     }
     .control-group select:focus,
-    .control-group input:focus {
-      border-color: #00ff88;
-    }
-    .control-group input:disabled {
-      color: #555;
-      background: #050505;
-    }
-    .control-mode { flex: 0 0 auto; }
-    .control-mode select { flex: none; }
+    .control-group input:focus { border-color: #00ff88; }
+    .control-group input:disabled { color: #555; background: #050505; }
 
     /* ---- Conteúdo / histórico ---- */
     .terminal-content {
-      flex: 1;
-      min-height: 0;
+      flex: 1; min-height: 0;
       padding: 16px 14px;
       background: #050505;
       border: 1px solid #292929;
@@ -149,42 +113,64 @@
       font-size: 0.85em;
       padding-left: 10px;
       margin-top: 1px;
-      margin-bottom: 4px;
       overflow-wrap: anywhere;
     }
 
+    /* ---- Botão decifrar + resultados ---- */
+    .decrypt-btn {
+      display: inline-block;
+      margin-top: 6px;
+      padding: 3px 12px;
+      background: transparent;
+      color: #00ff88;
+      border: 1px solid #00ff88;
+      border-radius: 3px;
+      font-family: inherit;
+      font-size: 11px;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+    .decrypt-btn:hover {
+      background: #00ff88;
+      color: #000;
+    }
+    .decrypt-results {
+      margin-top: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .decrypt-result {
+      color: #ffb74d;
+      font-size: 12px;
+      padding: 3px 0 3px 10px;
+      border-left: 2px solid #ffb74d;
+      overflow-wrap: anywhere;
+    }
+    .decrypt-result .key-label { color: #999; }
+
     /* ---- Preview (live) ---- */
     .terminal-preview {
-      display: flex;
-      align-items: flex-start;
-      gap: 6px;
+      display: flex; align-items: flex-start; gap: 6px;
       padding: 8px 11px;
       background: #050505;
       border: 1px solid #292929;
       border-top: 1px solid #1a1a1a;
       font-size: 12px;
-      min-height: 34px;
-      max-height: 70px;
+      min-height: 34px; max-height: 70px;
       overflow-y: auto;
       flex-shrink: 0;
     }
-    .preview-label {
-      color: #00ff88;
-      flex-shrink: 0;
-      font-weight: bold;
-    }
+    .preview-label { color: #00ff88; flex-shrink: 0; font-weight: bold; }
     .preview-text {
-      flex: 1;
-      min-width: 0;
+      flex: 1; min-width: 0;
       color: #00ff88;
       overflow-wrap: anywhere;
       word-break: break-all;
     }
-
     .cursor {
       display: inline-block;
-      width: 8px;
-      height: 14px;
+      width: 8px; height: 14px;
       vertical-align: middle;
       background: #00ff88;
       animation: blink 0.8s steps(2) infinite;
@@ -195,25 +181,18 @@
     /* ============ CHAT (DIREITA) ============ */
     .lado-direito {
       position: relative;
-      display: flex;
-      align-items: stretch;
-      justify-content: stretch;
-      width: 45%;
-      height: 100%;
+      display: flex; align-items: stretch; justify-content: stretch;
+      width: 45%; height: 100%;
       flex-shrink: 0;
       background-image: url("https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=1600&q=90");
       background-position: center;
       background-size: cover;
       background-repeat: no-repeat;
     }
-
     .chat {
-      display: flex;
-      flex-direction: column;
-      width: 100%;
-      height: 100%;
-      min-width: 0;
-      min-height: 0;
+      display: flex; flex-direction: column;
+      width: 100%; height: 100%;
+      min-width: 0; min-height: 0;
       overflow: hidden;
       background: rgba(15, 15, 15, 0.78);
       backdrop-filter: blur(5px);
@@ -221,26 +200,20 @@
       border-left: 1px solid rgba(255, 255, 255, 0.18);
       color: #fff;
     }
-
     .chat-header {
-      display: flex;
-      align-items: center;
-      gap: 14px;
+      display: flex; align-items: center; gap: 14px;
       padding: 20px;
       background: rgba(20, 20, 20, 0.75);
       border-bottom: 1px solid rgba(255, 255, 255, 0.15);
       flex-shrink: 0;
     }
     .avatar {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       width: 48px; height: 48px;
       flex-shrink: 0;
       border-radius: 50%;
       background: #a33b32;
-      font-size: 23px;
-      font-weight: bold;
+      font-size: 23px; font-weight: bold;
     }
     .contact { flex: 1; min-width: 0; }
     .contact h3 { margin-bottom: 5px; font-size: 18px; }
@@ -248,10 +221,7 @@
     .header-icons { color: #ddd; font-size: 25px; cursor: pointer; }
 
     .messages {
-      display: flex;
-      flex: 1;
-      flex-direction: column;
-      gap: 18px;
+      display: flex; flex: 1; flex-direction: column; gap: 18px;
       min-height: 0;
       overflow-y: auto;
       padding: 24px 20px;
@@ -265,8 +235,7 @@
       padding: 7px 14px;
       border-radius: 8px;
       background: rgba(40, 40, 40, 0.8);
-      color: #ddd;
-      font-size: 11px;
+      color: #ddd; font-size: 11px;
     }
     .message {
       max-width: 85%;
@@ -295,17 +264,14 @@
     }
 
     .chat-input {
-      display: flex;
-      align-items: center;
-      gap: 12px;
+      display: flex; align-items: center; gap: 12px;
       padding: 16px;
       background: rgba(20, 20, 20, 0.82);
       border-top: 1px solid rgba(255, 255, 255, 0.15);
       flex-shrink: 0;
     }
     .chat-input input {
-      flex: 1;
-      min-width: 0;
+      flex: 1; min-width: 0;
       padding: 14px 16px;
       border: 1px solid rgba(255, 255, 255, 0.12);
       outline: none;
@@ -316,9 +282,7 @@
     }
     .chat-input input::placeholder { color: #c0c0c0; }
     .chat-input button {
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: flex; align-items: center; justify-content: center;
       width: 46px; height: 46px;
       flex-shrink: 0;
       border: none;
@@ -332,15 +296,9 @@
     .chat-input button:hover { background: #c14a3f; }
 
     /* ============ KEYFRAMES ============ */
-    @keyframes terminalOpen {
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes lineAppear {
-      to { opacity: 1; }
-    }
-    @keyframes blink {
-      50% { opacity: 0; }
-    }
+    @keyframes terminalOpen { to { opacity: 1; transform: translateY(0); } }
+    @keyframes lineAppear { to { opacity: 1; } }
+    @keyframes blink { 50% { opacity: 0; } }
 
     /* ============ TELAS GRANDES ============ */
     @media (min-width: 1200px) {
@@ -366,29 +324,22 @@
     /* ============ MOBILE (EMPILHADO) ============ */
     @media (max-width: 600px) {
       .container { flex-direction: column; }
-
-      .lado-esquerdo {
-        flex: 0 0 45%;
-        width: 100%;
-        height: 45%;
-        padding: 6px;
-      }
-      .lado-direito {
-        flex: 0 0 55%;
-        width: 100%;
-        height: 55%;
-      }
+      .lado-esquerdo { flex: 0 0 45%; width: 100%; height: 45%; padding: 6px; }
+      .lado-direito  { flex: 0 0 55%; width: 100%; height: 55%; }
 
       .terminal { font-size: 10px; }
       .terminal-top { padding: 8px; }
       .terminal-title { font-size: 9px; }
       .terminal-controls { padding: 6px 8px; gap: 6px; }
+      .control-group { flex: 1 1 90px; }
       .control-group label { font-size: 9px; }
       .control-group select,
       .control-group input { padding: 4px 5px; font-size: 10px; }
       .terminal-content { padding: 8px 6px; line-height: 1.6; }
       .terminal-preview { padding: 6px 8px; font-size: 10px; min-height: 26px; max-height: 50px; }
       .cursor { width: 6px; height: 11px; }
+      .decrypt-btn { font-size: 9px; padding: 2px 8px; }
+      .decrypt-result { font-size: 10px; }
 
       .chat-header { gap: 9px; padding: 12px 10px; }
       .avatar { width: 38px; height: 38px; font-size: 19px; }
@@ -419,7 +370,7 @@
           <span class="terminal-title">roma@terminal:~</span>
         </div>
 
-        <!-- Controles de Cifra -->
+        <!-- Controles (apenas cifra + chave) -->
         <div class="terminal-controls">
           <div class="control-group">
             <label for="cipherSelect">Cifra</label>
@@ -428,12 +379,6 @@
           <div class="control-group">
             <label for="cipherKey">Chave</label>
             <input type="text" id="cipherKey" value="3" />
-          </div>
-          <div class="control-group control-mode">
-            <select id="modeSelect" title="Modo">
-              <option value="encrypt">🔒 Cifrar</option>
-              <option value="decrypt">🔓 Decifrar</option>
-            </select>
           </div>
         </div>
 
@@ -481,10 +426,7 @@
 
   <script>
     /* =====================================================
-       1) REGISTRO DE CIFRAS (fácil de estender)
-       Cada cifra expõe: name, keyType, defaultKey,
-       encrypt(text, key), decrypt(text, key)
-       keyType: "number" | "text" | "none"
+       1) REGISTRO DE CIFRAS
     ===================================================== */
     const Ciphers = {
 
@@ -544,8 +486,7 @@
           return text.split('').map(c => {
             const l = c.toLowerCase();
             if (l >= 'a' && l <= 'z') {
-              const shift = k.charCodeAt(ki % k.length) - 97;
-              ki++;
+              const shift = k.charCodeAt(ki % k.length) - 97; ki++;
               const base = (c === l) ? 97 : 65;
               const code = c.charCodeAt(0) - base;
               return String.fromCharCode(base + ((code + shift) % 26));
@@ -560,8 +501,7 @@
           return text.split('').map(c => {
             const l = c.toLowerCase();
             if (l >= 'a' && l <= 'z') {
-              const shift = k.charCodeAt(ki % k.length) - 97;
-              ki++;
+              const shift = k.charCodeAt(ki % k.length) - 97; ki++;
               const base = (c === l) ? 97 : 65;
               const code = c.charCodeAt(0) - base;
               return String.fromCharCode(base + ((code - shift + 26) % 26));
@@ -666,7 +606,7 @@
         }
       }
 
-      /* ➕ Para adicionar uma nova cifra futuramente:
+      /* ➕ Adicione novas cifras aqui:
          minhaCifra: {
            name: "Minha Cifra",
            keyType: "number" | "text" | "none",
@@ -684,7 +624,6 @@
     const previewText     = document.getElementById("previewText");
     const cipherSelect    = document.getElementById("cipherSelect");
     const cipherKeyInput  = document.getElementById("cipherKey");
-    const modeSelect      = document.getElementById("modeSelect");
     const form            = document.getElementById("chatForm");
     const input           = document.getElementById("chatMessage");
     const messages        = document.getElementById("messages");
@@ -692,7 +631,7 @@
     let currentCipher = "cesar";
 
     /* =====================================================
-       3) POPULAR SELECT DE CIFRAS
+       3) POPULAR SELECT
     ===================================================== */
     Object.entries(Ciphers).forEach(([id, c]) => {
       const opt = document.createElement("option");
@@ -705,20 +644,11 @@
     /* =====================================================
        4) HELPERS
     ===================================================== */
-    function escapeText(t) {
-      // usado como textContent, não precisa escapar, mas deixamos util
-      return t;
-    }
-
     function aplicarCifra(text) {
       const cipher = Ciphers[currentCipher];
       const key = cipherKeyInput.value;
-      const mode = modeSelect.value;
-      try {
-        return mode === "decrypt" ? cipher.decrypt(text, key) : cipher.encrypt(text, key);
-      } catch (e) {
-        return "[erro: " + e.message + "]";
-      }
+      try { return cipher.encrypt(text, key); }
+      catch (e) { return "[erro: " + e.message + "]"; }
     }
 
     function atualizarPreview() {
@@ -742,9 +672,9 @@
     }
 
     /* =====================================================
-       5) HISTÓRICO NO TERMINAL
+       5) HISTÓRICO NO TERMINAL (com botão Decifrar)
     ===================================================== */
-    function adicionarAoTerminal(original, resultado, cipherName, keyText, mode) {
+    function adicionarAoTerminal(original, cifrado, cipherId, cipherName, keyUsada) {
       const hora = new Date().toLocaleTimeString("pt-BR", {
         hour: "2-digit", minute: "2-digit", second: "2-digit"
       });
@@ -754,19 +684,60 @@
 
       const prompt = document.createElement("span");
       prompt.className = "prompt";
-      prompt.textContent = `[${hora}] ${mode === "encrypt" ? "cifrado" : "decifrado"}> `;
+      prompt.textContent = `[${hora}] cifrado> `;
 
       const result = document.createElement("span");
       result.className = "result";
-      result.textContent = resultado;
+      result.textContent = cifrado;
 
       const meta = document.createElement("div");
       meta.className = "terminal-meta";
-      meta.textContent = `↳ msg: "${original}" • ${cipherName}${keyText ? ` (k=${keyText})` : ""}`;
+      meta.textContent = `↳ msg: "${original}" • ${cipherName}${keyUsada ? ` (k=${keyUsada})` : ""}`;
+
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "decrypt-btn";
+      btn.textContent = "Decifrar";
+
+      const resultsBox = document.createElement("div");
+      resultsBox.className = "decrypt-results";
+
+      btn.addEventListener("click", () => {
+        const cipher = Ciphers[cipherId];
+        let key = "";
+
+        if (cipher.keyType !== "none") {
+          // Sugere a chave original, mas o usuário pode digitar qualquer uma
+          const suggested = keyUsada || cipher.defaultKey || "";
+          const resposta = prompt(`Chave para decifrar (${cipher.name}):`, suggested);
+          if (resposta === null) return; // usuário cancelou
+          key = resposta;
+        }
+
+        let textoDecifrado;
+        try {
+          textoDecifrado = cipher.decrypt(cifrado, key);
+        } catch (e) {
+          textoDecifrado = "[erro: " + e.message + "]";
+        }
+
+        const linha = document.createElement("div");
+        linha.className = "decrypt-result";
+
+        const keyLabel = cipher.keyType === "none"
+          ? ""
+          : ` (k=${key})`;
+
+        linha.textContent = `decifrado${keyLabel}: ${textoDecifrado}`;
+        resultsBox.appendChild(linha);
+        terminalContent.scrollTop = terminalContent.scrollHeight;
+      });
 
       row.appendChild(prompt);
       row.appendChild(result);
       row.appendChild(meta);
+      row.appendChild(btn);
+      row.appendChild(resultsBox);
       terminalContent.appendChild(row);
       terminalContent.scrollTop = terminalContent.scrollHeight;
     }
@@ -782,11 +753,10 @@
     });
 
     cipherKeyInput.addEventListener("input", atualizarPreview);
-    modeSelect.addEventListener("change", atualizarPreview);
     input.addEventListener("input", atualizarPreview);
 
     /* =====================================================
-       7) BOOT ANIMATION (mensagens iniciais)
+       7) BOOT ANIMATION
     ===================================================== */
     const bootLines = [
       { text: "Iniciando Roma Secure Messenger...", type: "command" },
@@ -817,7 +787,7 @@
     });
 
     /* =====================================================
-       8) ENVIO DA MENSAGEM (cifra + chat + terminal)
+       8) ENVIO DA MENSAGEM
     ===================================================== */
     form.addEventListener("submit", function (event) {
       event.preventDefault();
@@ -826,12 +796,12 @@
 
       const cipher = Ciphers[currentCipher];
       const keyText = cipher.keyType === "none" ? "" : cipherKeyInput.value;
-      const resultado = aplicarCifra(text);
+      const cifrado = aplicarCifra(text);
 
-      // 1) Salva no terminal
-      adicionarAoTerminal(text, resultado, cipher.name, keyText, modeSelect.value);
+      // Terminal
+      adicionarAoTerminal(text, cifrado, currentCipher, cipher.name, keyText);
 
-      // 2) Adiciona no chat
+      // Chat
       const message = document.createElement("div");
       message.className = "message sent";
 
@@ -846,7 +816,6 @@
       message.appendChild(time);
       messages.appendChild(message);
 
-      // 3) Reset
       input.value = "";
       atualizarPreview();
       messages.scrollTop = messages.scrollHeight;
