@@ -3,31 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Roma</title>
+  <title>Roma • Secure Terminal</title>
 
   <style>
-    /* =========================
-       CONFIGURAÇÃO GERAL
-    ========================= */
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    html,
-    body {
-      width: 100%;
-      height: 100%;
-    }
-
+    /* ============ RESET / BASE ============ */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body { width: 100%; height: 100%; }
     body {
       background: #000;
       overflow: hidden;
       font-family: Arial, sans-serif;
     }
-
     .container {
       display: flex;
       width: 100%;
@@ -36,609 +22,816 @@
       background: #000;
     }
 
-    /* =========================
-       LADO ESQUERDO PRETO
-    ========================= */
+    /* ============ TERMINAL (ESQUERDA) ============ */
+    .lado-esquerdo {
+      flex: 1;
+      min-width: 0;
+      height: 100%;
+      background: #000;
+      display: flex;
+      align-items: stretch;
+      justify-content: stretch;
+      padding: 24px;
+    }
 
- .lado-esquerdo {
-  flex: 1;
-  min-width: 0;
-  height: 100%;
-  background: #000;
-  display: flex;
-  align-items: stretch;
-  justify-content: stretch;
-  padding: 0;
-}
+    .terminal {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      color: #00ff88;
+      font-family: "Courier New", monospace;
+      font-size: 14px;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: terminalOpen 0.8s ease forwards;
+      min-height: 0;
+    }
 
-    /* =========================
-       LADO DIREITO COM IMAGEM
-    ========================= */
+    .terminal-top {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 12px;
+      background: #171717;
+      border: 1px solid #292929;
+      flex-shrink: 0;
+    }
+    .dot { width: 10px; height: 10px; border-radius: 50%; }
+    .red    { background: #ff5f56; }
+    .yellow { background: #ffbd2e; }
+    .green  { background: #27c93f; }
+    .terminal-title {
+      margin-left: 10px;
+      color: #999;
+      font-size: 12px;
+    }
 
+    /* ---- Controles (cifra / chave / modo) ---- */
+    .terminal-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 9px 11px;
+      background: #0a0a0a;
+      border: 1px solid #292929;
+      border-top: none;
+      flex-shrink: 0;
+    }
+    .control-group {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex: 1 1 100px;
+      min-width: 0;
+    }
+    .control-group label {
+      color: #777;
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      flex-shrink: 0;
+    }
+    .control-group select,
+    .control-group input {
+      flex: 1;
+      min-width: 0;
+      padding: 5px 7px;
+      background: #000;
+      color: #00ff88;
+      border: 1px solid #2a2a2a;
+      border-radius: 3px;
+      font-family: inherit;
+      font-size: 11px;
+      outline: none;
+    }
+    .control-group select:focus,
+    .control-group input:focus {
+      border-color: #00ff88;
+    }
+    .control-group input:disabled {
+      color: #555;
+      background: #050505;
+    }
+    .control-mode { flex: 0 0 auto; }
+    .control-mode select { flex: none; }
+
+    /* ---- Conteúdo / histórico ---- */
+    .terminal-content {
+      flex: 1;
+      min-height: 0;
+      padding: 16px 14px;
+      background: #050505;
+      border: 1px solid #292929;
+      border-top: none;
+      line-height: 1.75;
+      overflow-y: auto;
+      overflow-wrap: anywhere;
+      scrollbar-width: thin;
+      scrollbar-color: #444 transparent;
+    }
+    .terminal-line {
+      opacity: 0;
+      animation: lineAppear 0.3s ease forwards;
+    }
+    .terminal-line .prompt { color: #00ff88; }
+    .terminal-line .result { color: #aaa; }
+
+    .terminal-entry {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed #1c1c1c;
+    }
+    .terminal-entry .prompt { color: #00ff88; }
+    .terminal-entry .result { color: #c7d4e4; }
+    .terminal-meta {
+      color: #6a6a6a;
+      font-size: 0.85em;
+      padding-left: 10px;
+      margin-top: 1px;
+      margin-bottom: 4px;
+      overflow-wrap: anywhere;
+    }
+
+    /* ---- Preview (live) ---- */
+    .terminal-preview {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      padding: 8px 11px;
+      background: #050505;
+      border: 1px solid #292929;
+      border-top: 1px solid #1a1a1a;
+      font-size: 12px;
+      min-height: 34px;
+      max-height: 70px;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+    .preview-label {
+      color: #00ff88;
+      flex-shrink: 0;
+      font-weight: bold;
+    }
+    .preview-text {
+      flex: 1;
+      min-width: 0;
+      color: #00ff88;
+      overflow-wrap: anywhere;
+      word-break: break-all;
+    }
+
+    .cursor {
+      display: inline-block;
+      width: 8px;
+      height: 14px;
+      vertical-align: middle;
+      background: #00ff88;
+      animation: blink 0.8s steps(2) infinite;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    /* ============ CHAT (DIREITA) ============ */
     .lado-direito {
       position: relative;
       display: flex;
       align-items: stretch;
       justify-content: stretch;
-
       width: 45%;
       height: 100%;
       flex-shrink: 0;
-      padding: 0;
-
-      background-image: url(
-        "https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=1600&q=90"
-      );
+      background-image: url("https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=1600&q=90");
       background-position: center;
       background-size: cover;
       background-repeat: no-repeat;
     }
 
-    /* =========================
-       CAIXA DE CONVERSA
-    ========================= */
-
     .chat {
       display: flex;
       flex-direction: column;
-
       width: 100%;
       height: 100%;
       min-width: 0;
       min-height: 0;
-      max-width: none;
-
       overflow: hidden;
-
       background: rgba(15, 15, 15, 0.78);
       backdrop-filter: blur(5px);
       -webkit-backdrop-filter: blur(5px);
-
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      border-radius: 0;
-
-      box-shadow: none;
+      border-left: 1px solid rgba(255, 255, 255, 0.18);
       color: #fff;
     }
-
-    /* =========================
-       CABEÇALHO
-    ========================= */
 
     .chat-header {
       display: flex;
       align-items: center;
       gap: 14px;
-
       padding: 20px;
-
       background: rgba(20, 20, 20, 0.75);
       border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-
       flex-shrink: 0;
     }
-
     .avatar {
       display: flex;
       align-items: center;
       justify-content: center;
-
-      width: 48px;
-      height: 48px;
+      width: 48px; height: 48px;
       flex-shrink: 0;
-
       border-radius: 50%;
       background: #a33b32;
-
       font-size: 23px;
       font-weight: bold;
     }
-
-    .contact {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .contact h3 {
-      margin-bottom: 5px;
-      font-size: 18px;
-    }
-
-    .contact span {
-      color: #b8b8b8;
-      font-size: 13px;
-    }
-
-    .header-icons {
-      color: #ddd;
-      font-size: 25px;
-      cursor: pointer;
-    }
-
-    /* =========================
-       ÁREA DAS MENSAGENS
-    ========================= */
+    .contact { flex: 1; min-width: 0; }
+    .contact h3 { margin-bottom: 5px; font-size: 18px; }
+    .contact span { color: #b8b8b8; font-size: 13px; }
+    .header-icons { color: #ddd; font-size: 25px; cursor: pointer; }
 
     .messages {
       display: flex;
       flex: 1;
       flex-direction: column;
       gap: 18px;
-
       min-height: 0;
       overflow-y: auto;
-
       padding: 24px 20px;
-
       background: rgba(0, 0, 0, 0.18);
       scrollbar-width: thin;
       scrollbar-color: #666 transparent;
     }
-
     .date {
       align-self: center;
-
       margin-bottom: 8px;
       padding: 7px 14px;
-
       border-radius: 8px;
       background: rgba(40, 40, 40, 0.8);
-
       color: #ddd;
       font-size: 11px;
     }
-
     .message {
       max-width: 85%;
       padding: 13px 15px 9px;
-
       border-radius: 13px;
-
       font-size: 15px;
       line-height: 1.5;
       overflow-wrap: anywhere;
     }
-
     .message span {
       display: block;
       margin-top: 5px;
-
       color: #c6c6c6;
       font-size: 10px;
       text-align: right;
     }
-
     .received {
       align-self: flex-start;
-
       background: rgba(45, 45, 45, 0.92);
       border-top-left-radius: 3px;
     }
-
     .sent {
       align-self: flex-end;
-
       background: rgba(7, 94, 84, 0.94);
       border-top-right-radius: 3px;
     }
-
-    /* =========================
-       CAMPO DE TEXTO
-    ========================= */
 
     .chat-input {
       display: flex;
       align-items: center;
       gap: 12px;
-
       padding: 16px;
-
       background: rgba(20, 20, 20, 0.82);
       border-top: 1px solid rgba(255, 255, 255, 0.15);
-
       flex-shrink: 0;
     }
-
     .chat-input input {
       flex: 1;
       min-width: 0;
-
       padding: 14px 16px;
-
       border: 1px solid rgba(255, 255, 255, 0.12);
       outline: none;
       border-radius: 25px;
-
       background: rgba(255, 255, 255, 0.1);
       color: #fff;
-
       font-size: 14px;
     }
-
-    .chat-input input::placeholder {
-      color: #c0c0c0;
-    }
-
+    .chat-input input::placeholder { color: #c0c0c0; }
     .chat-input button {
       display: flex;
       align-items: center;
       justify-content: center;
-
-      width: 46px;
-      height: 46px;
+      width: 46px; height: 46px;
       flex-shrink: 0;
-
       border: none;
       border-radius: 50%;
-
       background: #a33b32;
       color: #fff;
-
       font-size: 21px;
       cursor: pointer;
-
       transition: background 0.2s;
     }
+    .chat-input button:hover { background: #c14a3f; }
 
-    .chat-input button:hover {
-      background: #c14a3f;
+    /* ============ KEYFRAMES ============ */
+    @keyframes terminalOpen {
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes lineAppear {
+      to { opacity: 1; }
+    }
+    @keyframes blink {
+      50% { opacity: 0; }
     }
 
-    /* =========================
-       TELAS GRANDES
-    ========================= */
-
+    /* ============ TELAS GRANDES ============ */
     @media (min-width: 1200px) {
-      .lado-direito {
-        width: 45%;
-      }
-
-      .chat-header {
-        padding: 24px;
-      }
-
-      .avatar {
-        width: 52px;
-        height: 52px;
-        font-size: 25px;
-      }
-
-      .contact h3 {
-        font-size: 20px;
-      }
-
-      .messages {
-        padding: 28px 24px;
-        gap: 20px;
-      }
-
-      .message {
-        font-size: 16px;
-        padding: 15px 18px 10px;
-      }
-
-      .chat-input {
-        padding: 20px;
-      }
+      .chat-header { padding: 24px; }
+      .avatar { width: 52px; height: 52px; font-size: 25px; }
+      .contact h3 { font-size: 20px; }
+      .messages { padding: 28px 24px; gap: 20px; }
+      .message { font-size: 16px; padding: 15px 18px 10px; }
+      .chat-input { padding: 20px; }
+      .terminal { font-size: 15px; }
     }
 
-    /* =========================
-       TABLETS E TELAS MÉDIAS
-    ========================= */
-
+    /* ============ TABLETS ============ */
     @media (min-width: 601px) and (max-width: 1199px) {
-      .lado-direito {
-        width: 45%;
-      }
-
-      .chat-header {
-        padding: 15px;
-      }
-
-      .messages {
-        padding: 18px 12px;
-        gap: 14px;
-      }
-
-      .message {
-        font-size: 14px;
-      }
-
-      .chat-input {
-        padding: 12px;
-      }
+      .lado-esquerdo { padding: 12px; }
+      .chat-header { padding: 15px; }
+      .messages { padding: 18px 12px; gap: 14px; }
+      .message { font-size: 14px; }
+      .chat-input { padding: 12px; }
+      .terminal { font-size: 12px; }
     }
 
-    /* =========================
-       TELEMÓVEIS
-    ========================= */
-
+    /* ============ MOBILE (EMPILHADO) ============ */
     @media (max-width: 600px) {
+      .container { flex-direction: column; }
+
       .lado-esquerdo {
-        flex: 0 0 25%;
-        width: 25%;
-      }
-
-      .lado-direito {
-        flex: 0 0 75%;
-        width: 45%;
-      }
-
-      .chat {
+        flex: 0 0 45%;
         width: 100%;
-        height: 100%;
-        min-height: 0;
+        height: 45%;
+        padding: 6px;
+      }
+      .lado-direito {
+        flex: 0 0 55%;
+        width: 100%;
+        height: 55%;
       }
 
-      .chat-header {
-        gap: 9px;
-        padding: 12px 10px;
-      }
+      .terminal { font-size: 10px; }
+      .terminal-top { padding: 8px; }
+      .terminal-title { font-size: 9px; }
+      .terminal-controls { padding: 6px 8px; gap: 6px; }
+      .control-group label { font-size: 9px; }
+      .control-group select,
+      .control-group input { padding: 4px 5px; font-size: 10px; }
+      .terminal-content { padding: 8px 6px; line-height: 1.6; }
+      .terminal-preview { padding: 6px 8px; font-size: 10px; min-height: 26px; max-height: 50px; }
+      .cursor { width: 6px; height: 11px; }
 
-      .avatar {
-        width: 38px;
-        height: 38px;
-        font-size: 19px;
-      }
-
-      .contact h3 {
-        font-size: 15px;
-      }
-
-      .contact span {
-        font-size: 11px;
-      }
-
-      .header-icons {
-        font-size: 21px;
-      }
-
-      .messages {
-        padding: 14px 8px;
-        gap: 12px;
-      }
-
-      .message {
-        max-width: 92%;
-        padding: 9px 10px 7px;
-        font-size: 12px;
-      }
-
-      .message span {
-        font-size: 9px;
-      }
-
-      .chat-input {
-        gap: 7px;
-        padding: 9px 7px;
-      }
-
-      .chat-input input {
-        padding: 11px 10px;
-        font-size: 12px;
-      }
-
-      .chat-input button {
-        width: 36px;
-        height: 36px;
-        font-size: 18px;
-      }
+      .chat-header { gap: 9px; padding: 12px 10px; }
+      .avatar { width: 38px; height: 38px; font-size: 19px; }
+      .contact h3 { font-size: 15px; }
+      .contact span { font-size: 11px; }
+      .header-icons { font-size: 21px; }
+      .messages { padding: 14px 8px; gap: 12px; }
+      .message { max-width: 92%; padding: 9px 10px 7px; font-size: 12px; }
+      .message span { font-size: 9px; }
+      .chat-input { gap: 7px; padding: 9px 7px; }
+      .chat-input input { padding: 11px 10px; font-size: 12px; }
+      .chat-input button { width: 36px; height: 36px; font-size: 18px; }
     }
-
-.lado-esquerdo {
-  flex: 1;
-  min-width: 0;
-  height: 100%;
-  background: #000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 30px;
-}
-
-.terminal {
-  width: 100%;
-  max-width: none;
-  height: 100%;
-
-  display: flex;
-  flex-direction: column;
-
-  color: #00ff88;
-  font-family: "Courier New", monospace;
-  font-size: 14px;
-
-  opacity: 0;
-  transform: translateY(20px);
-  animation: terminalOpen 0.8s ease forwards;
-}
-
-.terminal-top {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 12px;
-  background: #171717;
-  border: 1px solid #292929;
-  border-radius:0;
-}
-
-.dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-}
-
-.red { background: #ff5f56; }
-.yellow { background: #ffbd2e; }
-.green { background: #27c93f; }
-
-.terminal-title {
-  margin-left: 10px;
-  color: #999;
-  font-size: 12px;
-}
-
-.terminal-content {
-  flex: 1;
-  min-height: 0;
-  padding: 20px 15px;
-
-  background: #050505;
-  border: 1px solid #292929;
-  border-top: none;
-  border-radius: 0;
-
-  line-height: 1.9;
-  overflow-y: hidden;
-  overflow-wrap: anywhere;
-}
-
-.terminal-line {
-  opacity: 0;
-  animation: lineAppear 0.3s ease forwards;
-}
-
-.terminal-line .prompt {
-  color: #00ff88;
-}
-
-.terminal-line .result {
-  color: #aaa;
-}
-
-.cursor {
-  display: inline-block;
-  width: 8px;
-  height: 16px;
-  margin-left: 3px;
-  vertical-align: middle;
-  background: #00ff88;
-  animation: blink 0.8s steps(2) infinite;
-}
-
-@keyframes terminalOpen {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes lineAppear {
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes blink {
-  50% { opacity: 0; }
-}
-
-@media (max-width: 600px) {
-  .lado-esquerdo {
-    padding: 8px;
-  }
-
-  .terminal {
-    font-size: 10px;
-  }
-
-  .terminal-content {
-    min-height: 180px;
-    padding: 10px 7px;
-  }
-
-  .terminal-title {
-    font-size: 9px;
-  }
-}
   </style>
 </head>
 
 <body>
   <main class="container">
 
+    <!-- ===================== TERMINAL ===================== -->
     <div class="lado-esquerdo">
-  <div class="terminal" id="terminal">
-    <div class="terminal-top">
-      <span class="dot red"></span>
-      <span class="dot yellow"></span>
-      <span class="dot green"></span>
-      <span class="terminal-title">roma@terminal:~</span>
+      <div class="terminal" id="terminal">
+
+        <div class="terminal-top">
+          <span class="dot red"></span>
+          <span class="dot yellow"></span>
+          <span class="dot green"></span>
+          <span class="terminal-title">roma@terminal:~</span>
+        </div>
+
+        <!-- Controles de Cifra -->
+        <div class="terminal-controls">
+          <div class="control-group">
+            <label for="cipherSelect">Cifra</label>
+            <select id="cipherSelect"></select>
+          </div>
+          <div class="control-group">
+            <label for="cipherKey">Chave</label>
+            <input type="text" id="cipherKey" value="3" />
+          </div>
+          <div class="control-group control-mode">
+            <select id="modeSelect" title="Modo">
+              <option value="encrypt">🔒 Cifrar</option>
+              <option value="decrypt">🔓 Decifrar</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Histórico -->
+        <div class="terminal-content" id="terminalContent"></div>
+
+        <!-- Preview (live) -->
+        <div class="terminal-preview">
+          <span class="preview-label">live&gt;</span>
+          <span class="preview-text" id="previewText"></span>
+          <span class="cursor"></span>
+        </div>
+
+      </div>
     </div>
 
-    <div class="terminal-content" id="terminalContent"></div>
-  </div>
-</div>
-
+    <!-- ===================== CHAT ===================== -->
     <section class="lado-direito">
-
       <div class="chat">
-
         <header class="chat-header">
           <div class="avatar">R</div>
-
           <div class="contact">
             <h3>Roma</h3>
             <span>online agora</span>
           </div>
-
           <div class="header-icons">⋮</div>
         </header>
 
         <div class="messages" id="messages">
           <div class="date">HOJE</div>
-
-          <div class="message received">
-            Olá! Bem-vindo a Roma. 🇮🇹
-            <span>09:30</span>
-          </div>
-
-          <div class="message sent">
-            Estava à tua espera...
-            <span>09:31 ✓✓</span>
-          </div>
-
-          <div class="message received">
-            Temos muito para conversar.
-            <span>09:32</span>
-          </div>
-
-          <div class="message sent">
-            Então, vamos começar.
-            <span>09:33 ✓✓</span>
-          </div>
+          <div class="message received">Olá! Bem-vindo a Roma. 🇮🇹<span>09:30</span></div>
+          <div class="message sent">Estava à tua espera...<span>09:31 ✓✓</span></div>
+          <div class="message received">Temos muito para conversar.<span>09:32</span></div>
+          <div class="message sent">Então, vamos começar.<span>09:33 ✓✓</span></div>
         </div>
 
         <form class="chat-input" id="chatForm">
-          <input
-            type="text"
-            id="chatMessage"
-            placeholder="Escreve uma mensagem..."
-            autocomplete="off"
-          >
-
+          <input type="text" id="chatMessage" placeholder="Escreve uma mensagem..." autocomplete="off">
           <button type="submit" aria-label="Enviar">➤</button>
         </form>
-
       </div>
-
     </section>
 
   </main>
 
   <script>
-    const form = document.getElementById("chatForm");
-    const input = document.getElementById("chatMessage");
-    const messages = document.getElementById("messages");
+    /* =====================================================
+       1) REGISTRO DE CIFRAS (fácil de estender)
+       Cada cifra expõe: name, keyType, defaultKey,
+       encrypt(text, key), decrypt(text, key)
+       keyType: "number" | "text" | "none"
+    ===================================================== */
+    const Ciphers = {
 
-    form.addEventListener("submit", function(event) {
+      cesar: {
+        name: "César",
+        keyType: "number",
+        defaultKey: 3,
+        encrypt(text, key) {
+          const k = ((Number(key) || 0) % 26 + 26) % 26;
+          return text.split('').map(c => {
+            const l = c.toLowerCase();
+            if (l >= 'a' && l <= 'z') {
+              const base = (c === l) ? 97 : 65;
+              const code = c.charCodeAt(0) - base;
+              return String.fromCharCode(base + ((code + k) % 26));
+            }
+            return c;
+          }).join('');
+        },
+        decrypt(text, key) {
+          const n = Number(key);
+          return this.encrypt(text, isNaN(n) ? 0 : -n);
+        }
+      },
+
+      rot13: {
+        name: "ROT13",
+        keyType: "none",
+        encrypt(text) { return Ciphers.cesar.encrypt(text, 13); },
+        decrypt(text) { return Ciphers.cesar.encrypt(text, 13); }
+      },
+
+      atbash: {
+        name: "Atbash",
+        keyType: "none",
+        encrypt(text) {
+          return text.split('').map(c => {
+            const l = c.toLowerCase();
+            if (l >= 'a' && l <= 'z') {
+              const base = (c === l) ? 97 : 65;
+              return String.fromCharCode(base + (25 - (c.charCodeAt(0) - base)));
+            }
+            return c;
+          }).join('');
+        },
+        decrypt(text) { return this.encrypt(text); }
+      },
+
+      vigenere: {
+        name: "Vigenère",
+        keyType: "text",
+        defaultKey: "roma",
+        encrypt(text, key) {
+          const k = (key || "").toLowerCase().replace(/[^a-z]/g, '');
+          if (!k) return text;
+          let ki = 0;
+          return text.split('').map(c => {
+            const l = c.toLowerCase();
+            if (l >= 'a' && l <= 'z') {
+              const shift = k.charCodeAt(ki % k.length) - 97;
+              ki++;
+              const base = (c === l) ? 97 : 65;
+              const code = c.charCodeAt(0) - base;
+              return String.fromCharCode(base + ((code + shift) % 26));
+            }
+            return c;
+          }).join('');
+        },
+        decrypt(text, key) {
+          const k = (key || "").toLowerCase().replace(/[^a-z]/g, '');
+          if (!k) return text;
+          let ki = 0;
+          return text.split('').map(c => {
+            const l = c.toLowerCase();
+            if (l >= 'a' && l <= 'z') {
+              const shift = k.charCodeAt(ki % k.length) - 97;
+              ki++;
+              const base = (c === l) ? 97 : 65;
+              const code = c.charCodeAt(0) - base;
+              return String.fromCharCode(base + ((code - shift + 26) % 26));
+            }
+            return c;
+          }).join('');
+        }
+      },
+
+      base64: {
+        name: "Base64",
+        keyType: "none",
+        encrypt(text) {
+          try { return btoa(unescape(encodeURIComponent(text))); }
+          catch(e) { return text; }
+        },
+        decrypt(text) {
+          try { return decodeURIComponent(escape(atob(text))); }
+          catch(e) { return text; }
+        }
+      },
+
+      hex: {
+        name: "Hexadecimal",
+        keyType: "none",
+        encrypt(text) {
+          return Array.from(new TextEncoder().encode(text))
+            .map(b => b.toString(16).padStart(2, '0')).join(' ');
+        },
+        decrypt(text) {
+          try {
+            const bytes = text.trim().split(/\s+/).map(h => parseInt(h, 16));
+            return new TextDecoder().decode(new Uint8Array(bytes));
+          } catch(e) { return text; }
+        }
+      },
+
+      binary: {
+        name: "Binário",
+        keyType: "none",
+        encrypt(text) {
+          return Array.from(new TextEncoder().encode(text))
+            .map(b => b.toString(2).padStart(8, '0')).join(' ');
+        },
+        decrypt(text) {
+          try {
+            const bytes = text.trim().split(/\s+/).map(b => parseInt(b, 2));
+            return new TextDecoder().decode(new Uint8Array(bytes));
+          } catch(e) { return text; }
+        }
+      },
+
+      reverse: {
+        name: "Inverter",
+        keyType: "none",
+        encrypt(text) { return text.split('').reverse().join(''); },
+        decrypt(text) { return text.split('').reverse().join(''); }
+      },
+
+      xor: {
+        name: "XOR",
+        keyType: "text",
+        defaultKey: "roma",
+        encrypt(text, key) {
+          const kb = new TextEncoder().encode(key || "roma");
+          const bytes = new TextEncoder().encode(text);
+          return Array.from(bytes).map((b, i) => (b ^ kb[i % kb.length]).toString(16).padStart(2, '0')).join(' ');
+        },
+        decrypt(text, key) {
+          const kb = new TextEncoder().encode(key || "roma");
+          try {
+            const bytes = text.trim().split(/\s+/).map(h => parseInt(h, 16));
+            return new TextDecoder().decode(new Uint8Array(bytes.map((b, i) => b ^ kb[i % kb.length])));
+          } catch(e) { return text; }
+        }
+      },
+
+      morse: {
+        name: "Morse",
+        keyType: "none",
+        encrypt(text) {
+          const m = {
+            a:".-",b:"-...",c:"-.-.",d:"-..",e:".",f:"..-.",g:"--.",h:"....",
+            i:"..",j:".---",k:"-.-",l:".-..",m:"--",n:"-.",o:"---",p:".--.",
+            q:"--.-",r:".-.",s:"...",t:"-",u:"..-",v:"...-",w:".--",x:"-..-",
+            y:"-.--",z:"--..",
+            "0":"-----","1":".----","2":"..---","3":"...--","4":"....-",
+            "5":".....","6":"-....","7":"--...","8":"---..","9":"----."
+          };
+          return text.toLowerCase().split('').map(c => m[c] || (c === ' ' ? '/' : c)).join(' ');
+        },
+        decrypt(text) {
+          const m = {
+            ".-":"a","-...":"b","-.-.":"c","-..":"d",".":"e","..-.":"f","--.":"g","....":"h",
+            "..":"i",".---":"j","-.-":"k",".-..":"l","--":"m","-.":"n","---":"o",".--.":"p",
+            "--.-":"q",".-.":"r","...":"s","-":"t","..-":"u","...-":"v",".--":"w","-..-":"x",
+            "-.--":"y","--..":"z",
+            "-----":"0",".----":"1","..---":"2","...--":"3","....-":"4",
+            ".....":"5","-....":"6","--...":"7","---..":"8","----.":"9"
+          };
+          return text.split(/\s+/).map(c => c === '/' ? ' ' : (m[c] || c)).join('');
+        }
+      }
+
+      /* ➕ Para adicionar uma nova cifra futuramente:
+         minhaCifra: {
+           name: "Minha Cifra",
+           keyType: "number" | "text" | "none",
+           defaultKey: "algo",
+           encrypt(text, key) { ... },
+           decrypt(text, key) { ... }
+         }
+      */
+    };
+
+    /* =====================================================
+       2) ESTADO E ELEMENTOS
+    ===================================================== */
+    const terminalContent = document.getElementById("terminalContent");
+    const previewText     = document.getElementById("previewText");
+    const cipherSelect    = document.getElementById("cipherSelect");
+    const cipherKeyInput  = document.getElementById("cipherKey");
+    const modeSelect      = document.getElementById("modeSelect");
+    const form            = document.getElementById("chatForm");
+    const input           = document.getElementById("chatMessage");
+    const messages        = document.getElementById("messages");
+
+    let currentCipher = "cesar";
+
+    /* =====================================================
+       3) POPULAR SELECT DE CIFRAS
+    ===================================================== */
+    Object.entries(Ciphers).forEach(([id, c]) => {
+      const opt = document.createElement("option");
+      opt.value = id;
+      opt.textContent = c.name;
+      cipherSelect.appendChild(opt);
+    });
+    cipherSelect.value = currentCipher;
+
+    /* =====================================================
+       4) HELPERS
+    ===================================================== */
+    function escapeText(t) {
+      // usado como textContent, não precisa escapar, mas deixamos util
+      return t;
+    }
+
+    function aplicarCifra(text) {
+      const cipher = Ciphers[currentCipher];
+      const key = cipherKeyInput.value;
+      const mode = modeSelect.value;
+      try {
+        return mode === "decrypt" ? cipher.decrypt(text, key) : cipher.encrypt(text, key);
+      } catch (e) {
+        return "[erro: " + e.message + "]";
+      }
+    }
+
+    function atualizarPreview() {
+      const text = input.value;
+      previewText.textContent = text ? aplicarCifra(text) : "";
+    }
+
+    function atualizarKeyField() {
+      const cipher = Ciphers[currentCipher];
+      if (cipher.keyType === "none") {
+        cipherKeyInput.value = "";
+        cipherKeyInput.disabled = true;
+        cipherKeyInput.placeholder = "(sem chave)";
+      } else {
+        cipherKeyInput.disabled = false;
+        if (!cipherKeyInput.value) {
+          cipherKeyInput.value = String(cipher.defaultKey ?? "");
+        }
+        cipherKeyInput.placeholder = cipher.keyType === "number" ? "ex: 3" : "ex: roma";
+      }
+    }
+
+    /* =====================================================
+       5) HISTÓRICO NO TERMINAL
+    ===================================================== */
+    function adicionarAoTerminal(original, resultado, cipherName, keyText, mode) {
+      const hora = new Date().toLocaleTimeString("pt-BR", {
+        hour: "2-digit", minute: "2-digit", second: "2-digit"
+      });
+
+      const row = document.createElement("div");
+      row.className = "terminal-entry";
+
+      const prompt = document.createElement("span");
+      prompt.className = "prompt";
+      prompt.textContent = `[${hora}] ${mode === "encrypt" ? "cifrado" : "decifrado"}> `;
+
+      const result = document.createElement("span");
+      result.className = "result";
+      result.textContent = resultado;
+
+      const meta = document.createElement("div");
+      meta.className = "terminal-meta";
+      meta.textContent = `↳ msg: "${original}" • ${cipherName}${keyText ? ` (k=${keyText})` : ""}`;
+
+      row.appendChild(prompt);
+      row.appendChild(result);
+      row.appendChild(meta);
+      terminalContent.appendChild(row);
+      terminalContent.scrollTop = terminalContent.scrollHeight;
+    }
+
+    /* =====================================================
+       6) EVENTOS DOS CONTROLES
+    ===================================================== */
+    cipherSelect.addEventListener("change", () => {
+      currentCipher = cipherSelect.value;
+      cipherKeyInput.value = "";
+      atualizarKeyField();
+      atualizarPreview();
+    });
+
+    cipherKeyInput.addEventListener("input", atualizarPreview);
+    modeSelect.addEventListener("change", atualizarPreview);
+    input.addEventListener("input", atualizarPreview);
+
+    /* =====================================================
+       7) BOOT ANIMATION (mensagens iniciais)
+    ===================================================== */
+    const bootLines = [
+      { text: "Iniciando Roma Secure Messenger...", type: "command" },
+      { text: "[ OK ] Módulo de cifras carregado", type: "success" },
+      { text: "[ OK ] Sessão criptográfica verificada", type: "success" },
+      { text: "[ OK ] Canal privado estabelecido", type: "success" },
+      { text: "Estado: AGUARDANDO MENSAGENS", type: "active" }
+    ];
+
+    bootLines.forEach((line, index) => {
+      const row = document.createElement("div");
+      row.className = "terminal-line";
+      row.style.animationDelay = `${0.15 + index * 0.2}s`;
+
+      const prompt = document.createElement("span");
+      prompt.className = "prompt";
+      prompt.textContent = "roma@secure:~$ ";
+
+      const content = document.createElement("span");
+      content.textContent = line.text;
+      if (line.type === "success") content.style.color = "#00ff88";
+      else if (line.type === "active") content.style.color = "#4da6ff";
+      else content.style.color = "#b8c7d9";
+
+      row.appendChild(prompt);
+      row.appendChild(content);
+      terminalContent.appendChild(row);
+    });
+
+    /* =====================================================
+       8) ENVIO DA MENSAGEM (cifra + chat + terminal)
+    ===================================================== */
+    form.addEventListener("submit", function (event) {
       event.preventDefault();
-
       const text = input.value.trim();
-
       if (!text) return;
 
+      const cipher = Ciphers[currentCipher];
+      const keyText = cipher.keyType === "none" ? "" : cipherKeyInput.value;
+      const resultado = aplicarCifra(text);
+
+      // 1) Salva no terminal
+      adicionarAoTerminal(text, resultado, cipher.name, keyText, modeSelect.value);
+
+      // 2) Adiciona no chat
       const message = document.createElement("div");
       message.className = "message sent";
 
@@ -647,65 +840,24 @@
 
       const time = document.createElement("span");
       time.textContent =
-        new Date().toLocaleTimeString("pt-BR", {
-          hour: "2-digit",
-          minute: "2-digit"
-        }) + " ✓✓";
+        new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) + " ✓✓";
 
       message.appendChild(content);
       message.appendChild(time);
-
       messages.appendChild(message);
 
+      // 3) Reset
       input.value = "";
+      atualizarPreview();
       messages.scrollTop = messages.scrollHeight;
       input.focus();
     });
 
-const terminalContent = document.getElementById("terminalContent");
-
-const terminalLines = [
-  { text: "Iniciando Roma Secure Messenger...", type: "command" },
-  { text: "[ OK ] Carregando módulo de mensagens", type: "success" },
-  { text: "[ OK ] Verificando integridade da sessão", type: "success" },
-  { text: "[ OK ] Protocolo de comunicação inicializado", type: "success" },
-  { text: "Gerando par de chaves criptográficas...", type: "command" },
-  { text: "[ OK ] Chave pública preparada", type: "success" },
-  { text: "[ OK ] Canal seguro preparado", type: "success" },
-  { text: "Estabelecendo conexão privada...", type: "command" },
-  { text: "[ OK ] Sistema de mensagens pronto", type: "success" },
-  { text: "Estado: AGUARDANDO MENSAGENS", type: "active" }
-];
-
-terminalLines.forEach((line, index) => {
-  const row = document.createElement("div");
-  row.className = "terminal-line";
-  row.style.animationDelay = `${0.5 + index * 0.65}s`;
-
-  const prompt = document.createElement("span");
-  prompt.className = "prompt";
-  prompt.textContent = "roma@secure:~$ ";
-
-  const content = document.createElement("span");
-  content.textContent = line.text;
-
-  if (line.type === "success") {
-    content.style.color = "#00ff88";
-  } else if (line.type === "active") {
-    content.style.color = "#4da6ff";
-  } else {
-    content.style.color = "#b8c7d9";
-  }
-
-  row.appendChild(prompt);
-  row.appendChild(content);
-  terminalContent.appendChild(row);
-});
-
-const cursor = document.createElement("span");
-cursor.className = "cursor";
-cursor.style.animationDelay = "4.3s";
-terminalContent.appendChild(cursor);
+    /* =====================================================
+       9) INICIALIZAÇÃO
+    ===================================================== */
+    atualizarKeyField();
+    atualizarPreview();
   </script>
 </body>
 </html>
