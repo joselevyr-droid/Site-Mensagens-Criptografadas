@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Roma • Secure Terminal</title>
+  <title>Chat • Secure Terminal</title>
 
   <style>
     /* ============ RESET / BASE ============ */
@@ -105,6 +105,7 @@
       border-top: 1px dashed #1c1c1c;
     }
     .terminal-entry .prompt { color: #00ff88; }
+    .terminal-entry.received-entry .prompt { color: #4da6ff; }
     .terminal-entry .result { color: #c7d4e4; }
 
     .decrypt-btn {
@@ -149,13 +150,9 @@
       cursor: pointer;
       flex-shrink: 0;
     }
-    .decrypt-confirm {
-      background: #00ff88; color: #000; border: 1px solid #00ff88;
-    }
+    .decrypt-confirm { background: #00ff88; color: #000; border: 1px solid #00ff88; }
     .decrypt-confirm:hover { background: #00cc6a; border-color: #00cc6a; }
-    .decrypt-cancel {
-      background: transparent; color: #ff5f56; border: 1px solid #ff5f56;
-    }
+    .decrypt-cancel { background: transparent; color: #ff5f56; border: 1px solid #ff5f56; }
     .decrypt-cancel:hover { background: #ff5f56; color: #000; }
 
     .decrypt-results { margin-top: 4px; }
@@ -195,7 +192,7 @@
       margin-top: 1px;
     }
 
-    /* ============ CHAT (REDESENHADO) ============ */
+    /* ============ CHAT (tema cotidiano, azul-ardósia) ============ */
     .lado-direito {
       position: relative;
       display: flex; align-items: stretch; justify-content: stretch;
@@ -203,21 +200,9 @@
       flex-shrink: 0;
       overflow: hidden;
       background:
-        linear-gradient(rgba(8, 8, 10, 0.94), rgba(8, 8, 10, 0.94)),
-        url("https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&w=1600&q=90")
-        center / cover no-repeat;
-    }
-
-    /* Glow ambiente sutil */
-    .lado-direito::before {
-      content: '';
-      position: absolute;
-      top: -40%;
-      right: -20%;
-      width: 80%;
-      height: 80%;
-      background: radial-gradient(circle, rgba(163, 59, 50, 0.09) 0%, transparent 65%);
-      pointer-events: none;
+        radial-gradient(ellipse at top right, rgba(79, 90, 122, 0.10) 0%, transparent 55%),
+        radial-gradient(ellipse at bottom left, rgba(0, 255, 136, 0.025) 0%, transparent 55%),
+        linear-gradient(135deg, #0f1015 0%, #08090c 100%);
     }
 
     .chat {
@@ -226,9 +211,7 @@
       width: 100%; height: 100%;
       min-width: 0; min-height: 0;
       overflow: hidden;
-      background: rgba(10, 10, 12, 0.55);
-      backdrop-filter: blur(24px) saturate(120%);
-      -webkit-backdrop-filter: blur(24px) saturate(120%);
+      background: rgba(10, 10, 12, 0.40);
       border-left: 1px solid rgba(255, 255, 255, 0.04);
       color: #e8e8e8;
     }
@@ -238,8 +221,6 @@
       display: flex; align-items: center; gap: 12px;
       padding: 18px 22px;
       background: rgba(12, 12, 14, 0.55);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid rgba(255, 255, 255, 0.04);
       flex-shrink: 0;
     }
@@ -248,14 +229,14 @@
       width: 38px; height: 38px;
       flex-shrink: 0;
       border-radius: 50%;
-      background: linear-gradient(135deg, #a33b32 0%, #5c1e18 100%);
+      background: linear-gradient(135deg, #5f6b8a 0%, #3a4566 100%);
       color: #fff;
       font-size: 15px;
       font-weight: 600;
       letter-spacing: 0.3px;
       box-shadow:
         inset 0 1px 0 rgba(255, 255, 255, 0.12),
-        0 2px 8px rgba(163, 59, 50, 0.25);
+        0 2px 8px rgba(79, 90, 122, 0.28);
     }
     .contact { flex: 1; min-width: 0; }
     .contact h3 {
@@ -335,19 +316,34 @@
     }
     .sent {
       align-self: flex-end;
-      background: linear-gradient(135deg, #8b2f27 0%, #6b2119 100%);
-      color: #f4ece9;
+      background: linear-gradient(135deg, #4f5a7a 0%, #374160 100%);
+      color: #eef1f7;
       border-bottom-right-radius: 5px;
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
     }
+
+    /* Typing indicator */
+    .message.typing {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      padding: 14px 16px;
+    }
+    .typing-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #888;
+      animation: typingBounce 1.2s infinite;
+    }
+    .typing-dot:nth-child(2) { animation-delay: 0.18s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.36s; }
 
     /* Input */
     .chat-input {
       display: flex; align-items: center; gap: 10px;
       padding: 16px 20px 20px;
-      background: rgba(10, 10, 12, 0.6);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
+      background: rgba(10, 10, 12, 0.55);
       border-top: 1px solid rgba(255, 255, 255, 0.04);
       flex-shrink: 0;
     }
@@ -364,7 +360,7 @@
       transition: border-color 0.2s ease, background 0.2s ease;
     }
     .chat-input input:focus {
-      border-color: rgba(163, 59, 50, 0.55);
+      border-color: rgba(79, 90, 122, 0.65);
       background: rgba(255, 255, 255, 0.055);
     }
     .chat-input input::placeholder {
@@ -377,23 +373,17 @@
       flex-shrink: 0;
       border: none;
       border-radius: 50%;
-      background: linear-gradient(135deg, #a33b32 0%, #6d2420 100%);
+      background: linear-gradient(135deg, #4f5a7a 0%, #374160 100%);
       color: #fff;
       cursor: pointer;
       transition: transform 0.15s ease, box-shadow 0.2s ease;
     }
     .chat-input button:hover {
       transform: translateY(-1px);
-      box-shadow: 0 6px 18px rgba(163, 59, 50, 0.35);
+      box-shadow: 0 6px 18px rgba(79, 90, 122, 0.35);
     }
-    .chat-input button:active {
-      transform: translateY(0);
-    }
-    .chat-input button svg {
-      width: 16px;
-      height: 16px;
-      display: block;
-    }
+    .chat-input button:active { transform: translateY(0); }
+    .chat-input button svg { width: 16px; height: 16px; display: block; }
 
     /* ============ KEYFRAMES ============ */
     @keyframes terminalOpen { to { opacity: 1; transform: translateY(0); } }
@@ -406,6 +396,10 @@
     @keyframes msgIn {
       from { opacity: 0; transform: translateY(6px); }
       to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes typingBounce {
+      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+      30% { transform: translateY(-4px); opacity: 1; }
     }
 
     /* ============ TELAS GRANDES ============ */
@@ -429,7 +423,7 @@
       .terminal { font-size: 12px; }
     }
 
-    /* ============ MOBILE (EMPILHADO) ============ */
+    /* ============ MOBILE ============ */
     @media (max-width: 600px) {
       .container { flex-direction: column; }
       .lado-esquerdo { flex: 0 0 45%; width: 100%; height: 45%; padding: 6px; }
@@ -475,7 +469,7 @@
           <span class="dot red"></span>
           <span class="dot yellow"></span>
           <span class="dot green"></span>
-          <span class="terminal-title">roma@terminal:~</span>
+          <span class="terminal-title">chat@local:~</span>
         </div>
 
         <div class="terminal-controls">
@@ -503,20 +497,14 @@
     <section class="lado-direito">
       <div class="chat">
         <header class="chat-header">
-          <div class="avatar">R</div>
+          <div class="avatar">L</div>
           <div class="contact">
-            <h3>Roma</h3>
+            <h3>Lia</h3>
             <span>online</span>
           </div>
         </header>
 
-        <div class="messages" id="messages">
-          <div class="date">HOJE</div>
-          <div class="message received">Olá! Bem-vindo a Roma. 🇮🇹<span>09:30</span></div>
-          <div class="message sent">Estava à tua espera...<span>09:31 ✓✓</span></div>
-          <div class="message received">Temos muito para conversar.<span>09:32</span></div>
-          <div class="message sent">Então, vamos começar.<span>09:33 ✓✓</span></div>
-        </div>
+        <div class="messages" id="messages"></div>
 
         <form class="chat-input" id="chatForm">
           <input type="text" id="chatMessage" placeholder="Escreve uma mensagem..." autocomplete="off">
@@ -710,6 +698,8 @@
     const messages        = document.getElementById("messages");
 
     let currentCipher = "cesar";
+    let chatHasMessages = false;
+    let pendingResponses = 0;
 
     /* =====================================================
        3) POPULAR SELECT
@@ -752,21 +742,26 @@
       }
     }
 
+    function horaAtual(incluirSegundos) {
+      const opts = { hour: "2-digit", minute: "2-digit" };
+      if (incluirSegundos) opts.second = "2-digit";
+      return new Date().toLocaleTimeString("pt-BR", opts);
+    }
+
     /* =====================================================
-       5) HISTÓRICO NO TERMINAL (sem meta, sem nome da cifra)
+       5) TERMINAL — HISTÓRICO
     ===================================================== */
-    function adicionarAoTerminal(cifrado, cipherId) {
-      const hora = new Date().toLocaleTimeString("pt-BR", {
-        hour: "2-digit", minute: "2-digit", second: "2-digit"
-      });
+    function adicionarAoTerminal(cifrado, cipherId, direcao) {
+      // direcao: "cifrado" (enviado) ou "recebido"
+      const recebido = direcao === "recebido";
 
       const row = document.createElement("div");
-      row.className = "terminal-entry";
+      row.className = "terminal-entry" + (recebido ? " received-entry" : "");
 
       const header = document.createElement("div");
       const promptSpan = document.createElement("span");
       promptSpan.className = "prompt";
-      promptSpan.textContent = `[${hora}] cifrado> `;
+      promptSpan.textContent = `[${horaAtual(true)}] ${direcao}> `;
       const resultSpan = document.createElement("span");
       resultSpan.className = "result";
       resultSpan.textContent = cifrado;
@@ -830,7 +825,6 @@
         btn.style.display = "none";
         keyInput.focus();
       }
-
       function hideInput() {
         inputRow.classList.remove("active");
         btn.style.display = "";
@@ -843,15 +837,12 @@
         if (cipher.keyType === "none") doDecrypt("");
         else showInput();
       });
-
       confirmBtn.addEventListener("click", () => {
         doDecrypt(keyInput.value);
         keyInput.focus();
         keyInput.select();
       });
-
       cancelBtn.addEventListener("click", hideInput);
-
       keyInput.addEventListener("keydown", (e) => {
         if (e.key === "Enter") { e.preventDefault(); confirmBtn.click(); }
         else if (e.key === "Escape") hideInput();
@@ -862,7 +853,140 @@
     }
 
     /* =====================================================
-       6) EVENTOS
+       6) CHAT — ADICIONAR MENSAGEM
+    ===================================================== */
+    function addMessage(text, direction) {
+      if (!chatHasMessages) {
+        const dateEl = document.createElement("div");
+        dateEl.className = "date";
+        dateEl.textContent = "HOJE";
+        messages.appendChild(dateEl);
+        chatHasMessages = true;
+      }
+
+      const message = document.createElement("div");
+      message.className = "message " + direction;
+
+      const content = document.createElement("div");
+      content.textContent = text;
+
+      const time = document.createElement("span");
+      time.textContent = horaAtual(false) + (direction === "sent" ? " ✓✓" : "");
+
+      message.appendChild(content);
+      message.appendChild(time);
+      messages.appendChild(message);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    /* =====================================================
+       7) TYPING INDICATOR (com contador de pendências)
+    ===================================================== */
+    function showTyping() {
+      if (document.getElementById("typingIndicator")) return;
+      const el = document.createElement("div");
+      el.className = "message received typing";
+      el.id = "typingIndicator";
+      for (let i = 0; i < 3; i++) {
+        const d = document.createElement("span");
+        d.className = "typing-dot";
+        el.appendChild(d);
+      }
+      messages.appendChild(el);
+      messages.scrollTop = messages.scrollHeight;
+    }
+    function hideTyping() {
+      const el = document.getElementById("typingIndicator");
+      if (el) el.remove();
+    }
+
+    /* =====================================================
+       8) GERADOR DE RESPOSTAS
+    ===================================================== */
+    function gerarResposta(texto) {
+      const t = texto.toLowerCase().trim();
+      const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+
+      if (/\b(bom dia)\b/.test(t)) {
+        return pick(["Bom dia! Tudo certo?", "Bom dia! Como foi a noite?"]);
+      }
+      if (/\b(boa tarde)\b/.test(t)) {
+        return pick(["Boa tarde! Tudo certo?", "Boa tarde! Como tá o dia?"]);
+      }
+      if (/\b(boa noite)\b/.test(t)) {
+        return pick(["Boa noite! Descansando?", "Boa noite! Ainda acordado?"]);
+      }
+      if (/\b(oi|olá|ola|eai|e ai|hey|hello|opa|salve)\b/.test(t)) {
+        return pick([
+          "Oi! Tudo certo?",
+          "E aí, beleza?",
+          "Fala! Tranquilo?",
+          "Oi! Como vai?"
+        ]);
+      }
+      if (/\b(tudo bem|tudo bom|como vai|como você está|como ta|como tá|como está|beleza|de boa)\b/.test(t)) {
+        return pick([
+          "Tudo tranquilo por aqui, e você?",
+          "De boa, e contigo?",
+          "Tudo certo! Você?",
+          "Na paz. E aí?"
+        ]);
+      }
+      if (/\b(tchau|até|até mais|falou|flw|bye|até logo|nos vemos)\b/.test(t)) {
+        return pick([
+          "Falou! Até mais.",
+          "Valeu, até a próxima.",
+          "Tchau! Se cuida.",
+          "Até mais tarde!"
+        ]);
+      }
+      if (/\b(obrigad|valeu|thanks|brigad|agradec)\b/.test(t)) {
+        return pick(["De nada!", "Por nada!", "Imagina.", "Tamo junto."]);
+      }
+      if (/\b(desculpa|desculpe|foi mal|perdão)\b/.test(t)) {
+        return pick(["Sem problema.", "Relaxa, tá tudo bem.", "Imagina, não foi nada."]);
+      }
+      if (/\?/.test(t) || /\b(por que|porque|como|quando|onde|quem|qual|será)\b/.test(t)) {
+        return pick([
+          "Hmm, boa pergunta. O que você acha?",
+          "Não sei ainda, tenho que pensar.",
+          "Acho que sim. Você concorda?",
+          "Depende do ponto de vista, né?",
+          "Faz sentido pensar nisso."
+        ]);
+      }
+      if (/\b(sim|claro|concordo|verdade|exato|com certeza)\b/.test(t)) {
+        return pick(["Né?", "Pois é.", "Exatamente.", "Concordo."]);
+      }
+      if (/\b(não|nao|nunca|discordo)\b/.test(t)) {
+        return pick(["Por quê?", "Sério? Por que não?", "Hmm, entendi."]);
+      }
+      if (/\b(hoje|amanhã|amanha|ontem|semana|fim de semana)\b/.test(t)) {
+        return pick([
+          "E o que você vai fazer?",
+          "Bacana. Tem planos?",
+          "Legal! Depois me conta.",
+          "Ah, entendi."
+        ]);
+      }
+
+      // Fallback
+      return pick([
+        "Entendi.",
+        "Faz sentido.",
+        "É, verdade.",
+        "Hmm, interessante.",
+        "Concordo.",
+        "Boa.",
+        "Tô pensando aqui...",
+        "Sim, pode ser.",
+        "Legal.",
+        "Saquei."
+      ]);
+    }
+
+    /* =====================================================
+       9) EVENTOS
     ===================================================== */
     cipherSelect.addEventListener("change", () => {
       currentCipher = cipherSelect.value;
@@ -874,13 +998,13 @@
     input.addEventListener("input", atualizarPreview);
 
     /* =====================================================
-       7) BOOT ANIMATION
+       10) BOOT ANIMATION
     ===================================================== */
     const bootLines = [
-      { text: "Iniciando Roma Secure Messenger...", type: "command" },
+      { text: "Iniciando canal de mensagens...", type: "command" },
       { text: "[ OK ] Módulo de cifras carregado", type: "success" },
-      { text: "[ OK ] Sessão criptográfica verificada", type: "success" },
-      { text: "[ OK ] Canal privado estabelecido", type: "success" },
+      { text: "[ OK ] Sessão estabelecida", type: "success" },
+      { text: "[ OK ] Canal pronto", type: "success" },
       { text: "Estado: AGUARDANDO MENSAGENS", type: "active" }
     ];
     bootLines.forEach((line, index) => {
@@ -890,7 +1014,7 @@
 
       const prompt = document.createElement("span");
       prompt.className = "prompt";
-      prompt.textContent = "roma@secure:~$ ";
+      prompt.textContent = "chat@local:~$ ";
 
       const content = document.createElement("span");
       content.textContent = line.text;
@@ -904,41 +1028,52 @@
     });
 
     /* =====================================================
-       8) ENVIO DA MENSAGEM
+       11) ENVIO DA MENSAGEM + RESPOSTA AUTOMÁTICA
     ===================================================== */
     form.addEventListener("submit", function (event) {
       event.preventDefault();
       const text = input.value.trim();
       if (!text) return;
 
-      const cifrado = aplicarCifra(text);
+      // Snapshot da cifra/chave NO MOMENTO DO ENVIO
+      const cipherId = currentCipher;
+      const cipher = Ciphers[cipherId];
+      const key = cipherKeyInput.value;
 
-      // Terminal (sem nome da cifra, sem original, sem chave)
-      adicionarAoTerminal(cifrado, currentCipher);
+      // Cifra + terminal (enviado)
+      const cifrado = cipher.encrypt(text, key);
+      adicionarAoTerminal(cifrado, cipherId, "cifrado");
 
       // Chat
-      const message = document.createElement("div");
-      message.className = "message sent";
+      addMessage(text, "sent");
 
-      const content = document.createElement("div");
-      content.textContent = text;
-
-      const time = document.createElement("span");
-      time.textContent =
-        new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }) + " ✓✓";
-
-      message.appendChild(content);
-      message.appendChild(time);
-      messages.appendChild(message);
-
+      // Reset
       input.value = "";
       atualizarPreview();
-      messages.scrollTop = messages.scrollHeight;
       input.focus();
+
+      // Resposta automática
+      const delay = 900 + Math.random() * 1100;
+      pendingResponses++;
+      if (pendingResponses === 1) showTyping();
+
+      setTimeout(() => {
+        const resposta = gerarResposta(text);
+        const cifradoResp = cipher.encrypt(resposta, key);
+
+        // Chat (recebida)
+        addMessage(resposta, "received");
+
+        // Terminal (recebida, mesma cifra/chave do envio)
+        adicionarAoTerminal(cifradoResp, cipherId, "recebido");
+
+        pendingResponses--;
+        if (pendingResponses === 0) hideTyping();
+      }, delay);
     });
 
     /* =====================================================
-       9) INICIALIZAÇÃO
+       12) INICIALIZAÇÃO
     ===================================================== */
     atualizarKeyField();
     atualizarPreview();
