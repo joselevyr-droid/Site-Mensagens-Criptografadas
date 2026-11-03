@@ -192,7 +192,7 @@
       margin-top: 1px;
     }
 
-    /* ============ CHAT (tema cotidiano, azul-ardósia) ============ */
+    /* ============ CHAT ============ */
     .lado-direito {
       position: relative;
       display: flex; align-items: stretch; justify-content: stretch;
@@ -204,7 +204,6 @@
         radial-gradient(ellipse at bottom left, rgba(0, 255, 136, 0.025) 0%, transparent 55%),
         linear-gradient(135deg, #0f1015 0%, #08090c 100%);
     }
-
     .chat {
       position: relative;
       display: flex; flex-direction: column;
@@ -215,8 +214,6 @@
       border-left: 1px solid rgba(255, 255, 255, 0.04);
       color: #e8e8e8;
     }
-
-    /* Header */
     .chat-header {
       display: flex; align-items: center; gap: 12px;
       padding: 18px 22px;
@@ -264,7 +261,6 @@
       animation: pulse 2.4s ease-in-out infinite;
     }
 
-    /* Mensagens */
     .messages {
       display: flex; flex: 1; flex-direction: column; gap: 6px;
       min-height: 0;
@@ -307,7 +303,6 @@
       text-align: right;
       opacity: 0.55;
     }
-
     .received {
       align-self: flex-start;
       background: #1c1c1f;
@@ -322,7 +317,7 @@
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
     }
 
-    /* Typing indicator */
+    /* Typing */
     .message.typing {
       display: flex;
       gap: 4px;
@@ -330,8 +325,7 @@
       padding: 14px 16px;
     }
     .typing-dot {
-      width: 6px;
-      height: 6px;
+      width: 6px; height: 6px;
       border-radius: 50%;
       background: #888;
       animation: typingBounce 1.2s infinite;
@@ -363,10 +357,7 @@
       border-color: rgba(79, 90, 122, 0.65);
       background: rgba(255, 255, 255, 0.055);
     }
-    .chat-input input::placeholder {
-      color: #4f4f54;
-      letter-spacing: 0.2px;
-    }
+    .chat-input input::placeholder { color: #4f4f54; letter-spacing: 0.2px; }
     .chat-input button {
       display: flex; align-items: center; justify-content: center;
       width: 38px; height: 38px;
@@ -389,10 +380,7 @@
     @keyframes terminalOpen { to { opacity: 1; transform: translateY(0); } }
     @keyframes lineAppear { to { opacity: 1; } }
     @keyframes blink { 50% { opacity: 0; } }
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.45; }
-    }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
     @keyframes msgIn {
       from { opacity: 0; transform: translateY(6px); }
       to   { opacity: 1; transform: translateY(0); }
@@ -402,7 +390,7 @@
       30% { transform: translateY(-4px); opacity: 1; }
     }
 
-    /* ============ TELAS GRANDES ============ */
+    /* ============ RESPONSIVE ============ */
     @media (min-width: 1200px) {
       .chat-header { padding: 22px 26px; }
       .avatar { width: 42px; height: 42px; font-size: 16px; }
@@ -412,8 +400,6 @@
       .chat-input { padding: 18px 24px 22px; }
       .terminal { font-size: 15px; }
     }
-
-    /* ============ TABLETS ============ */
     @media (min-width: 601px) and (max-width: 1199px) {
       .lado-esquerdo { padding: 12px; }
       .chat-header { padding: 14px 16px; }
@@ -422,8 +408,6 @@
       .chat-input { padding: 12px 14px 14px; }
       .terminal { font-size: 12px; }
     }
-
-    /* ============ MOBILE ============ */
     @media (max-width: 600px) {
       .container { flex-direction: column; }
       .lado-esquerdo { flex: 0 0 45%; width: 100%; height: 45%; padding: 6px; }
@@ -701,6 +685,8 @@
     let chatHasMessages = false;
     let pendingResponses = 0;
 
+    const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
     /* =====================================================
        3) POPULAR SELECT
     ===================================================== */
@@ -742,9 +728,9 @@
       }
     }
 
-    function horaAtual(incluirSegundos) {
+    function horaAtual(comSegundos) {
       const opts = { hour: "2-digit", minute: "2-digit" };
-      if (incluirSegundos) opts.second = "2-digit";
+      if (comSegundos) opts.second = "2-digit";
       return new Date().toLocaleTimeString("pt-BR", opts);
     }
 
@@ -752,9 +738,7 @@
        5) TERMINAL — HISTÓRICO
     ===================================================== */
     function adicionarAoTerminal(cifrado, cipherId, direcao) {
-      // direcao: "cifrado" (enviado) ou "recebido"
       const recebido = direcao === "recebido";
-
       const row = document.createElement("div");
       row.className = "terminal-entry" + (recebido ? " received-entry" : "");
 
@@ -806,16 +790,13 @@
 
       function doDecrypt(key) {
         const cipher = Ciphers[cipherId];
-        let textoDecifrado;
-        try {
-          textoDecifrado = cipher.decrypt(cifrado, key);
-        } catch (e) {
-          textoDecifrado = "[erro: " + e.message + "]";
-        }
+        let out;
+        try { out = cipher.decrypt(cifrado, key); }
+        catch (e) { out = "[erro: " + e.message + "]"; }
         resultsBox.innerHTML = "";
         const linha = document.createElement("div");
         linha.className = "decrypt-result";
-        linha.textContent = `→ ${textoDecifrado}`;
+        linha.textContent = `→ ${out}`;
         resultsBox.appendChild(linha);
         terminalContent.scrollTop = terminalContent.scrollHeight;
       }
@@ -875,12 +856,17 @@
 
       message.appendChild(content);
       message.appendChild(time);
-      messages.appendChild(message);
+
+      // Insere ANTES do typing indicator (se existir)
+      const typing = document.getElementById("typingIndicator");
+      if (typing) messages.insertBefore(message, typing);
+      else messages.appendChild(message);
+
       messages.scrollTop = messages.scrollHeight;
     }
 
     /* =====================================================
-       7) TYPING INDICATOR (com contador de pendências)
+       7) TYPING
     ===================================================== */
     function showTyping() {
       if (document.getElementById("typingIndicator")) return;
@@ -901,92 +887,439 @@
     }
 
     /* =====================================================
-       8) GERADOR DE RESPOSTAS
+       8) O CÉREBRO — IA LOCAL
+       (troque Brain.think() por fetch(OpenAI) se quiser IA real)
     ===================================================== */
-    function gerarResposta(texto) {
-      const t = texto.toLowerCase().trim();
-      const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+    const Brain = {
+      memory: {
+        name: null,
+        lastTopic: null,
+        mood: "neutral",
+        messageCount: 0
+      },
 
-      if (/\b(bom dia)\b/.test(t)) {
-        return pick(["Bom dia! Tudo certo?", "Bom dia! Como foi a noite?"]);
-      }
-      if (/\b(boa tarde)\b/.test(t)) {
-        return pick(["Boa tarde! Tudo certo?", "Boa tarde! Como tá o dia?"]);
-      }
-      if (/\b(boa noite)\b/.test(t)) {
-        return pick(["Boa noite! Descansando?", "Boa noite! Ainda acordado?"]);
-      }
-      if (/\b(oi|olá|ola|eai|e ai|hey|hello|opa|salve)\b/.test(t)) {
-        return pick([
-          "Oi! Tudo certo?",
-          "E aí, beleza?",
-          "Fala! Tranquilo?",
-          "Oi! Como vai?"
-        ]);
-      }
-      if (/\b(tudo bem|tudo bom|como vai|como você está|como ta|como tá|como está|beleza|de boa)\b/.test(t)) {
-        return pick([
-          "Tudo tranquilo por aqui, e você?",
-          "De boa, e contigo?",
-          "Tudo certo! Você?",
-          "Na paz. E aí?"
-        ]);
-      }
-      if (/\b(tchau|até|até mais|falou|flw|bye|até logo|nos vemos)\b/.test(t)) {
-        return pick([
-          "Falou! Até mais.",
-          "Valeu, até a próxima.",
-          "Tchau! Se cuida.",
-          "Até mais tarde!"
-        ]);
-      }
-      if (/\b(obrigad|valeu|thanks|brigad|agradec)\b/.test(t)) {
-        return pick(["De nada!", "Por nada!", "Imagina.", "Tamo junto."]);
-      }
-      if (/\b(desculpa|desculpe|foi mal|perdão)\b/.test(t)) {
-        return pick(["Sem problema.", "Relaxa, tá tudo bem.", "Imagina, não foi nada."]);
-      }
-      if (/\?/.test(t) || /\b(por que|porque|como|quando|onde|quem|qual|será)\b/.test(t)) {
-        return pick([
-          "Hmm, boa pergunta. O que você acha?",
-          "Não sei ainda, tenho que pensar.",
-          "Acho que sim. Você concorda?",
-          "Depende do ponto de vista, né?",
-          "Faz sentido pensar nisso."
-        ]);
-      }
-      if (/\b(sim|claro|concordo|verdade|exato|com certeza)\b/.test(t)) {
-        return pick(["Né?", "Pois é.", "Exatamente.", "Concordo."]);
-      }
-      if (/\b(não|nao|nunca|discordo)\b/.test(t)) {
-        return pick(["Por quê?", "Sério? Por que não?", "Hmm, entendi."]);
-      }
-      if (/\b(hoje|amanhã|amanha|ontem|semana|fim de semana)\b/.test(t)) {
-        return pick([
-          "E o que você vai fazer?",
-          "Bacana. Tem planos?",
-          "Legal! Depois me conta.",
-          "Ah, entendi."
-        ]);
-      }
+      pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; },
+      chance(p) { return Math.random() < p; },
 
-      // Fallback
-      return pick([
-        "Entendi.",
-        "Faz sentido.",
-        "É, verdade.",
-        "Hmm, interessante.",
-        "Concordo.",
-        "Boa.",
-        "Tô pensando aqui...",
-        "Sim, pode ser.",
-        "Legal.",
-        "Saquei."
-      ]);
+      detectName(t) {
+        const m = t.match(/\b(?:meu nome é|me chamo|sou o|sou a|pode me chamar de|me chama de)\s+([A-Za-zÀ-ÿ]{2,20})\b/i);
+        return m ? m[1] : null;
+      },
+
+      detectSentiment(t) {
+        if (/\b(triste|mal|ruim|cansad|estressad|ansios|preocupad|raiva|ódio|odeio|chatead|deprimid|sozinh|difícil|problema|chorar|chorando|exaust|nervos|arrasad)\b/i.test(t)) return "negative";
+        if (/\b(feliz|ótimo|ótima|legal|bom|boa|alegre|animad|empolgad|maravilh|incrível|amo|adorei|top|show|demais)\b/i.test(t)) return "positive";
+        return "neutral";
+      },
+
+      detectTopic(t) {
+        const topics = {
+          trabalho: /\b(trabalho|trabalhar|emprego|chefe|escritório|reunião|projeto|cliente|colega|carreira)\b/i,
+          estudo: /\b(estudo|estudar|escola|faculdade|prova|exame|aula|professor|matéria|tarefa|dever)\b/i,
+          comida: /\b(comida|comer|almoço|jantar|café|fome|lanche|pizza|hambúrguer|doce|receita)\b/i,
+          música: /\b(música|banda|cantor|ouvir|playlist|som|spotify)\b/i,
+          filme: /\b(filme|série|cinema|assistir|netflix|episódio|documentário)\b/i,
+          tempo: /\b(chuva|sol|frio|calor|tempo|clima|nublado|tempestade)\b/i,
+          sono: /\b(dormir|sono|dormindo|cama|acordado|acordar|insônia)\b/i,
+          amor: /\b(amor|namorad|paixão|crush|gosto de você|coração|apaixonad)\b/i,
+          amizade: /\b(amigo|amiga|amizade)\b/i,
+          jogo: /\b(jogo|jogar|game|futebol|vôlei|videogame|placar)\b/i,
+          saudade: /\b(saudade)\b/i,
+          viagem: /\b(viagem|viajar|praia|montanha|campo|passagem|hotel)\b/i,
+          animal: /\b(cachorro|gato|pet|animal|bichinho)\b/i,
+          tecnologia: /\b(computador|código|programação|programar|celular|app|internet|dev)\b/i
+        };
+        for (const [k, rx] of Object.entries(topics)) if (rx.test(t)) return k;
+        return null;
+      },
+
+      topicResponses: {
+        trabalho: {
+          statements: [
+            "Trabalho pesa às vezes, né. Como tá sendo?",
+            "O que você faz?",
+            "E aí, o trabalho tá tranquilo?",
+            "Tem dias que cansa demais.",
+            "Já faz tempo que tá nesse trampo?"
+          ],
+          question: [
+            "Trabalho depende muito da área. Tá com algum problema específico?",
+            "O que exatamente sobre trabalho você quer saber?"
+          ]
+        },
+        estudo: {
+          statements: [
+            "Estudar é puxado, mas vale. Tá estudando o quê?",
+            "Foco é difícil né. Como você faz?",
+            "Provas são tensas. Tem alguma chegando?",
+            "Tá gostando do que estuda?"
+          ],
+          question: [
+            "Depende da matéria. O que você tá estudando?",
+            "Tá com dificuldade em algo específico?"
+          ]
+        },
+        comida: {
+          statements: [
+            "Comida é bom demais. Você cozinha?",
+            "Agora deu fome 😅 O que você curte?",
+            "Qual foi a última coisa boa que você comeu?",
+            "Doce ou salgado?"
+          ],
+          question: [
+            "Qual seu prato favorito?",
+            "Tá pensando em comer alguma coisa específica?"
+          ]
+        },
+        música: {
+          statements: [
+            "Música é tudo. O que anda ouvindo?",
+            "Qual o último som que te pegou?",
+            "Já ouviu algo bom essa semana?",
+            "Rock, pop, rap — você curte o quê?"
+          ],
+          question: [
+            "Música é gosto pessoal. Qual o seu estilo?",
+            "Tá buscando algo novo pra ouvir?"
+          ]
+        },
+        filme: {
+          statements: [
+            "Vi algo legal outro dia. Curte mais filme ou série?",
+            "Qual o último que te marcou?",
+            "Cinema em casa é bom demais.",
+            "Tem alguma recomendação?"
+          ],
+          question: [
+            "Filme ou série? Tá afim de quê?",
+            "Tem tanto conteúdo hoje... buscando algo específico?"
+          ]
+        },
+        tempo: {
+          statements: [
+            "Como tá o tempo aí?",
+            "Aqui tá estranho hoje.",
+            "Prefere frio ou calor?",
+            "Chuva é bom pra ficar em casa."
+          ],
+          question: [
+            "Tempo muda muito. Onde você tá?",
+            "Prefere sol ou chuva?"
+          ]
+        },
+        sono: {
+          statements: [
+            "Dormir é bom demais. Tem dormido bem?",
+            "Ando cansada ultimamente.",
+            "Quantas horas você dorme geralmente?",
+            "Sonho é uma coisa curiosa."
+          ],
+          question: [
+            "Tá com dificuldade pra dormir?",
+            "Como tá seu sono?"
+          ]
+        },
+        amor: {
+          statements: [
+            "Falando em amor, você tá apaixonado?",
+            "Isso é sempre bom de ouvir.",
+            "Amor é complicado mas vale a pena.",
+            "Você namora?"
+          ],
+          question: [
+            "Amor é um assunto sem fim. Tá falando de alguém?",
+            "Romântico ou de amizade?"
+          ]
+        },
+        amizade: {
+          statements: [
+            "Amizade é importante demais. Tem muitos amigos?",
+            "Amigo bom é aquele que tá sempre.",
+            "Sinto falta dos meus às vezes."
+          ],
+          question: [
+            "Tá falando de alguém em específico?",
+            "Precisando conversar com alguém?"
+          ]
+        },
+        jogo: {
+          statements: [
+            "Jogo é bom pra distrair. Você joga o quê?",
+            "Torce pra algum time?",
+            "Ganhou ou perdeu o último?"
+          ],
+          question: [
+            "Videogame ou esporte?",
+            "Tá afim de jogar o quê?"
+          ]
+        },
+        saudade: {
+          statements: [
+            "Saudade dói, né.",
+            "De quem ou do quê você tem saudade?",
+            "Sinto isso às vezes também.",
+            "É um sentimento esquisito, meio doce meio triste."
+          ],
+          question: [
+            "Saudade de alguém específico?",
+            "Do que você tem saudade?"
+          ]
+        },
+        viagem: {
+          statements: [
+            "Viagem é bom demais. Já viajou pra onde?",
+            "Praia ou campo?",
+            "Tô querendo viajar qualquer dia.",
+            "Qual lugar você sonha em conhecer?"
+          ],
+          question: [
+            "Tá planejando alguma?",
+            "Praia, montanha, cidade — o que prefere?"
+          ]
+        },
+        animal: {
+          statements: [
+            "Aww, você tem pet?",
+            "Animais alegram a vida demais.",
+            "Gosto de cachorro e gato. Você prefere qual?",
+            "Conta mais sobre ele!"
+          ],
+          question: ["Você tem algum pet?", "Cachorro ou gato?"]
+        },
+        tecnologia: {
+          statements: [
+            "Tecnologia evolui rápido demais.",
+            "Você trabalha com isso?",
+            "Hardware ou software?",
+            "Programar é desafiador."
+          ],
+          question: [
+            "Tá mexendo com algo específico?",
+            "O que você quer saber?"
+          ]
+        }
+      },
+
+      think(text) {
+        const t = text.toLowerCase().trim();
+        this.memory.messageCount++;
+
+        // Nome
+        const detectedName = this.detectName(text);
+        if (detectedName) {
+          this.memory.name = detectedName;
+          return [this.pick([
+            `Prazer, ${detectedName}! Pode me chamar de Lia.`,
+            `Legal, ${detectedName}! Como posso ajudar?`,
+            `${detectedName}, prazer! Do que você quer conversar?`
+          ])];
+        }
+
+        const name = this.memory.name;
+        const nameCall = (name && this.chance(0.25)) ? `${name}, ` : "";
+
+        // Sentimento
+        const sentiment = this.detectSentiment(text);
+        if (sentiment !== "neutral") this.memory.mood = sentiment;
+
+        // Tópico
+        const topic = this.detectTopic(text);
+        if (topic) this.memory.lastTopic = topic;
+
+        // Saudações
+        if (/^(oi|olá|ola|eai|e ai|hey|hello|opa|salve|bom dia|boa tarde|boa noite)\b/i.test(t)) {
+          const greet =
+            /bom dia/.test(t)   ? this.pick(["Bom dia!", "Bom dia, tudo certo?"]) :
+            /boa tarde/.test(t) ? this.pick(["Boa tarde!", "Boa tarde, como vai?"]) :
+            /boa noite/.test(t) ? this.pick(["Boa noite!", "Boa noite, tranquilo?"]) :
+                                  this.pick(["Oi!", "E aí!", "Olá!", "Ei!", "Fala!"]);
+          const follow = this.chance(0.75) ? " " + this.pick(["Tudo bem?", "Como você tá?", "Tudo certo?", "Como tá o dia?"]) : "";
+          return [greet + follow];
+        }
+
+        // Despedidas
+        if (/\b(tchau|até mais|falou|flw|bye|até logo|nos vemos)\b/i.test(t)) {
+          return [this.pick([
+            `Até mais${name ? `, ${name}` : ""}!`,
+            "Falou! Se cuida.",
+            "Tchau, até a próxima.",
+            "Foi bom conversar. Até!"
+          ])];
+        }
+
+        // Como vai
+        if (/\b(tudo bem|tudo bom|como vai|como você está|como ta|como tá|como está|beleza|de boa|tudo certo)\b/i.test(t)) {
+          return [this.pick([
+            "Tudo ótimo por aqui! E você?",
+            "Tô bem, obrigada por perguntar. E você?",
+            "Na paz! Como você está?",
+            "Tudo certo! E aí, como vai?",
+            "Bem demais. Você tá bem?"
+          ])];
+        }
+
+        // Estou bem
+        if (/^(tudo|tudo bem|tudo bom|bem|de boa|beleza|tranquilo|tranquila|na paz|tô bem|to bem)\b/i.test(t)) {
+          return [this.pick([
+            "Que bom!",
+            "Boa! Alguma novidade?",
+            "Ótimo saber.",
+            "Bacana! Fico feliz.",
+            "Boa, que bom."
+          ])];
+        }
+
+        // Agradecimento
+        if (/\b(obrigad|valeu|brigad|thanks|agradec)\b/i.test(t)) {
+          return [this.pick(["De nada!", "Por nada.", "Imagina!", "Tamo junto.", "Sempre que precisar."])];
+        }
+
+        // Desculpas
+        if (/\b(desculpa|desculpe|foi mal|perdão|perdao)\b/i.test(t)) {
+          return [this.pick(["Relaxa, tá tudo bem.", "Sem problema!", "Imagina, não foi nada.", "Tranquilo."])];
+        }
+
+        // Rindo
+        if (/\b(haha|hehe|kkk+|rs+|lol|xd|rindo)\b/i.test(t)) {
+          return [this.pick(["😄", "Haha!", "Boa.", "Hahaha.", "😂"])];
+        }
+
+        // Sim / Não
+        if (/^(sim|claro|concordo|verdade|exato|com certeza|isso|uhum|aham|positivo)\b/i.test(t)) {
+          return [this.pick(["Né?", "Pois é.", "Exatamente.", "Concordo.", "Boa."])];
+        }
+        if (/^(não|nao|nunca|discordo|negativo)\b/i.test(t)) {
+          return [this.pick(["Por quê?", "Sério? Por que não?", "Hmm, entendi.", "Tudo bem."])];
+        }
+
+        // Emoções negativas
+        if (/\b(triste|mal|deprimid|chorand|chatead|arrasad|pra baixo|sozinh)\b/i.test(t)) {
+          return [this.pick([
+            `Poxa${name ? `, ${name}` : ""}. Quer falar sobre isso?`,
+            "Sinto muito. O que aconteceu?",
+            "Tô aqui se quiser desabafar.",
+            "Isso é ruim. Quer contar?"
+          ])];
+        }
+        if (/\b(cansad|exaust|estressad|ansios|preocupad|nervos)\b/i.test(t)) {
+          return [this.pick([
+            "Isso pesa, né? Já tentou descansar?",
+            "Puxa... quer espairecer?",
+            "Respira fundo. O que tá te preocupando?",
+            "Entendo. Foi um dia pesado?"
+          ])];
+        }
+        if (/\b(feliz|alegre|animad|empolgad|ótimo|ótima|maravilh|top|incrível|adorei)\b/i.test(t)) {
+          return [this.pick([
+            "Que bom! Fico feliz.",
+            "Adoro ouvir isso!",
+            "Boa! Me conta mais.",
+            "Ótimo! O que aconteceu de bom?"
+          ])];
+        }
+        if (/\b(entediad|tédio|tedio|sem fazer nada|chato)\b/i.test(t)) {
+          return [this.pick([
+            "Bora fazer alguma coisa então? O que você gosta?",
+            "Tédio é ruim. Quer conversar sobre algo?",
+            "Já pensou em ler, ouvir música, ver algo?",
+            "Puxa... o que você costuma fazer pra passar o tempo?"
+          ])];
+        }
+
+        // Perguntas
+        if (/\?/.test(t) || /^(por que|porque|como|quando|onde|quem|qual|quais|será|você sabe)\b/i.test(t)) {
+          if (topic && this.topicResponses[topic]) {
+            return [this.pick(this.topicResponses[topic].question)];
+          }
+          return [this.pick([
+            "Hmm, boa pergunta.",
+            "Deixa eu pensar...",
+            "Não tenho certeza, mas acho que depende.",
+            "Interessante. Por que você quer saber?",
+            "Depende do contexto, sabe? O que você acha?",
+            "Pensando aqui..."
+          ])];
+        }
+
+        // Tópicos
+        if (topic && this.topicResponses[topic]) {
+          return [this.pick(this.topicResponses[topic].statements)];
+        }
+
+        // Fallback com reflexão
+        if (this.chance(0.5) && text.length > 8) {
+          const short = text.length > 55 ? text.slice(0, 50) + "..." : text;
+          return [this.pick([
+            `Entendi — "${short}" Hmm.`,
+            `Ah, ${short.toLowerCase()}. Interessante.`,
+            `${this.chance(0.5) ? "Faz sentido." : "Entendi."} Como você se sente sobre isso?`,
+            "Hmm... me conta mais."
+          ])];
+        }
+
+        return [this.pick([
+          "Hmm, entendi.",
+          "Faz sentido.",
+          "É, verdade.",
+          "Interessante.",
+          "Concordo.",
+          "Boa.",
+          "Tô pensando aqui...",
+          "Sim, pode ser.",
+          "Legal.",
+          "Saquei.",
+          "Ah, entendi.",
+          "Bacana."
+        ])];
+      },
+
+      thinkMulti(text) {
+        const primary = this.think(text);
+        if (primary.length === 1 && this.memory.messageCount >= 3 && this.chance(0.22)) {
+          const name = this.memory.name;
+          const followups = name
+            ? [`Aliás, ${name}, o que você tem feito hoje?`, "E você, como tá sendo o dia?"]
+            : [
+                "E você, o que tem feito?",
+                "Aliás, como tá sendo seu dia?",
+                "Mas enfim, você tá bem?"
+              ];
+          primary.push(this.pick(followups));
+        }
+        return primary;
+      }
+    };
+
+    /* =====================================================
+       9) RESPOSTA ASSÍNCRONA
+    ===================================================== */
+    async function respondAsync(userText, cipher, key, cipherId) {
+      pendingResponses++;
+      if (pendingResponses === 1) showTyping();
+
+      try {
+        const responses = Brain.thinkMulti(userText);
+        for (let i = 0; i < responses.length; i++) {
+          const r = responses[i];
+          const delay = 700 + Math.min(r.length * 22, 2200) + Math.random() * 500;
+          await sleep(delay);
+
+          addMessage(r, "received");
+          const cifradoResp = cipher.encrypt(r, key);
+          adicionarAoTerminal(cifradoResp, cipherId, "recebido");
+
+          if (i < responses.length - 1) {
+            await sleep(500 + Math.random() * 500);
+          }
+        }
+      } finally {
+        pendingResponses--;
+        if (pendingResponses === 0) hideTyping();
+      }
     }
 
     /* =====================================================
-       9) EVENTOS
+       10) EVENTOS DOS CONTROLES
     ===================================================== */
     cipherSelect.addEventListener("change", () => {
       currentCipher = cipherSelect.value;
@@ -998,14 +1331,14 @@
     input.addEventListener("input", atualizarPreview);
 
     /* =====================================================
-       10) BOOT ANIMATION
+       11) BOOT ANIMATION
     ===================================================== */
     const bootLines = [
       { text: "Iniciando canal de mensagens...", type: "command" },
-      { text: "[ OK ] Módulo de cifras carregado", type: "success" },
-      { text: "[ OK ] Sessão estabelecida", type: "success" },
-      { text: "[ OK ] Canal pronto", type: "success" },
-      { text: "Estado: AGUARDANDO MENSAGENS", type: "active" }
+      { text: "[ OK ] Motor de linguagem carregado", type: "success" },
+      { text: "[ OK ] Vocabulário e contextos prontos", type: "success" },
+      { text: "[ OK ] Canal seguro estabelecido", type: "success" },
+      { text: "Estado: PRONTO PARA CONVERSAR", type: "active" }
     ];
     bootLines.forEach((line, index) => {
       const row = document.createElement("div");
@@ -1028,14 +1361,14 @@
     });
 
     /* =====================================================
-       11) ENVIO DA MENSAGEM + RESPOSTA AUTOMÁTICA
+       12) ENVIO + RESPOSTA
     ===================================================== */
     form.addEventListener("submit", function (event) {
       event.preventDefault();
       const text = input.value.trim();
       if (!text) return;
 
-      // Snapshot da cifra/chave NO MOMENTO DO ENVIO
+      // Snapshot da cifra/chave do momento
       const cipherId = currentCipher;
       const cipher = Ciphers[cipherId];
       const key = cipherKeyInput.value;
@@ -1047,33 +1380,16 @@
       // Chat
       addMessage(text, "sent");
 
-      // Reset
       input.value = "";
       atualizarPreview();
       input.focus();
 
-      // Resposta automática
-      const delay = 900 + Math.random() * 1100;
-      pendingResponses++;
-      if (pendingResponses === 1) showTyping();
-
-      setTimeout(() => {
-        const resposta = gerarResposta(text);
-        const cifradoResp = cipher.encrypt(resposta, key);
-
-        // Chat (recebida)
-        addMessage(resposta, "received");
-
-        // Terminal (recebida, mesma cifra/chave do envio)
-        adicionarAoTerminal(cifradoResp, cipherId, "recebido");
-
-        pendingResponses--;
-        if (pendingResponses === 0) hideTyping();
-      }, delay);
+      // Resposta (assíncrona, com snapshot da cifra)
+      respondAsync(text, cipher, key, cipherId);
     });
 
     /* =====================================================
-       12) INICIALIZAÇÃO
+       13) INICIALIZAÇÃO
     ===================================================== */
     atualizarKeyField();
     atualizarPreview();
