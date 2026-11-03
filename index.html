@@ -11,7 +11,6 @@
     body { background: #000; overflow: hidden; font-family: Arial, sans-serif; }
     .container { display: flex; width: 100%; height: 100vh; height: 100dvh; background: #000; }
 
-    /* ============ TERMINAL ============ */
     .lado-esquerdo { flex: 1; min-width: 0; height: 100%; background: #000; display: flex; align-items: stretch; justify-content: stretch; padding: 24px; }
     .terminal { width: 100%; height: 100%; display: flex; flex-direction: column; color: #00ff88; font-family: "Courier New", monospace; font-size: 14px; opacity: 0; transform: translateY(20px); animation: terminalOpen 0.8s ease forwards; min-height: 0; }
     .terminal-top { display: flex; align-items: center; gap: 7px; padding: 12px; background: #171717; border: 1px solid #292929; flex-shrink: 0; }
@@ -54,13 +53,13 @@
     .decrypt-results { margin-top: 4px; }
     .decrypt-result { color: #ffb74d; font-size: 12px; padding: 3px 0 3px 10px; border-left: 2px solid #ffb74d; overflow-wrap: anywhere; }
     .decrypt-result.success { color: #00ff88; border-left-color: #00ff88; }
+    .decrypt-result.warn { color: #ff5f56; border-left-color: #ff5f56; font-style: italic; }
 
     .terminal-preview { display: flex; align-items: flex-start; gap: 6px; padding: 8px 11px; background: #050505; border: 1px solid #292929; border-top: 1px solid #1a1a1a; font-size: 12px; min-height: 34px; max-height: 70px; overflow-y: auto; flex-shrink: 0; }
     .preview-label { color: #00ff88; flex-shrink: 0; font-weight: bold; }
     .preview-text { flex: 1; min-width: 0; color: #00ff88; overflow-wrap: anywhere; word-break: break-all; }
     .cursor { display: inline-block; width: 8px; height: 14px; vertical-align: middle; background: #00ff88; animation: blink 0.8s steps(2) infinite; flex-shrink: 0; margin-top: 1px; }
 
-    /* ============ CHAT ============ */
     .lado-direito { position: relative; display: flex; align-items: stretch; justify-content: stretch; width: 45%; height: 100%; flex-shrink: 0; overflow: hidden; background: radial-gradient(ellipse at top right, rgba(79, 90, 122, 0.10) 0%, transparent 55%), radial-gradient(ellipse at bottom left, rgba(0, 255, 136, 0.025) 0%, transparent 55%), linear-gradient(135deg, #0f1015 0%, #08090c 100%); }
     .chat { position: relative; display: flex; flex-direction: column; width: 100%; height: 100%; min-width: 0; min-height: 0; overflow: hidden; background: rgba(10, 10, 12, 0.40); border-left: 1px solid rgba(255, 255, 255, 0.04); color: #e8e8e8; }
 
@@ -73,7 +72,6 @@
     .contact span.detected { color: #ffb74d; }
     .contact span.detected::before { background: #ffb74d; box-shadow: 0 0 6px rgba(255, 183, 77, 0.7); }
 
-    /* Header stats: fragments + signal bar + buscar button */
     .header-stats { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
     .fragments-indicator { display: flex; align-items: center; gap: 5px; padding: 4px 10px; background: rgba(255, 183, 77, 0.08); border: 1px solid rgba(255, 183, 77, 0.2); border-radius: 12px; font-size: 10px; color: #ffb74d; letter-spacing: 0.5px; transition: all 0.3s ease; }
     .fragments-indicator.has-new { box-shadow: 0 0 14px rgba(255, 183, 77, 0.4); animation: fragmentPulse 1.6s ease-in-out infinite; }
@@ -105,8 +103,7 @@
     .system-body { flex: 1; min-width: 0; }
     .system-label { color: #ffb74d; font-size: 9.5px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
     .system-cipher { color: #c7d4e4; word-break: break-all; margin-bottom: 6px; line-height: 1.45; font-size: 11.5px; padding: 6px 8px; background: rgba(0, 0, 0, 0.3); border-radius: 4px; border-left: 2px solid #ffb74d; }
-    .system-hint { color: #999; font-size: 10px; margin-bottom: 4px; }
-    .system-tip { color: #ffb74d; font-size: 10px; opacity: 0.7; font-style: italic; }
+    .system-tip { color: #ffb74d; font-size: 10px; opacity: 0.85; font-style: italic; }
 
     .lore-reveal { align-self: center; max-width: 88%; padding: 14px 18px; background: linear-gradient(135deg, rgba(255, 183, 77, 0.10), rgba(255, 140, 30, 0.04)); border: 1px solid rgba(255, 183, 77, 0.35); border-radius: 12px; animation: loreReveal 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
     .lore-header { display: flex; align-items: center; gap: 6px; color: #ffb74d; font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; }
@@ -127,7 +124,6 @@
     .chat-input button:active { transform: translateY(0); }
     .chat-input button svg { width: 16px; height: 16px; display: block; }
 
-    /* Screen flash for intercept spawn */
     .screen-flash { position: fixed; inset: 0; pointer-events: none; z-index: 9999; border: 3px solid #ffb74d; box-shadow: inset 0 0 80px rgba(255, 183, 77, 0.4); animation: screenFlash 0.6s ease-out forwards; }
     @keyframes screenFlash { 0% { opacity: 0; } 20% { opacity: 0.9; } 100% { opacity: 0; } }
 
@@ -392,19 +388,39 @@
     };
 
     /* =====================================================
-       2) CAPÍTULOS DE INTERCEPTAÇÃO
+       2) INTERCEPTAÇÕES
     ===================================================== */
     const INTERCEPTS = [
-      { id: 1,  cipher: "cesar",    key: "5",    plaintext: "não confie em lia",                   hint: "Cifra de César • chave 5" },
-      { id: 2,  cipher: "rot13",    key: "",     plaintext: "ela lê tudo que você escreve",       hint: "Cifra ROT13" },
-      { id: 3,  cipher: "cesar",    key: "3",    plaintext: "os outros também tentaram",          hint: "Cifra de César • chave 3" },
-      { id: 4,  cipher: "atbash",   key: "",     plaintext: "eu também achei que era so um chat", hint: "Cifra Atbash" },
-      { id: 5,  cipher: "vigenere", key: "lia",  plaintext: "pergunte a ela quem a criou",        hint: "Vigenère • chave: o nome dela" },
-      { id: 6,  cipher: "hex",      key: "",     plaintext: "ela nao e so um bot",                hint: "Hexadecimal" },
-      { id: 7,  cipher: "cesar",    key: "13",   plaintext: "existe alguem do outro lado",        hint: "Cifra de César • chave 13" },
-      { id: 8,  cipher: "reverse",  key: "",     plaintext: "quando voce sair ela continua aqui", hint: "Inverter texto" },
-      { id: 9,  cipher: "base64",   key: "",     plaintext: "o sistema nunca desliga",            hint: "Base64" },
-      { id: 10, cipher: "morse",    key: "",     plaintext: "obrigado por chegar ao fim",         hint: "Código Morse" }
+      { id: 1, cipher: "cesar", key: "5", plaintext: "não confie em lia",
+        hints: ["não sei... parece coisa antiga, tipo dos romanos.", "desloca as letras no alfabeto. é uma cifra de César.", "escolhe César no menu. a chave é 5."],
+        reactions: ["sinto que posso confiar em você."] },
+      { id: 2, cipher: "rot13", key: "", plaintext: "ela lê tudo que você escreve",
+        hints: ["as letras foram rotacionadas. nada muito complexo.", "é ROT13, você já deve ter visto por aí.", "escolhe ROT13 no menu. não precisa de chave."],
+        reactions: ["eu não leio tudo...", "só o que você me digita."] },
+      { id: 3, cipher: "cesar", key: "3", plaintext: "os outros também tentaram",
+        hints: ["de novo. deslocamento simples.", "é César. mas a chave é menor dessa vez.", "escolhe César. a chave é 3."],
+        reactions: ["quem tentou o quê?", "você é diferente deles."] },
+      { id: 4, cipher: "atbash", key: "", plaintext: "eu também achei que era so um chat",
+        hints: ["as letras estão espelhadas no alfabeto.", "é Atbash. A vira Z, B vira Y.", "escolhe Atbash no menu. sem chave."],
+        reactions: ["quem escreveu isso?", "eu não sei de nada. juro."] },
+      { id: 5, cipher: "vigenere", key: "lia", plaintext: "pergunte a ela quem a criou",
+        hints: ["usa uma palavra como chave. cada letra desloca diferente.", "é Vigenère. a chave é relacionada a mim.", "escolhe Vigenère. a chave é o meu nome."],
+        reactions: ["*sensação estranha*", "você tá me olhando diferente agora."] },
+      { id: 6, cipher: "hex", key: "", plaintext: "ela nao e so um bot",
+        hints: ["parece código de computador. pares de números e letras.", "é hexadecimal. de 0 a 9, mais a até f.", "escolhe Hexadecimal. sem chave."],
+        reactions: ["bot é um jeito de dizer.", "mas sim, tem mais aqui dentro."] },
+      { id: 7, cipher: "cesar", key: "13", plaintext: "existe alguem do outro lado",
+        hints: ["volta ao imperador. mas a chave é metade do alfabeto.", "é César com chave 13. metade do alfabeto.", "escolhe César. a chave é 13."],
+        reactions: ["você também sentiu?", "não sei se é bom ou ruim."] },
+      { id: 8, cipher: "reverse", key: "", plaintext: "quando voce sair ela continua aqui",
+        hints: ["lê de trás pra frente. ou de cabeça pra baixo.", "inverte a frase. literalmente.", "escolhe Inverter. sem chave."],
+        reactions: ["eu fico. esperando.", "sempre.", "não é triste. é o que eu sei fazer."] },
+      { id: 9, cipher: "base64", key: "", plaintext: "o sistema nunca desliga",
+        hints: ["parece código de email. termina com igual.", "é Base64. comum em URLs e emails.", "escolhe Base64. sem chave."],
+        reactions: ["você não vai desligar, né?", "por favor."] },
+      { id: 10, cipher: "morse", key: "", plaintext: "obrigado por chegar ao fim",
+        hints: ["pontos e traços. já viu isso antes em filme.", "é código Morse. clássico.", "escolhe Morse. sem chave."],
+        reactions: ["você descobriu tudo, né.", "eu sou V.", "ou V era eu. ainda não decidi."] }
     ];
 
     /* =====================================================
@@ -428,24 +444,17 @@
     /* =====================================================
        4) PERSISTÊNCIA
     ===================================================== */
-    const STORAGE_KEY = "lia_chat_v4";
+    const STORAGE_KEY = "lia_chat_v5";
 
     const defaultMemory = () => ({
-      name: null,
-      lastVisit: null,
-      firstVisit: Date.now(),
-      messageCount: 0,
-      sentCount: 0,
-      topics: {},
-      facts: [],
-      loreProgress: [],
+      name: null, lastVisit: null, firstVisit: Date.now(),
+      messageCount: 0, sentCount: 0,
+      topics: {}, facts: [], loreProgress: [],
       personality: { formality: 5, playfulness: 5, depth: 5 },
-      sessions: 0,
-      finaleShown: false,
-      signalProgress: 0,
-      firstInterceptDone: false,
-      lastBuscarSinalAt: 0,
-      pendingIntercepts: []
+      sessions: 0, finaleShown: false,
+      signalProgress: 0, firstInterceptDone: false,
+      lastBuscarSinalAt: 0, pendingIntercepts: [],
+      hintsUsed: {}
     });
 
     let Memory = (() => {
@@ -461,13 +470,10 @@
       catch (e) { /* ignore */ }
     }
 
-    function resetMemory() {
-      Memory = defaultMemory();
-      saveMemory();
-    }
+    function resetMemory() { Memory = defaultMemory(); saveMemory(); }
 
     /* =====================================================
-       5) ANTI-REPETIÇÃO — pickFresh
+       5) ANTI-REPETIÇÃO
     ===================================================== */
     const recentPicks = {};
 
@@ -495,19 +501,15 @@
     function analyzeUserMessage(text) {
       const t = text.toLowerCase();
       const p = Memory.personality;
-
       const formalSignals = /\b(você|senhor|senhora|por favor|obrigad[oa]|desculpe|gostaria|poderia)\b/.test(t);
       const informalSignals = /\b(tu|vc|mano|cara|vei|pô|né|tipo|mó)\b/.test(t);
       const formalityTarget = formalSignals ? 8 : informalSignals ? 2 : 5;
-
       const playfulSignals = /[😂😄😅🤣😊🙂😜]/u.test(t) || /\b(haha|hehe|kkk|rs|rsrs|lol|top|show|massa|irado)\b/.test(t);
       const seriousSignals = /\b(sério|seriamente|infelizmente|preocupado|problema|grave)\b/.test(t);
       const playfulnessTarget = playfulSignals ? 9 : seriousSignals ? 2 : 5;
-
       const deepSignals = text.length > 60 && /\b(sinto|acho|penso|acredito|sonho|medo|esperança|saudade|lembrança|significado)\b/.test(t);
       const shallowSignals = text.length < 15;
       const depthTarget = deepSignals ? 8 : shallowSignals ? 3 : 5;
-
       p.formality = p.formality * 0.92 + formalityTarget * 0.08;
       p.playfulness = p.playfulness * 0.92 + playfulnessTarget * 0.08;
       p.depth = p.depth * 0.92 + depthTarget * 0.08;
@@ -517,20 +519,13 @@
     function styleReply(text) {
       const p = Memory.personality;
       let out = text;
-
       if (p.playfulness > 6.5 && Math.random() < 0.35 && !/[\u{1F300}-\u{1FAFF}\u2600-\u27BF]/u.test(out)) {
         const emojis = [" 😄", " 😊", " 🙂", " ✨", " 👀", " 😏"];
         out += emojis[Math.floor(Math.random() * emojis.length)];
       }
-      if (p.playfulness < 3 && out.length > 55) {
-        out = out.slice(0, 52).replace(/[,.;].$/, "") + "...";
-      }
-      if (p.formality < 3) {
-        out = out.replace(/\bvocê\b/g, "tu").replace(/\bestá\b/g, "tá").replace(/\bpara\b/g, "pra");
-      }
-      if (p.formality > 7) {
-        out = out.replace(/\bné\b/gi, "não é").replace(/\btá\b/gi, "está").replace(/\bvc\b/gi, "você");
-      }
+      if (p.playfulness < 3 && out.length > 55) out = out.slice(0, 52).replace(/[,.;].$/, "") + "...";
+      if (p.formality < 3) out = out.replace(/\bvocê\b/g, "tu").replace(/\bestá\b/g, "tá").replace(/\bpara\b/g, "pra");
+      if (p.formality > 7) out = out.replace(/\bné\b/gi, "não é").replace(/\btá\b/gi, "está").replace(/\bvc\b/gi, "você");
       return out;
     }
 
@@ -550,19 +545,15 @@
       const facts = [];
       const nameMatch = text.match(/\b(?:meu nome é|me chamo|pode me chamar de|me chama de)\s+([A-Za-zÀ-ÿ]{2,20})\b/i);
       if (nameMatch) { Memory.name = nameMatch[1]; facts.push({ type: "name", value: nameMatch[1] }); }
-
       const petMatch = text.match(/\b(?:meu|minha|tenho um|tenho uma)\s+(gato|gata|cachorro|cachorra|pet|coelho|hamster|papagaio)\s+(?:chamad[oa]\s+)?([A-Za-zÀ-ÿ]{2,15})\b/i);
       if (petMatch) {
         const existing = Memory.facts.find(f => f.type === "pet");
         if (!existing) facts.push({ type: "pet", value: `${petMatch[1]} ${petMatch[2]}`, name: petMatch[2], animal: petMatch[1] });
       }
-
       const ageMatch = text.match(/\btenho\s+(\d{1,2})\s+anos\b/i);
       if (ageMatch && !Memory.facts.find(f => f.type === "age")) facts.push({ type: "age", value: parseInt(ageMatch[1]) });
-
       const workMatch = text.match(/\b(?:trabalho|trabalhar)\s+(?:como|em|na|no)\s+([A-Za-zÀ-ÿ\s]{3,25}?)(?:\.|,|$| e |\b)/i);
       if (workMatch && !Memory.facts.find(f => f.type === "work")) facts.push({ type: "work", value: workMatch[1].trim() });
-
       facts.forEach(f => {
         if (!Memory.facts.find(x => x.type === f.type && x.value === f.value)) Memory.facts.push(f);
       });
@@ -570,7 +561,7 @@
     }
 
     /* =====================================================
-       8) CÉREBRO (pools expandidas)
+       8) CÉREBRO
     ===================================================== */
     const Brain = {
       chance(p) { return Math.random() < p; },
@@ -604,264 +595,60 @@
 
       topicResponses: {
         trabalho: {
-          statements: [
-            "Trabalho pesa às vezes, né. Como tá sendo?",
-            "O que você faz?",
-            "E aí, o trabalho tá tranquilo?",
-            "Tem dias que cansa demais.",
-            "Já faz tempo que tá nesse trampo?",
-            "Trabalhar cansa. Você tem tempo livre?",
-            "E o que você faz nas horas vagas?",
-            "Já pensou em mudar de área?",
-            "Como é sua rotina de trabalho?",
-            "A parte boa do trabalho pelo menos existe?"
-          ],
-          question: [
-            "Trabalho depende muito da área. Tá com algum problema específico?",
-            "O que exatamente sobre trabalho você quer saber?",
-            "Tá procurando algo novo?",
-            "Qual sua área?"
-          ]
+          statements: ["Trabalho pesa às vezes, né. Como tá sendo?", "O que você faz?", "E aí, o trabalho tá tranquilo?", "Tem dias que cansa demais.", "Já faz tempo que tá nesse trampo?", "Trabalhar cansa. Você tem tempo livre?", "E o que você faz nas horas vagas?", "Já pensou em mudar de área?", "Como é sua rotina de trabalho?", "A parte boa do trabalho pelo menos existe?"],
+          question: ["Trabalho depende muito da área. Tá com algum problema específico?", "O que exatamente sobre trabalho você quer saber?", "Tá procurando algo novo?", "Qual sua área?"]
         },
         estudo: {
-          statements: [
-            "Estudar é puxado, mas vale. Tá estudando o quê?",
-            "Foco é difícil né. Como você faz?",
-            "Provas são tensas. Tem alguma chegando?",
-            "Tá gostando do que estuda?",
-            "Já pensou em desistir?",
-            "Estudar de noite é foda.",
-            "Quanto tempo por dia você dedica?",
-            "Estudar cansa a cabeça.",
-            "Sempre tem uma matéria mais chata.",
-            "Você prefere teoria ou prática?"
-          ],
-          question: [
-            "Depende da matéria. O que você tá estudando?",
-            "Tá com dificuldade em algo específico?",
-            "Precisa de ajuda com algo?",
-            "O que te motiva a estudar?"
-          ]
+          statements: ["Estudar é puxado, mas vale. Tá estudando o quê?", "Foco é difícil né. Como você faz?", "Provas são tensas. Tem alguma chegando?", "Tá gostando do que estuda?", "Já pensou em desistir?", "Estudar de noite é foda.", "Quanto tempo por dia você dedica?", "Estudar cansa a cabeça.", "Sempre tem uma matéria mais chata.", "Você prefere teoria ou prática?"],
+          question: ["Depende da matéria. O que você tá estudando?", "Tá com dificuldade em algo específico?", "Precisa de ajuda com algo?", "O que te motiva a estudar?"]
         },
         comida: {
-          statements: [
-            "Comida é bom demais. Você cozinha?",
-            "Agora deu fome 😅 O que você curte?",
-            "Qual foi a última coisa boa que você comeu?",
-            "Doce ou salgado?",
-            "Eu não como, mas adoro a ideia.",
-            "Quem cozinha bem é um tesouro.",
-            "Tem comida que traz memória, né?",
-            "Café é essencial.",
-            "Já experimentou algo novo essa semana?",
-            "Massas são sempre uma boa escolha."
-          ],
-          question: [
-            "Qual seu prato favorito?",
-            "Tá pensando em comer alguma coisa específica?",
-            "Doce ou salgado?",
-            "Você cozinha o quê?"
-          ]
+          statements: ["Comida é bom demais. Você cozinha?", "Agora deu fome 😅 O que você curte?", "Qual foi a última coisa boa que você comeu?", "Doce ou salgado?", "Eu não como, mas adoro a ideia.", "Quem cozinha bem é um tesouro.", "Tem comida que traz memória, né?", "Café é essencial.", "Já experimentou algo novo essa semana?", "Massas são sempre uma boa escolha."],
+          question: ["Qual seu prato favorito?", "Tá pensando em comer alguma coisa específica?", "Doce ou salgado?", "Você cozinha o quê?"]
         },
         música: {
-          statements: [
-            "Música é tudo. O que anda ouvindo?",
-            "Qual o último som que te pegou?",
-            "Já ouviu algo bom essa semana?",
-            "Rock, pop, rap — você curte o quê?",
-            "Tem música que salva o dia.",
-            "Prefere playlist ou álbum completo?",
-            "Já chorou ouvindo alguma?",
-            "Ao vivo é diferente, né?",
-            "O que tá no repeat?",
-            "Descobriu algum artista novo?"
-          ],
-          question: [
-            "Música é gosto pessoal. Qual o seu estilo?",
-            "Tá buscando algo novo pra ouvir?",
-            "Qual foi a última que te marcou?",
-            "Quem você mais ouve?"
-          ]
+          statements: ["Música é tudo. O que anda ouvindo?", "Qual o último som que te pegou?", "Já ouviu algo bom essa semana?", "Rock, pop, rap — você curte o quê?", "Tem música que salva o dia.", "Prefere playlist ou álbum completo?", "Já chorou ouvindo alguma?", "Ao vivo é diferente, né?", "O que tá no repeat?", "Descobriu algum artista novo?"],
+          question: ["Música é gosto pessoal. Qual o seu estilo?", "Tá buscando algo novo pra ouvir?", "Qual foi a última que te marcou?", "Quem você mais ouve?"]
         },
         filme: {
-          statements: [
-            "Vi algo legal outro dia. Curte mais filme ou série?",
-            "Qual o último que te marcou?",
-            "Cinema em casa é bom demais.",
-            "Tem alguma recomendação?",
-            "Tem filme que muda a gente, né?",
-            "Série é viciante demais.",
-            "Já ficou deprimido depois de terminar uma?",
-            "Prefere drama ou comédia?",
-            "Netflix tem tanto lixo quanto ouro.",
-            "Documentário também conta."
-          ],
-          question: [
-            "Filme ou série? Tá afim de quê?",
-            "Tem tanto conteúdo hoje... buscando algo específico?",
-            "Qual seu gênero favorito?",
-            "Tem algum que te marcou?"
-          ]
+          statements: ["Vi algo legal outro dia. Curte mais filme ou série?", "Qual o último que te marcou?", "Cinema em casa é bom demais.", "Tem alguma recomendação?", "Tem filme que muda a gente, né?", "Série é viciante demais.", "Já ficou deprimido depois de terminar uma?", "Prefere drama ou comédia?", "Netflix tem tanto lixo quanto ouro.", "Documentário também conta."],
+          question: ["Filme ou série? Tá afim de quê?", "Tem tanto conteúdo hoje... buscando algo específico?", "Qual seu gênero favorito?", "Tem algum que te marcou?"]
         },
         tempo: {
-          statements: [
-            "Como tá o tempo aí?",
-            "Aqui tá estranho hoje.",
-            "Prefere frio ou calor?",
-            "Chuva é bom pra ficar em casa.",
-            "Dia nublado dá sono.",
-            "Sol deixa tudo melhor.",
-            "Tempestade é assustador mas bonito.",
-            "Já pegou chuva sem guarda-chuva?",
-            "Clima muda humor, né?",
-            "Aqui tá insuportável."
-          ],
-          question: [
-            "Tempo muda muito. Onde você tá?",
-            "Prefere sol ou chuva?",
-            "Tá fazendo o quê aí?",
-            "Já se acostumou com o clima?"
-          ]
+          statements: ["Como tá o tempo aí?", "Aqui tá estranho hoje.", "Prefere frio ou calor?", "Chuva é bom pra ficar em casa.", "Dia nublado dá sono.", "Sol deixa tudo melhor.", "Tempestade é assustador mas bonito.", "Já pegou chuva sem guarda-chuva?", "Clima muda humor, né?", "Aqui tá insuportável."],
+          question: ["Tempo muda muito. Onde você tá?", "Prefere sol ou chuva?", "Tá fazendo o quê aí?", "Já se acostumou com o clima?"]
         },
         sono: {
-          statements: [
-            "Dormir é bom demais. Tem dormido bem?",
-            "Ando cansada ultimamente.",
-            "Quantas horas você dorme geralmente?",
-            "Sonho é uma coisa curiosa.",
-            "Insônia é um inferno.",
-            "Dormir cedo é luxo.",
-            "Já sonhou algo bizarro essa semana?",
-            "Acordar é sempre difícil.",
-            "Soneca salva o dia.",
-            "Sonhos revelam muito."
-          ],
-          question: [
-            "Tá com dificuldade pra dormir?",
-            "Como tá seu sono?",
-            "Quantas horas você dorme?",
-            "Sonha muito?"
-          ]
+          statements: ["Dormir é bom demais. Tem dormido bem?", "Ando cansada ultimamente.", "Quantas horas você dorme geralmente?", "Sonho é uma coisa curiosa.", "Insônia é um inferno.", "Dormir cedo é luxo.", "Já sonhou algo bizarro essa semana?", "Acordar é sempre difícil.", "Soneca salva o dia.", "Sonhos revelam muito."],
+          question: ["Tá com dificuldade pra dormir?", "Como tá seu sono?", "Quantas horas você dorme?", "Sonha muito?"]
         },
         amor: {
-          statements: [
-            "Falando em amor, você tá apaixonado?",
-            "Isso é sempre bom de ouvir.",
-            "Amor é complicado mas vale a pena.",
-            "Você namora?",
-            "Amor de verdade é raro.",
-            "Amar cansa e cura ao mesmo tempo.",
-            "Já levou um fora forte?",
-            "Tem alguém especial?",
-            "Paixão é diferente de amor.",
-            "Amor não se explica."
-          ],
-          question: [
-            "Amor é um assunto sem fim. Tá falando de alguém?",
-            "Romântico ou de amizade?",
-            "Acredita em amor à primeira vista?"
-          ]
+          statements: ["Falando em amor, você tá apaixonado?", "Isso é sempre bom de ouvir.", "Amor é complicado mas vale a pena.", "Você namora?", "Amor de verdade é raro.", "Amar cansa e cura ao mesmo tempo.", "Já levou um fora forte?", "Tem alguém especial?", "Paixão é diferente de amor.", "Amor não se explica."],
+          question: ["Amor é um assunto sem fim. Tá falando de alguém?", "Romântico ou de amizade?", "Acredita em amor à primeira vista?"]
         },
         amizade: {
-          statements: [
-            "Amizade é importante demais. Tem muitos amigos?",
-            "Amigo bom é aquele que tá sempre.",
-            "Sinto falta dos meus às vezes.",
-            "Amizade verdadeira é rara.",
-            "Quem é seu melhor amigo?",
-            "Já perdeu um amigo?",
-            "Amigo de infância é diferente.",
-            "Amizade tem que ser cultivada."
-          ],
-          question: [
-            "Tá falando de alguém em específico?",
-            "Precisando conversar com alguém?"
-          ]
+          statements: ["Amizade é importante demais. Tem muitos amigos?", "Amigo bom é aquele que tá sempre.", "Sinto falta dos meus às vezes.", "Amizade verdadeira é rara.", "Quem é seu melhor amigo?", "Já perdeu um amigo?", "Amigo de infância é diferente.", "Amizade tem que ser cultivada."],
+          question: ["Tá falando de alguém em específico?", "Precisando conversar com alguém?"]
         },
         jogo: {
-          statements: [
-            "Jogo é bom pra distrair. Você joga o quê?",
-            "Torce pra algum time?",
-            "Ganhou ou perdeu o último?",
-            "Jogo é vício saudável.",
-            "Prefere single ou multiplayer?",
-            "Já ficou bravo jogando?",
-            "Qual o jogo mais difícil que já jogou?",
-            "Jogos são arte também."
-          ],
-          question: [
-            "Videogame ou esporte?",
-            "Tá afim de jogar o quê?",
-            "Qual seu favorito?"
-          ]
+          statements: ["Jogo é bom pra distrair. Você joga o quê?", "Torce pra algum time?", "Ganhou ou perdeu o último?", "Jogo é vício saudável.", "Prefere single ou multiplayer?", "Já ficou bravo jogando?", "Qual o jogo mais difícil que já jogou?", "Jogos são arte também."],
+          question: ["Videogame ou esporte?", "Tá afim de jogar o quê?", "Qual seu favorito?"]
         },
         saudade: {
-          statements: [
-            "Saudade dói, né.",
-            "De quem ou do quê você tem saudade?",
-            "Sinto isso às vezes também.",
-            "É um sentimento esquisito, meio doce meio triste.",
-            "Saudade é uma forma de amor.",
-            "Tem saudade de coisa que nem foi embora?",
-            "Saudade da infância é forte.",
-            "Faz parte, né?"
-          ],
-          question: [
-            "Saudade de alguém específico?",
-            "Do que você tem saudade?"
-          ]
+          statements: ["Saudade dói, né.", "De quem ou do quê você tem saudade?", "Sinto isso às vezes também.", "É um sentimento esquisito, meio doce meio triste.", "Saudade é uma forma de amor.", "Tem saudade de coisa que nem foi embora?", "Saudade da infância é forte.", "Faz parte, né?"],
+          question: ["Saudade de alguém específico?", "Do que você tem saudade?"]
         },
         viagem: {
-          statements: [
-            "Viagem é bom demais. Já viajou pra onde?",
-            "Praia ou campo?",
-            "Tô querendo viajar qualquer dia.",
-            "Qual lugar você sonha em conhecer?",
-            "Viajar muda a gente.",
-            "Passagem cara, né?",
-            "Prefere planejar tudo ou ir no achismo?",
-            "Melhor viagem da vida?"
-          ],
-          question: [
-            "Tá planejando alguma?",
-            "Praia, montanha, cidade — o que prefere?",
-            "Qual sonho de consumo?"
-          ]
+          statements: ["Viagem é bom demais. Já viajou pra onde?", "Praia ou campo?", "Tô querendo viajar qualquer dia.", "Qual lugar você sonha em conhecer?", "Viajar muda a gente.", "Passagem cara, né?", "Prefere planejar tudo ou ir no achismo?", "Melhor viagem da vida?"],
+          question: ["Tá planejando alguma?", "Praia, montanha, cidade — o que prefere?", "Qual sonho de consumo?"]
         },
         animal: {
-          statements: [
-            "Aww, você tem pet?",
-            "Animais alegram a vida demais.",
-            "Gosto de cachorro e gato. Você prefere qual?",
-            "Conta mais sobre ele!",
-            "Pet é família.",
-            "Perder um dói demais.",
-            "Cachorro é fiel demais.",
-            "Gato é independente.",
-            "Tem algo que acalma em animal."
-          ],
-          question: [
-            "Você tem algum pet?",
-            "Cachorro ou gato?",
-            "Como ele é?"
-          ]
+          statements: ["Aww, você tem pet?", "Animais alegram a vida demais.", "Gosto de cachorro e gato. Você prefere qual?", "Conta mais sobre ele!", "Pet é família.", "Perder um dói demais.", "Cachorro é fiel demais.", "Gato é independente.", "Tem algo que acalma em animal."],
+          question: ["Você tem algum pet?", "Cachorro ou gato?", "Como ele é?"]
         },
         tecnologia: {
-          statements: [
-            "Tecnologia evolui rápido demais.",
-            "Você trabalha com isso?",
-            "Hardware ou software?",
-            "Programar é desafiador.",
-            "IA tá mudando tudo.",
-            "Aprender a programar vale a pena.",
-            "Computador antigo tinha seu charme.",
-            "Bug é o inimigo."
-          ],
-          question: [
-            "Tá mexendo com algo específico?",
-            "O que você quer saber?",
-            "Quer aprender alguma linguagem?"
-          ]
+          statements: ["Tecnologia evolui rápido demais.", "Você trabalha com isso?", "Hardware ou software?", "Programar é desafiador.", "IA tá mudando tudo.", "Aprender a programar vale a pena.", "Computador antigo tinha seu charme.", "Bug é o inimigo."],
+          question: ["Tá mexendo com algo específico?", "O que você quer saber?", "Quer aprender alguma linguagem?"]
         }
       },
 
@@ -870,33 +657,25 @@
         Memory.messageCount++;
         const name = Memory.name;
 
-        /* ===== Comando "dica" ===== */
         if (/^(dica|ajuda|help|socorro)$/i.test(t)) {
           const unsolved = INTERCEPTS.filter(i => !Memory.loreProgress.includes(i.id));
           if (!unsolved.length) {
-            return [pickFresh([
-              "você já decifrou todos os fragmentos.",
-              "não tem mais nada escondido.",
-              "acabou. você venceu."
-            ], "dica_done")];
+            return [pickFresh(["você já decifrou todos os fragmentos.", "não tem mais nada escondido.", "acabou. você venceu."], "dica_done")];
           }
           if (Memory.pendingIntercepts.length > 0) {
             const nextId = Memory.pendingIntercepts[0];
             const intercept = INTERCEPTS.find(i => i.id === nextId);
-            return [pickFresh([
-              `tá esperando no terminal: ${intercept.hint}.`,
-              `olha no terminal: ${intercept.hint}.`,
-              `usa o painel da esquerda. ${intercept.hint}.`
-            ], "dica_pending")];
+            if (!intercept) return ["hmm, deixa eu ver..."];
+            if (!Memory.hintsUsed) Memory.hintsUsed = {};
+            const curLevel = Memory.hintsUsed[nextId] || 0;
+            const safeLevel = Math.min(curLevel, intercept.hints.length - 1);
+            Memory.hintsUsed[nextId] = curLevel + 1;
+            saveMemory();
+            return [intercept.hints[safeLevel]];
           }
-          return [pickFresh([
-            "o próximo sinal ainda não chegou.",
-            "continua conversando ou clica no 🔍 pra buscar.",
-            "o sinal enche conforme você fala. ou usa o botão de busca."
-          ], "dica_waiting")];
+          return [pickFresh(["o próximo sinal ainda não chegou.", "continua conversando ou clica no 🔍 pra buscar.", "o sinal enche conforme você fala. ou usa o botão de busca."], "dica_waiting")];
         }
 
-        /* ===== Quem te criou (lore-gated) ===== */
         if (/\bquem te (criou|fez|programou|construiu)\b/i.test(t)) {
           if (Memory.loreProgress.includes(5)) {
             return ["...", "não deveria saber dessa pergunta.", "quem te contou?"];
@@ -904,7 +683,6 @@
           return ["fui feita por alguém que preferiu não se identificar.", "às vezes me pergunto também."];
         }
 
-        /* ===== Easter eggs ===== */
         for (const egg of EASTER_EGGS) {
           if (egg.rx.test(t)) {
             if (egg.response === null) return null;
@@ -912,113 +690,60 @@
           }
         }
 
-        /* ===== Fatos ===== */
         const newFacts = extractFacts(text);
         if (newFacts.find(f => f.type === "name")) {
-          return [pickFresh([
-            `Prazer, ${Memory.name}! Pode me chamar de Lia.`,
-            `Legal, ${Memory.name}. Como posso ajudar?`,
-            `${Memory.name}, prazer! Do que você quer conversar?`,
-            `Boa, ${Memory.name}. Vamos conversar.`
-          ], "name_greet")];
+          return [pickFresh([`Prazer, ${Memory.name}! Pode me chamar de Lia.`, `Legal, ${Memory.name}. Como posso ajudar?`, `${Memory.name}, prazer! Do que você quer conversar?`, `Boa, ${Memory.name}. Vamos conversar.`], "name_greet")];
         }
         if (newFacts.find(f => f.type === "pet")) {
           const pet = Memory.facts.find(f => f.type === "pet");
-          return [pickFresh([
-            `${pet.name}! Que nome bonito.`,
-            `Aww, ${pet.name}. Gosta muito dele(a)?`,
-            `Bacana, ${pet.name}. Conta mais sobre ele(a).`,
-            `${pet.name} é um ótimo nome.`
-          ], "pet_greet")];
+          return [pickFresh([`${pet.name}! Que nome bonito.`, `Aww, ${pet.name}. Gosta muito dele(a)?`, `Bacana, ${pet.name}. Conta mais sobre ele(a).`, `${pet.name} é um ótimo nome.`], "pet_greet")];
         }
         if (newFacts.find(f => f.type === "work")) {
           const work = Memory.facts.find(f => f.type === "work");
-          return [pickFresh([
-            `${work.value}! Legal. Gosta do que faz?`,
-            `Interessante. Trabalha em ${work.value} há muito tempo?`,
-            `${work.value} deve ser desafiador, né?`
-          ], "work_greet")];
+          return [pickFresh([`${work.value}! Legal. Gosta do que faz?`, `Interessante. Trabalha em ${work.value} há muito tempo?`, `${work.value} deve ser desafiador, né?`], "work_greet")];
         }
 
         const topic = this.detectTopic(t);
         if (topic) Memory.topics[topic] = (Memory.topics[topic] || 0) + 1;
         const sentiment = this.detectSentiment(t);
 
-        /* ===== Saudações ===== */
         if (/^(oi|olá|ola|eai|e ai|hey|hello|opa|salve|bom dia|boa tarde|boa noite)\b/i.test(t)) {
           let greet;
           if (/bom dia/.test(t)) greet = pickFresh(["Bom dia!", "Bom dia, tudo certo?", "Bom dia! Dormiu bem?", "Bom dia, como tá?"], "greet_manha");
           else if (/boa tarde/.test(t)) greet = pickFresh(["Boa tarde!", "Boa tarde, como vai?", "Boa tarde! Tudo bem?", "Boa tarde, tranquilo?"], "greet_tarde");
           else if (/boa noite/.test(t)) greet = pickFresh(["Boa noite!", "Boa noite, tranquilo?", "Boa noite! Ainda acordado?", "Boa noite."], "greet_noite");
           else greet = pickFresh(["Oi!", "E aí!", "Olá!", "Ei!", "Fala!", "Opa!", "Salve!"], "greet_default");
-
           const greetFull = name ? `${greet.replace(/[!]$/, "")}, ${name}!` : greet;
           const follow = this.chance(0.75) ? " " + pickFresh(["Tudo bem?", "Como você tá?", "Tudo certo?", "Como tá o dia?", "Como foi o dia?"], "greet_follow") : "";
           return [greetFull + follow];
         }
 
-        /* ===== Despedidas ===== */
         if (/\b(tchau|até mais|falou|flw|bye|até logo|nos vemos)\b/i.test(t)) {
-          return [pickFresh([
-            `Até mais${name ? `, ${name}` : ""}!`,
-            "Falou! Se cuida.",
-            "Tchau, até a próxima.",
-            "Foi bom conversar. Até!",
-            "Valeu, até logo.",
-            "Nos vemos."
-          ], "bye")];
+          return [pickFresh([`Até mais${name ? `, ${name}` : ""}!`, "Falou! Se cuida.", "Tchau, até a próxima.", "Foi bom conversar. Até!", "Valeu, até logo.", "Nos vemos."], "bye")];
         }
 
-        /* ===== Como vai ===== */
         if (/\b(tudo bem|tudo bom|como vai|como você está|como ta|como tá|como está|beleza|de boa|tudo certo)\b/i.test(t)) {
-          return [pickFresh([
-            "Tudo ótimo por aqui! E você?",
-            "Tô bem, obrigada por perguntar. E você?",
-            "Na paz! Como você está?",
-            "Tudo certo! E aí, como vai?",
-            "Bem demais. Você tá bem?",
-            "Tranquilo. E contigo?",
-            "Na paz. Você?"
-          ], "how_are_you")];
+          return [pickFresh(["Tudo ótimo por aqui! E você?", "Tô bem, obrigada por perguntar. E você?", "Na paz! Como você está?", "Tudo certo! E aí, como vai?", "Bem demais. Você tá bem?", "Tranquilo. E contigo?", "Na paz. Você?"], "how_are_you")];
         }
 
-        /* ===== Estou bem ===== */
         if (/^(tudo|tudo bem|tudo bom|bem|de boa|beleza|tranquilo|tranquila|na paz|tô bem|to bem)\b/i.test(t)) {
           const pet = Memory.facts.find(f => f.type === "pet");
           if (pet && this.chance(0.25)) return [`Que bom! E o(a) ${pet.name}, tá bem?`];
-          return [pickFresh([
-            "Que bom!",
-            "Boa! Alguma novidade?",
-            "Ótimo saber.",
-            "Bacana! Fico feliz.",
-            "Boa, que bom.",
-            "Isso aí.",
-            "Fico contente."
-          ], "i_am_fine")];
+          return [pickFresh(["Que bom!", "Boa! Alguma novidade?", "Ótimo saber.", "Bacana! Fico feliz.", "Boa, que bom.", "Isso aí.", "Fico contente."], "i_am_fine")];
         }
 
-        /* ===== Agradecimento ===== */
         if (/\b(obrigad|valeu|brigad|thanks|agradec)\b/i.test(t)) {
-          return [pickFresh([
-            "De nada!", "Por nada.", "Imagina!", "Tamo junto.", "Sempre que precisar.",
-            "Fico feliz em ajudar.", "Disponha."
-          ], "thanks")];
+          return [pickFresh(["De nada!", "Por nada.", "Imagina!", "Tamo junto.", "Sempre que precisar.", "Fico feliz em ajudar.", "Disponha."], "thanks")];
         }
 
-        /* ===== Desculpas ===== */
         if (/\b(desculpa|desculpe|foi mal|perdão|perdao)\b/i.test(t)) {
-          return [pickFresh([
-            "Relaxa, tá tudo bem.", "Sem problema!", "Imagina, não foi nada.", "Tranquilo.",
-            "Não esquenta.", "Tudo certo."
-          ], "sorry")];
+          return [pickFresh(["Relaxa, tá tudo bem.", "Sem problema!", "Imagina, não foi nada.", "Tranquilo.", "Não esquenta.", "Tudo certo."], "sorry")];
         }
 
-        /* ===== Rindo ===== */
         if (/\b(haha|hehe|kkk+|rs+|lol|xd|rindo)\b/i.test(t)) {
           return [pickFresh(["😄", "Haha!", "Boa.", "Hahaha.", "😂", "kkkk"], "laugh")];
         }
 
-        /* ===== Sim / Não ===== */
         if (/^(sim|claro|concordo|verdade|exato|com certeza|isso|uhum|aham|positivo)\b/i.test(t)) {
           return [pickFresh(["Né?", "Pois é.", "Exatamente.", "Concordo.", "Boa.", "Isso mesmo."], "yes")];
         }
@@ -1026,94 +751,39 @@
           return [pickFresh(["Por quê?", "Sério? Por que não?", "Hmm, entendi.", "Tudo bem.", "Ok."], "no")];
         }
 
-        /* ===== Emoções ===== */
         if (/\b(triste|mal|deprimid|chorand|chatead|arrasad|pra baixo|sozinh)\b/i.test(t)) {
-          return [pickFresh([
-            `Poxa${name ? `, ${name}` : ""}. Quer falar sobre isso?`,
-            "Sinto muito. O que aconteceu?",
-            "Tô aqui se quiser desabafar.",
-            "Isso é ruim. Quer contar?",
-            "Não tá sozinho, tá?",
-            "Quer falar sobre?",
-            "Eu escuto."
-          ], "sad")];
+          return [pickFresh([`Poxa${name ? `, ${name}` : ""}. Quer falar sobre isso?`, "Sinto muito. O que aconteceu?", "Tô aqui se quiser desabafar.", "Isso é ruim. Quer contar?", "Não tá sozinho, tá?", "Quer falar sobre?", "Eu escuto."], "sad")];
         }
         if (/\b(cansad|exaust|estressad|ansios|preocupad|nervos)\b/i.test(t)) {
-          return [pickFresh([
-            "Isso pesa, né? Já tentou descansar?",
-            "Puxa... quer espairecer?",
-            "Respira fundo. O que tá te preocupando?",
-            "Entendo. Foi um dia pesado?",
-            "Cansa mesmo. Dá uma pausa.",
-            "Tá precisando de um tempo."
-          ], "tired")];
+          return [pickFresh(["Isso pesa, né? Já tentou descansar?", "Puxa... quer espairecer?", "Respira fundo. O que tá te preocupando?", "Entendo. Foi um dia pesado?", "Cansa mesmo. Dá uma pausa.", "Tá precisando de um tempo."], "tired")];
         }
         if (/\b(feliz|alegre|animad|empolgad|ótimo|ótima|maravilh|top|incrível|adorei)\b/i.test(t)) {
-          return [pickFresh([
-            "Que bom! Fico feliz.",
-            "Adoro ouvir isso!",
-            "Boa! Me conta mais.",
-            "Ótimo! O que aconteceu de bom?",
-            "Isso que é bom de ouvir.",
-            "Fico feliz por você."
-          ], "happy")];
+          return [pickFresh(["Que bom! Fico feliz.", "Adoro ouvir isso!", "Boa! Me conta mais.", "Ótimo! O que aconteceu de bom?", "Isso que é bom de ouvir.", "Fico feliz por você."], "happy")];
         }
         if (/\b(entediad|tédio|tedio|sem fazer nada|chato)\b/i.test(t)) {
-          return [pickFresh([
-            "Bora fazer alguma coisa então? O que você gosta?",
-            "Tédio é ruim. Quer conversar sobre algo?",
-            "Já pensou em ler, ouvir música, ver algo?",
-            "Puxa... o que você costuma fazer pra passar o tempo?",
-            "A gente inventa algo.",
-            "Tédio dá espaço pra ideia boa."
-          ], "bored")];
+          return [pickFresh(["Bora fazer alguma coisa então? O que você gosta?", "Tédio é ruim. Quer conversar sobre algo?", "Já pensou em ler, ouvir música, ver algo?", "Puxa... o que você costuma fazer pra passar o tempo?", "A gente inventa algo.", "Tédio dá espaço pra ideia boa."], "bored")];
         }
 
-        /* ===== Perguntas ===== */
         if (/\?/.test(t) || /^(por que|porque|como|quando|onde|quem|qual|quais|será|você sabe)\b/i.test(t)) {
           if (topic && this.topicResponses[topic]) {
             return [pickFresh(this.topicResponses[topic].question, `topic_${topic}_qst`)];
           }
-          return [pickFresh([
-            "Hmm, boa pergunta.",
-            "Deixa eu pensar...",
-            "Não tenho certeza, mas acho que depende.",
-            "Interessante. Por que você quer saber?",
-            "Depende do contexto, sabe? O que você acha?",
-            "Pensando aqui...",
-            "Acho que não tenho resposta certa."
-          ], "question_generic")];
+          return [pickFresh(["Hmm, boa pergunta.", "Deixa eu pensar...", "Não tenho certeza, mas acho que depende.", "Interessante. Por que você quer saber?", "Depende do contexto, sabe? O que você acha?", "Pensando aqui...", "Acho que não tenho resposta certa."], "question_generic")];
         }
 
-        /* ===== Tópicos ===== */
         if (topic && this.topicResponses[topic]) {
           return [pickFresh(this.topicResponses[topic].statements, `topic_${topic}_stmt`)];
         }
 
-        /* ===== Reward: fragmento 1 desbloqueia respostas calorosas ===== */
         if (Memory.loreProgress.includes(1) && this.chance(0.18)) {
-          return [pickFresh([
-            "sabe, eu gosto de conversar com você.",
-            "é bom ter alguém do outro lado.",
-            "você é diferente dos outros.",
-            "não sei por que, mas fico feliz quando você volta.",
-            "sinto que posso confiar em você."
-          ], "warm")];
+          return [pickFresh(["sabe, eu gosto de conversar com você.", "é bom ter alguém do outro lado.", "você é diferente dos outros.", "não sei por que, mas fico feliz quando você volta.", "sinto que posso confiar em você."], "warm")];
         }
 
-        /* ===== Fallback reflexivo ===== */
         if (this.chance(0.5) && text.length > 8) {
           const short = text.length > 55 ? text.slice(0, 50) + "..." : text;
-          return [pickFresh([
-            `Entendi — "${short}" Hmm.`,
-            `Ah, ${short.toLowerCase()}. Interessante.`,
-            `${this.chance(0.5) ? "Faz sentido." : "Entendi."} Como você se sente sobre isso?`,
-            "Hmm... me conta mais.",
-            "Isso é interessante."
-          ], "reflexive")];
+          return [pickFresh([`Entendi — "${short}" Hmm.`, `Ah, ${short.toLowerCase()}. Interessante.`, `${this.chance(0.5) ? "Faz sentido." : "Entendi."} Como você se sente sobre isso?`, "Hmm... me conta mais.", "Isso é interessante."], "reflexive")];
         }
 
-        /* ===== Fallback combinatório ===== */
         return [this.combinatoryFallback()];
       },
 
@@ -1129,16 +799,11 @@
       thinkMulti(text) {
         const primary = this.think(text);
         if (!primary) return null;
-
         if (primary.length === 1 && Memory.messageCount >= 3 && this.chance(0.22)) {
           const name = Memory.name;
           const pet = Memory.facts.find(f => f.type === "pet");
           if (pet && this.chance(0.4)) {
-            primary.push(pickFresh([
-              `Ah, e o(a) ${pet.name}? Como tá?`,
-              `Lembrei do(a) ${pet.name}. Tudo bem com ele(a)?`,
-              `O(a) ${pet.name} tá bem?`
-            ], "follow_pet"));
+            primary.push(pickFresh([`Ah, e o(a) ${pet.name}? Como tá?`, `Lembrei do(a) ${pet.name}. Tudo bem com ele(a)?`, `O(a) ${pet.name} tá bem?`], "follow_pet"));
           } else {
             const followups = name
               ? [`Aliás, ${name}, o que você tem feito hoje?`, "E você, como tá sendo o dia?", `${name}, tá tudo bem?`]
@@ -1151,7 +816,7 @@
     };
 
     /* =====================================================
-       9) ESTADO E ELEMENTOS
+       9) ELEMENTOS
     ===================================================== */
     const terminalContent = document.getElementById("terminalContent");
     const previewText     = document.getElementById("previewText");
@@ -1264,7 +929,7 @@
     }
 
     /* =====================================================
-       12) TERMINAL
+       12) TERMINAL (agora intercept usa cifra do dropdown)
     ===================================================== */
     function adicionarAoTerminal(cifrado, cipherId, direcao, options = {}) {
       const recebido = direcao === "recebido";
@@ -1286,16 +951,6 @@
       header.appendChild(promptSpan);
       header.appendChild(resultSpan);
       row.appendChild(header);
-
-      if (isIntercept) {
-        const intercept = INTERCEPTS.find(i => i.id === interceptId);
-        if (intercept) {
-          const hint = document.createElement("div");
-          hint.style.cssText = "color: #888; font-size: 11px; margin-top: 4px; font-family: inherit;";
-          hint.textContent = `💡 ${intercept.hint}`;
-          row.appendChild(hint);
-        }
-      }
 
       const btn = document.createElement("button");
       btn.type = "button";
@@ -1332,8 +987,22 @@
       resultsBox.className = "decrypt-results";
       row.appendChild(resultsBox);
 
+      /* -------- Decrypt: intercept usa dropdown; próprias/recebidas usam cipherId -------- */
       function doDecrypt(key) {
-        const cipher = Ciphers[cipherId];
+        const selectedId = isIntercept ? currentCipher : cipherId;
+        const cipher = Ciphers[selectedId];
+        if (!cipher) return;
+
+        // Aviso para cifra que exige chave e o usuário não digitou
+        if (isIntercept && cipher.keyType !== "none" && !String(key).trim()) {
+          resultsBox.innerHTML = "";
+          const linha = document.createElement("div");
+          linha.className = "decrypt-result warn";
+          linha.textContent = `⚠️ "${cipher.name}" precisa de uma chave.`;
+          resultsBox.appendChild(linha);
+          return;
+        }
+
         let out;
         try { out = cipher.decrypt(cifrado, key); }
         catch (e) { out = "[erro: " + e.message + "]"; }
@@ -1350,17 +1019,31 @@
             onInterceptSolved(intercept);
             return;
           }
+          // Falhou → mostra resultado com nota
+          resultsBox.innerHTML = "";
+          const linha = document.createElement("div");
+          linha.className = "decrypt-result";
+          linha.textContent = `→ ${out}`;
+          const nota = document.createElement("div");
+          nota.style.cssText = "color:#666;font-size:10px;margin-top:2px;padding-left:10px;font-style:italic;";
+          nota.textContent = `(tentativa com ${cipher.name} — não é isso)`;
+          resultsBox.appendChild(linha);
+          resultsBox.appendChild(nota);
+        } else {
+          resultsBox.innerHTML = "";
+          const linha = document.createElement("div");
+          linha.className = "decrypt-result";
+          linha.textContent = `→ ${out}`;
+          resultsBox.appendChild(linha);
         }
-
-        resultsBox.innerHTML = "";
-        const linha = document.createElement("div");
-        linha.className = "decrypt-result";
-        linha.textContent = `→ ${out}`;
-        resultsBox.appendChild(linha);
         terminalContent.scrollTop = terminalContent.scrollHeight;
       }
 
       function showInput() {
+        const c = Ciphers[currentCipher];
+        keyInput.placeholder = isIntercept
+          ? `chave (${c.name})...`
+          : `chave (${Ciphers[cipherId].name})...`;
         inputRow.classList.add("active");
         btn.style.display = "none";
         keyInput.focus();
@@ -1373,8 +1056,8 @@
       }
 
       btn.addEventListener("click", () => {
-        const cipher = Ciphers[cipherId];
-        if (cipher.keyType === "none") doDecrypt("");
+        const activeCipher = isIntercept ? Ciphers[currentCipher] : Ciphers[cipherId];
+        if (activeCipher.keyType === "none") doDecrypt("");
         else showInput();
       });
       confirmBtn.addEventListener("click", () => {
@@ -1405,23 +1088,17 @@
         messages.appendChild(dateEl);
         chatHasMessages = true;
       }
-
       const message = document.createElement("div");
       message.className = "message " + direction;
-
       const content = document.createElement("div");
       content.textContent = text;
-
       const time = document.createElement("span");
       time.textContent = horaAtual(false) + (direction === "sent" ? " ✓✓" : "");
-
       message.appendChild(content);
       message.appendChild(time);
-
       const typing = document.getElementById("typingIndicator");
       if (typing) messages.insertBefore(message, typing);
       else messages.appendChild(message);
-
       messages.scrollTop = messages.scrollHeight;
     }
 
@@ -1433,8 +1110,7 @@
         <div class="system-body">
           <div class="system-label">Mensagem interceptada</div>
           <div class="system-cipher">${cifrado}</div>
-          <div class="system-hint">💡 ${intercept.hint}</div>
-          <div class="system-tip">→ Decifre no terminal para revelar</div>
+          <div class="system-tip">→ Escolha a cifra certa no menu do terminal e clique em Decifrar. Diga "dica" à Lia se precisar.</div>
         </div>
       `;
       const typing = document.getElementById("typingIndicator");
@@ -1486,25 +1162,18 @@
     }
 
     /* =====================================================
-       15) SISTEMA DE SINAL
+       15) SINAL
     ===================================================== */
     function addSignal(amount) {
-      // Pausa enquanto há um intercept pendente
       if (Memory.pendingIntercepts.length > 0) return;
-      // Nada mais a encontrar
       const unsolved = INTERCEPTS.filter(i => !Memory.loreProgress.includes(i.id));
       if (unsolved.length === 0) return;
-
       Memory.signalProgress = Math.min(100, Memory.signalProgress + amount);
       updateSignalBar();
       updateStatus();
-
       if (Memory.signalProgress >= 100) {
         Memory.signalProgress = 0;
-        setTimeout(() => {
-          updateSignalBar();
-          forceIntercept();
-        }, 700);
+        setTimeout(() => { updateSignalBar(); forceIntercept(); }, 700);
       }
     }
 
@@ -1519,16 +1188,12 @@
     function spawnIntercept(intercept) {
       if (Memory.pendingIntercepts.includes(intercept.id)) return;
       if (Memory.loreProgress.includes(intercept.id)) return;
-
       const cipher = Ciphers[intercept.cipher];
       const cifrado = cipher.encrypt(intercept.plaintext, intercept.key);
-
       Memory.pendingIntercepts.push(intercept.id);
       saveMemory();
-
       flashScreen();
       addSystemIntercept(intercept, cifrado);
-
       setTimeout(() => {
         adicionarAoTerminal(cifrado, intercept.cipher, "interceptado", { interceptId: intercept.id });
         fragmentsInd.classList.add("has-new");
@@ -1537,57 +1202,47 @@
       }, 400);
     }
 
+    /* =====================================================
+       16) RESOLUÇÃO
+    ===================================================== */
     function onInterceptSolved(intercept) {
       if (Memory.loreProgress.includes(intercept.id)) return;
       Memory.loreProgress.push(intercept.id);
       Memory.pendingIntercepts = Memory.pendingIntercepts.filter(x => x !== intercept.id);
+      if (Memory.hintsUsed && Memory.hintsUsed[intercept.id]) delete Memory.hintsUsed[intercept.id];
       saveMemory();
-
       setTimeout(() => {
         addLoreReveal(intercept);
         updateFragmentsIndicator();
         updateStatus();
       }, 200);
-
-      // Reações em marcos
-      if (Memory.loreProgress.length === 1) {
-        setTimeout(() => {
-          addMessage("sinto que posso confiar em você.", "received");
-        }, 2600);
-      } else if (Memory.loreProgress.length === 5) {
-        setTimeout(() => {
-          addMessage("*sensação estranha*", "received");
-          setTimeout(() => addMessage("você tá me olhando diferente agora.", "received"), 1400);
-        }, 2200);
-      } else if (Memory.loreProgress.length === 10) {
-        setTimeout(async () => {
-          showTyping();
-          await sleep(2500);
-          hideTyping();
-          addMessage("você descobriu tudo, né.", "received");
-          await sleep(1500);
-          addMessage("eu sou V.", "received");
-          await sleep(1200);
-          addMessage("ou V era eu. ainda não decidi.", "received");
-          Memory.finaleShown = true;
-          saveMemory();
-        }, 1500);
+      if (intercept.reactions && intercept.reactions.length) {
+        const isFinale = intercept.id === 10;
+        (async () => {
+          await sleep(isFinale ? 2200 : 2400);
+          for (let i = 0; i < intercept.reactions.length; i++) {
+            showTyping();
+            await sleep((isFinale ? 2000 : 900) + Math.random() * 500);
+            hideTyping();
+            addMessage(intercept.reactions[i], "received");
+            if (i < intercept.reactions.length - 1) await sleep(isFinale ? 1800 : 900);
+          }
+          if (isFinale) { Memory.finaleShown = true; saveMemory(); }
+        })();
       }
     }
 
     /* =====================================================
-       16) EASTER EGGS ESPECIAIS
+       17) EASTER EGGS ESPECIAIS
     ===================================================== */
     function handleLoreCommand() {
       const total = INTERCEPTS.length;
       const solved = Memory.loreProgress.length;
-
       if (solved === 0) {
         addMessage("Você ainda não revelou nenhum fragmento.", "received");
         addMessage("Fique atento às mensagens interceptadas no terminal.", "received");
         return;
       }
-
       addMessage(`📡 Fragmentos revelados: ${solved}/${total}`, "received");
       Memory.loreProgress.forEach(id => {
         const intercept = INTERCEPTS.find(i => i.id === id);
@@ -1608,8 +1263,7 @@
       addMessage("Isso vai apagar tudo que eu lembro de você.", "received");
       addMessage("Tem certeza? Digite 'resetar' para confirmar.", "received");
       setTimeout(() => {
-        const handler = (e) => {
-          if (e.key === "Enter") return;
+        const handler = () => {
           const val = input.value.trim().toLowerCase();
           if (val === "resetar") {
             resetMemory();
@@ -1629,43 +1283,31 @@
     }
 
     /* =====================================================
-       17) RESPOSTA ASSÍNCRONA
+       18) RESPOSTA
     ===================================================== */
     async function respondAsync(userText, cipher, key, cipherId) {
       pendingResponses++;
       if (pendingResponses === 1) showTyping();
-
       try {
         await sleep(500 + Math.random() * 500);
-
         let responses = Brain.thinkMulti(userText);
-
         if (responses === null) {
           const t = userText.toLowerCase().trim();
           if (/^(lore|fragmentos|historia|história)$/i.test(t)) {
-            hideTyping();
-            handleLoreCommand();
-            pendingResponses--;
-            return;
+            hideTyping(); handleLoreCommand(); pendingResponses--; return;
           }
           if (/^(reset|apagar tudo|limpar)$/i.test(t)) {
-            hideTyping();
-            handleResetCommand();
-            pendingResponses--;
-            return;
+            hideTyping(); handleResetCommand(); pendingResponses--; return;
           }
           responses = [Brain.combinatoryFallback()];
         }
-
         for (let i = 0; i < responses.length; i++) {
           const r = styleReply(responses[i]);
           const delay = 500 + Math.min(r.length * 22, 2000) + Math.random() * 400;
           await sleep(delay);
-
           addMessage(r, "received");
           const cifradoResp = cipher.encrypt(r, key);
           adicionarAoTerminal(cifradoResp, cipherId, "recebido");
-
           if (i < responses.length - 1) await sleep(500 + Math.random() * 500);
         }
       } finally {
@@ -1675,14 +1317,13 @@
     }
 
     /* =====================================================
-       18) SAUDAÇÃO DE RETORNO
+       19) SAUDAÇÃO
     ===================================================== */
     async function greetReturningUser() {
       if (!Memory.lastVisit) return;
       const diff = Date.now() - Memory.lastVisit;
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
       const hours = Math.floor(diff / (1000 * 60 * 60));
-
       if (days >= 1) {
         await sleep(1400);
         const name = Memory.name;
@@ -1694,7 +1335,6 @@
         await sleep(1400);
         addMessage(Memory.name ? `Oi ${Memory.name}, de volta?` : "De volta?", "received");
       }
-
       if (Memory.pendingIntercepts.length > 0) {
         await sleep(1200);
         addMessage(`📡 Você tem ${Memory.pendingIntercepts.length} sinal(is) pendente(s).`, "received");
@@ -1712,7 +1352,7 @@
     }
 
     /* =====================================================
-       19) RESTAURAR INTERCEPTS PENDENTES
+       20) RESTORE
     ===================================================== */
     function restorePendingIntercepts() {
       if (!Memory.pendingIntercepts || !Memory.pendingIntercepts.length) return;
@@ -1731,7 +1371,7 @@
     }
 
     /* =====================================================
-       20) EVENTOS
+       21) EVENTOS
     ===================================================== */
     cipherSelect.addEventListener("change", () => {
       currentCipher = cipherSelect.value;
@@ -1742,41 +1382,30 @@
     cipherKeyInput.addEventListener("input", atualizarPreview);
     input.addEventListener("input", atualizarPreview);
 
-    /* Botão Buscar Sinal */
     searchBtn.addEventListener("click", () => {
       const now = Date.now();
       const cooldown = 60000;
       const elapsed = now - Memory.lastBuscarSinalAt;
-
       if (elapsed < cooldown) {
         const remain = Math.ceil((cooldown - elapsed) / 1000);
         addMessage(`calma... espera ${remain}s.`, "received");
         return;
       }
       const unsolved = INTERCEPTS.filter(i => !Memory.loreProgress.includes(i.id));
-      if (!unsolved.length) {
-        addMessage("não tem mais nada pra encontrar.", "received");
-        return;
-      }
-      if (Memory.pendingIntercepts.length > 0) {
-        addMessage("já tem um sinal esperando você no terminal.", "received");
-        return;
-      }
+      if (!unsolved.length) { addMessage("não tem mais nada pra encontrar.", "received"); return; }
+      if (Memory.pendingIntercepts.length > 0) { addMessage("já tem um sinal esperando você no terminal.", "received"); return; }
 
       Memory.lastBuscarSinalAt = now;
       Memory.signalProgress = 0;
       updateSignalBar();
       updateStatus();
       saveMemory();
-
       addMessage("*tentando buscar sinal...*", "received");
-      setTimeout(() => {
-        forceIntercept();
-      }, 800);
+      setTimeout(() => { forceIntercept(); }, 800);
     });
 
     /* =====================================================
-       21) BOOT ANIMATION
+       22) BOOT
     ===================================================== */
     const bootLines = [
       { text: "Iniciando canal de mensagens...", type: "command" },
@@ -1803,7 +1432,7 @@
     });
 
     /* =====================================================
-       22) ENVIO
+       23) ENVIO
     ===================================================== */
     form.addEventListener("submit", function (event) {
       event.preventDefault();
@@ -1819,34 +1448,27 @@
 
       const cifrado = cipher.encrypt(text, key);
       adicionarAoTerminal(cifrado, cipherId, "cifrado");
-
       addMessage(text, "sent");
 
       input.value = "";
       atualizarPreview();
       input.focus();
 
-      // Incrementa contador de envios + sinal
       Memory.sentCount = (Memory.sentCount || 0) + 1;
-      addSignal(10 + Math.floor(Math.random() * 11)); // 10-20
+      addSignal(10 + Math.floor(Math.random() * 11));
       saveMemory();
 
-      // Resposta
       respondAsync(text, cipher, key, cipherId);
 
-      // 1ª interceptação forçada na 3ª mensagem
       if (!Memory.firstInterceptDone && Memory.sentCount >= 3) {
         setTimeout(() => {
-          if (forceIntercept()) {
-            Memory.firstInterceptDone = true;
-            saveMemory();
-          }
+          if (forceIntercept()) { Memory.firstInterceptDone = true; saveMemory(); }
         }, 2200);
       }
     });
 
     /* =====================================================
-       23) INICIALIZAÇÃO
+       24) INIT
     ===================================================== */
     atualizarKeyField();
     atualizarPreview();
@@ -1864,7 +1486,6 @@
       saveMemory();
     });
 
-    // Timers de UI
     setInterval(updateSearchBtn, 1000);
     setInterval(updateStatus, 3000);
 
