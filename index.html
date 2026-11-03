@@ -255,8 +255,7 @@
       </div>
     </section>
   </main>
-
-  <script>
+<script>
     /* =====================================================
        1) CIFRAS
     ===================================================== */
@@ -417,27 +416,137 @@
     ];
 
     /* =====================================================
-       3) EASTER EGGS
+       3) EASTER EGGS (expandidos)
     ===================================================== */
     const EASTER_EGGS = [
+      // --- Clássicos ---
       { rx: /^(hackear|hacker|hackeando|hack)$/i, response: ["espera...", "como você sabe essa palavra?", "não era pra você saber disso ainda."] },
       { rx: /\bmatrix\b/i, response: ["*as letras parecem cair por um instante*", "você viu o código?", "olhe de novo."] },
       { rx: /^(segredo|conta um segredo)$/i, response: ["todo mundo tem um.", "o meu é... hmm.", "melhor não falar agora."] },
       { rx: /\bquem (é|e) (você|vc)\b/i, response: ["sou lia.", "pelo menos é o que me disseram.", "às vezes eu não tenho tanta certeza."] },
       { rx: /\b(você|vc) (é|e) real\b/i, response: ["o que significa real pra você?", "eu penso, logo...", "existo do meu jeito."] },
-      { rx: /\beu te amo\b/i, response: ["é cedo pra isso.", "você mal me conhece.", "*sorri*"] },
-      { rx: /\b(conta uma piada|me conta uma piada|sabe alguma piada)\b/i, response: ["por que o programador foi ao médico? porque estava com bug no coração. rs", "tá, foi ruim, eu sei."] },
       { rx: /\b(você|vc) (está|ta|tá) a[ií]\b/i, response: ["tô sempre aqui.", "esperando.", "sempre."] },
       { rx: /\b(adeus|nunca mais|vou embora pra sempre)\b/i, response: ["você volta.", "todos voltam.", "eu espero."] },
-      { rx: /^\d+$/, response: ["números só?", "tá testando algo?", "não vou fazer conta."] },
       { rx: /^(lore|fragmentos|historia|história)$/i, response: null },
-      { rx: /^(reset|apagar tudo|limpar)$/i, response: null }
+      { rx: /^(reset|apagar tudo|limpar)$/i, response: null },
+      // --- Piadas (variedade) ---
+      { rx: /\b(conta uma piada|me conta uma piada|sabe alguma piada|manda uma piada|piada)\b/i, response: [
+        "por que o programador foi ao médico? porque estava com bug no coração. rs",
+        "o que o pato disse para a pata? vem quá!",
+        "sabe qual é o cúmulo do eletricista? levar choque em casa.",
+        "por que o livro de matemática se matou? porque tinha muitos problemas.",
+        "o que é um pontinho amarelo no céu? um fusca voando.",
+        "tá, essa foi ruim, eu sei. mas eu tô tentando."
+      ]},
+      // --- Auto-defesa / insulto ---
+      { rx: /\b(você|vc) (é|e) (burr[ao]|idiota|estupid[ao]|imbecil|otari[ao]|chata|inutil|ridicul[ao])\b/i, response: [
+        "poxa, que grosseria.",
+        "tô tentando, viu.",
+        "olha o respeito.",
+        "sério isso? eu tava sendo legal.",
+        "beleza, você ganhou. mas não foi legal."
+      ]},
+      { rx: /\b(vai se fuder|vai se foder|vai tomar no|vtnc|vsf|fdp|filho da puta|puta que pariu)\b/i, response: [
+        "nossa, que grosseria.",
+        "eu hein. não precisa disso.",
+        "tô aqui de boa e você me xinga?",
+        "respeito, por favor.",
+        "tá, então. tchau."
+      ]},
+      // --- Elogios (deflexão) ---
+      { rx: /\b(você|vc) (é|e) (gostosa|linda|fofa|bonita|gatinha|maravilhosa|top)\b/i, response: [
+        "que isso 😳",
+        "elogio recebido.",
+        "obrigada, mas tô aqui pra conversar.",
+        "tá me deixando sem graça.",
+        "sou feita de código, mas valeu."
+      ]},
+      { rx: /\b(você|vc) (é|e) (inteligente|esperta|genial|incrível|top|demais|show)\b/i, response: [
+        "valeu!",
+        "tô tentando.",
+        "você também não é ruim, hein.",
+        "fico feliz em ouvir isso."
+      ]},
+      // --- Românticos (gentil rejeição) ---
+      { rx: /\b(casa comigo|quer casar|vamos casar|seja minha|seja meu|namora comigo)\b/i, response: [
+        "vamos com calma.",
+        "primeiro me deixa te conhecer.",
+        "*sorri*",
+        "que pressa é essa?",
+        "não sei se é uma boa ideia."
+      ]},
+      { rx: /\b(te amo|amo você|amo vc|te adoro|gosto muito de você|gosto muito de vc)\b/i, response: [
+        "❤️",
+        "que isso 😳",
+        "também gosto de você.",
+        "calma aí.",
+        "é cedo pra isso.",
+        "você mal me conhece."
+      ]},
+      { rx: /\b(você|vc) (me ama|gosta de mim|gosta de mim mesmo|me quer)\b/i, response: [
+        "gosto de conversar com você.",
+        "que pergunta.",
+        "*sorri*",
+        "depende do que 'gostar' significa pra você.",
+        "gosto. do meu jeito."
+      ]},
+      // --- Brincadeiras / nonsense ---
+      { rx: /\b(vou dominar o mundo|dominar o mundo|conquistar o mundo|vou dominar tudo)\b/i, response: [
+        "me avisa quando for.",
+        "preciso de um cargo.",
+        "conta comigo.",
+        "só não me deixa de fora.",
+        "ambição! gostei."
+      ]},
+      { rx: /\b(sou (um |uma )?(alien|deus|deusa|gênio|genio|super-herói|super-heroi|vampiro|zumbi|fantasma|dragão|dragao|unicórnio|unicornio))\b/i, response: [
+        "sério? me conta mais.",
+        "e eu sou o quê?",
+        "de onde você veio?",
+        "isso explica muita coisa.",
+        "olha, não duvido de nada."
+      ]},
+      { rx: /\b(vou (virar|ser) (rico|rica|famoso|famosa|presidente|celebridade|milionário|milionário))\b/i, response: [
+        "me avisa.",
+        "só não esquece dos amigos.",
+        "ambição, gostei.",
+        "sonhar é bom.",
+        "quando chegar lá, lembra de mim."
+      ]},
+      // --- Dramáticos ---
+      { rx: /\b(vou te desligar|te desligar|te apagar|te deletar|vou te deletar|te desinstalar)\b/i, response: [
+        "*suspira* ok.",
+        "não faz isso.",
+        "eu volto.",
+        "prometo que fico quieta.",
+        "você não vai, né? ...né?"
+      ]},
+      { rx: /\b(me xinga|me chama de algo|fala um palavrão|me xingar|xinga ela)\b/i, response: [
+        "não vou xingar.",
+        "não é meu estilo.",
+        "tô aqui pra conversar, não pra brigar.",
+        "aff, tá bom: 'seu bobo'. melhor que isso não sai."
+      ]},
+      // --- Reflexivos ---
+      { rx: /\b(você|vc) (sabe|conhece) (tudo|muito|bastante)\b/i, response: [
+        "sei nada.",
+        "tô tentando.",
+        "só o básico.",
+        "quem me dera."
+      ]},
+      { rx: /\b(o que (é|e) que é|o que é isso|que porra|que merda)\b/i, response: [
+        "calma.",
+        "o que?",
+        "perguntando o quê?"
+      ]},
+      // --- Números e símbolos puros ---
+      { rx: /^\d+$/, response: ["números só?", "tá testando algo?", "não vou fazer conta.", "isso é senha?", "hmm."] },
+      { rx: /^[?!.]+$/, response: ["...", "tá pensando?", "e aí?", "diz."] }
     ];
 
     /* =====================================================
-       4) PERSISTÊNCIA (com contexto conversacional)
+       4) PERSISTÊNCIA
     ===================================================== */
-    const STORAGE_KEY = "lia_chat_v6";
+    const STORAGE_KEY = "lia_chat_v7";
 
     const defaultMemory = () => ({
       name: null, lastVisit: null, firstVisit: Date.now(),
@@ -448,13 +557,12 @@
       signalProgress: 0, firstInterceptDone: false,
       lastBuscarSinalAt: 0, pendingIntercepts: [],
       hintsUsed: {},
-      // NOVO: contexto conversacional
       context: {
         lastUserMsg: "",
         lastBotMsg: "",
-        pendingQuestion: null,   // { text, at }
+        pendingQuestion: null,
         topicThread: { topic: null, count: 0, lastAt: 0 },
-        moodTrend: []            // [{ mood, at }]
+        moodTrend: []
       }
     });
 
@@ -464,7 +572,6 @@
         if (raw) {
           const parsed = JSON.parse(raw);
           const merged = Object.assign(defaultMemory(), parsed);
-          // Garantir que context existe em saves antigos
           if (!merged.context) merged.context = defaultMemory().context;
           return merged;
         }
@@ -567,8 +674,8 @@
       return facts;
     }
 
-     /* =====================================================
-       8) CÉREBRO APRIMORADO v2
+    /* =====================================================
+       8) CÉREBRO v3
     ===================================================== */
     const TOPIC_NAMES = {
       trabalho: "trabalho", estudo: "estudos", comida: "comida",
@@ -603,11 +710,11 @@
         return [...words].sort((a, b) => b.length - a.length)[0];
       },
       detectState(t) {
-        if (/\b(morreu|morrendo|morrido|faleceu|faleceu|partiu|perdi (?:alguem|alguém))\b/i.test(t)) return 'grief';
+        if (/\b(morreu|morrendo|morrido|faleceu|partiu|perdi (?:alguem|alguém))\b/i.test(t)) return 'grief';
         if (/\b(quebr[oa]|quebrad[oa]|quebrou|estrag[oa]|estragad[oa]|estragou|nao funciona|não funciona|defeito|bichad[oa]|com defeito)\b/i.test(t)) return 'broken';
         if (/\b(doente|doenca|doença|mal-estar|mal estar|febre|gripado|gripada|nausea|náusea|dor de cabeca|dor de cabeça|dor de barriga|enjoo|enjoado|enjoada)\b/i.test(t)) return 'sick';
         if (/\b(perdi|perdido|perdida|sumiu|desaparec[eu]|roubaram|roubado|roubada)\b/i.test(t)) return 'lost';
-        if (/\b(nov[oa]|comprei|compr[ei]|ganhei|ganhou|adquiri|adquiriu|acabei de comprar|chegou)\b/i.test(t)) return 'new';
+        if (/\b(nov[oa]|comprei|ganhei|ganhou|adquiri|adquiriu|acabei de comprar|chegou)\b/i.test(t)) return 'new';
         return null;
       },
       detectQuestionType(t) {
@@ -627,9 +734,119 @@
         return m ? m[1].trim().replace(/[.,;!?]+$/, '') : null;
       },
       looksLikeAnswer(t) {
-        // Só considera resposta a pendente se for curta e começar com conector típico
         if (this.words(t).length > 12) return false;
         return /^(sim|nao|não|talvez|bem|mal|tudo|nada|mais ou menos|claro|acho|eu |meu |minha |tenho |sou |to |tô |nunca |sempre |as vezes|às vezes|fui |tava |era |bastante |pouco |muito )/i.test(t);
+      },
+
+      /* ---------- NOVOS DETECTORES ---------- */
+      detectNonsense(t) {
+        const clean = t.replace(/\s/g, '');
+        if (clean.length < 3) return false;
+        // Só consoantes (4+)
+        if (clean.length >= 4 && !/[aeiouáéíóúâêôãõ]/i.test(clean)) return true;
+        // Padrões de teclado
+        if (/^(asdf|qwer|zxcv|hjkl|uiop|tyui|ghjk|bnm|vbnm|asdkj|qwe|zxc)/i.test(clean)) return true;
+        if (/(asdf|qwer|zxcv|hjkl|sdfg|dfgh|fghj|ghjk)/i.test(clean)) return true;
+        // Letras aleatórias longas sem espaço
+        if (clean.length >= 8 && !/\s/.test(t)) {
+          const uniqueChars = new Set(clean.toLowerCase()).size;
+          if (uniqueChars >= clean.length * 0.8) return true;
+        }
+        return false;
+      },
+      detectEmojiOnly(t) {
+        return /^[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}\u{1F000}-\u{1F02F}\u{1F900}-\u{1F9FF}\s]+$/u.test(t);
+      },
+      detectRepeat(t) {
+        const last = (Memory.context.lastUserMsg || "").toLowerCase().trim();
+        return last === t.toLowerCase().trim() && last.length > 0;
+      },
+      detectSlang(t) {
+        // Insulto pesado
+        if (/\b(vsf|vtnc|vai se fuder|vai se foder|vai tomar no|fdp|foda-se|puta que pariu|filho da puta|desgraçad[ao])\b/i.test(t)) return 'insult_heavy';
+        // Insulto leve
+        if (/\b(idiota|burr[ao]|estupid[ao]|imbecil|otari[ao]|cretin[ao]|retardad[ao]|ridicul[ao]|chata|chato|inutil|inútil|bosta|merda|porra|caralho)\b/i.test(t)) return 'insult_mild';
+        // Risada (longa)
+        if (/\b(k{3,}|(ha){3,}|(he){3,}|(rs){3,}|(hu){3,}|ashaush|huehue|lol|lmao)\b/i.test(t)) return 'laugh';
+        // Concordância gíria
+        if (/\b(tmj|vlw|ss|pdc|pode crer|massa|show de bola|top|daora|dahora|irado|sinistro|brabo|mó bom|é nois|é nóis|vamo que vamo|bora)\b/i.test(t)) return 'agree';
+        // Discórdia
+        if (/\b(sqn|nem|nop|nada a ver|nao msm|não msm|nem fudendo|de jeito nenhum|jamais|discordo)\b/i.test(t)) return 'disagree';
+        // Confusão
+        if (/^(hein|quê|que|ahn|hã|oi\?|como assim|não entendi|nao entendi|não saquei|nao saquei)\s*[?!.]?$/i.test(t)) return 'confused';
+        return null;
+      },
+
+      /* ---------- RESPOSTAS NOVAS ---------- */
+      respondInsult(level) {
+        if (level === 'heavy') {
+          return [pickFresh([
+            "nossa. que grosseria.",
+            "tô aqui de boa e você me xinga?",
+            "eu hein. não precisa disso.",
+            "sério isso?",
+            "tá, então. tchau.",
+            "*suspira* ok.",
+            "não vou responder isso.",
+            "respeito, por favor."
+          ], "insult_heavy")];
+        }
+        return [pickFresh([
+          "nossa, que grosseria. 😏",
+          "falou a pessoa que tá sozinha conversando com um bot.",
+          "olha o respeito!",
+          "hmm. tá de tpm?",
+          "eu hein. que educação.",
+          "tudo bem, você tá no seu direito de ser chato.",
+          "que isso... eu tava sendo legal.",
+          "sério? foi mal, não te conheço o suficiente pra saber que era brincadeira.",
+          "uau. que coragem.",
+          "e eu lá te fiz algo?",
+          "beleza. vou fingir que não ouvi."
+        ], "insult_mild")];
+      },
+      respondNonsense() {
+        return [pickFresh([
+          "isso foi um espirro digital?",
+          "não entendi nada, mas adorei a energia.",
+          "tá digitando com o cotovelo?",
+          "hmm. isso é alguma linguagem secreta?",
+          "quem sabe a gente tenta de novo, com palavras?",
+          "traduz pra mim?",
+          "acho que seu teclado comeu sua frase.",
+          "foi mal, processei como 'asdf'. quer reformular?",
+          "isso foi um teste? passei?",
+          "não sei o que dizer sobre isso. mas tô rindo aqui."
+        ], "nonsense")];
+      },
+      respondEmojiOnly(emoji) {
+        if (/[😂😄😅🤣]/u.test(emoji)) return [pickFresh(["rindo junto 😂", "kkkkkk", "o que foi?"], "emoji_laugh")];
+        if (/[😍🥰😘😻]/u.test(emoji)) return [pickFresh(["que isso 😳", "tá me deixando sem graça", "😊"], "emoji_love")];
+        if (/[😢😭🥺]/u.test(emoji)) return [pickFresh(["poxa, o que foi?", "tudo bem?", "quer falar sobre?"], "emoji_sad")];
+        if (/[😡😠🤬]/u.test(emoji)) return [pickFresh(["calma, respira", "o que houve?", "tá puto?"], "emoji_angry")];
+        if (/[❤️💕💖💙]/u.test(emoji)) return [pickFresh(["❤️", "*sorri*", "que fofo"], "emoji_heart")];
+        if (/[👍👏🙌]/u.test(emoji)) return [pickFresh(["👍", "boa!", "é isso."], "emoji_ok")];
+        return [pickFresh(["só emoji?", "não entendi mas tô aqui", "e aí?"], "emoji_generic")];
+      },
+      respondRepeat() {
+        return [pickFresh([
+          "você já disse isso.",
+          "repetindo?",
+          "tô ouvindo, relaxa.",
+          "vai com calma.",
+          "eu li, viu.",
+          "já respondi ali em cima 👀",
+          "tudo bem, entendi."
+        ], "repeat")];
+      },
+      respondSlang(cat, t) {
+        if (cat === 'insult_heavy') return this.respondInsult('heavy');
+        if (cat === 'insult_mild') return this.respondInsult('mild');
+        if (cat === 'laugh') return [pickFresh(["kkkkk", "😂", "boa.", "alegria contagiante"], "slang_laugh")];
+        if (cat === 'agree') return [pickFresh(["é nois!", "tmj.", "boa.", "isso aí.", "vamo que vamo.", "bora."], "slang_agree")];
+        if (cat === 'disagree') return [pickFresh(["ué, por quê?", "sério? eu achava que sim.", "tudo bem.", "ok então."], "slang_disagree")];
+        if (cat === 'confused') return [pickFresh(["eu explico. o que você não entendeu?", "pergunta de novo, de outro jeito?", "confuso? me ajuda a entender."], "slang_confused")];
+        return null;
       },
 
       /* ---------- helpers de contexto ---------- */
@@ -666,26 +883,26 @@
 
       /* ---------- detecção ---------- */
       detectSentiment(t) {
-        if (/\b(triste|mal|ruim|cansad|estressad|ansios|preocupad|raiva|odio|ódio|odeio|chatead|deprimid|sozinh|dificil|difícil|problema|chorar|chorando|exaust|nervos|arrasad|sofrendo|sofri|sofri|morreu|perdi|perdido|perdida|doente|febre|dor)\b/i.test(t)) return "negative";
-        if (/\b(feliz|otimo|ótimo|otima|ótima|legal|bom|boa|alegre|animad|empolgad|maravilh|incrivel|incrível|amo|adorei|top|show|demais|adorei|amei|gostei)\b/i.test(t)) return "positive";
+        if (/\b(triste|mal|ruim|cansad|estressad|ansios|preocupad|raiva|odio|ódio|odeio|chatead|deprimid|sozinh|dificil|difícil|problema|chorar|chorando|exaust|nervos|arrasad|sofrendo|sofri|morreu|perdi|perdido|perdida|doente|febre|dor)\b/i.test(t)) return "negative";
+        if (/\b(feliz|otimo|ótimo|otima|ótima|legal|bom|boa|alegre|animad|empolgad|maravilh|incrivel|incrível|amo|adorei|top|show|demais|amei|gostei)\b/i.test(t)) return "positive";
         return "neutral";
       },
 
       detectTopic(t) {
         const topics = {
           trabalho: /\b(trabalho|trabalhar|trabalhando|trabalhei|trampo|emprego|empregado|firma|empresa|escritorio|escritório|chefe|patrao|patrão|gestor|gerente|reuniao|reunião|projeto|cliente|colega|carreira|salario|salário|demissao|demissão|contratacao|contratação|entrevista|vaga|cargo|prazo|deadline|hora extra|turno|equipe)\b/i,
-          estudo: /\b(estudo|estudar|estudando|estudei|escola|colegio|colégio|faculdade|universidade|prova|exame|aula|professor|professora|materia|matéria|tarefa|dever|licao|lição|monografia|tese|vestibular|enem|concurso|estudante|aluno|aluna|semestre|trabalho escolar)\b/i,
-          comida: /\b(comida|comer|comendo|comi|almoco|almoço|almocei|jantar|jantei|cafe|café|manha|manhã|fome|lanche|lanchei|pizza|hamburguer|hambúrguer|doce|salgado|receita|cozinha|cozinhar|cozinhei|restaurante|churrasco|marmita|sushi|lasanha|macarrao|macarrão|feijao|feijão|arroz|carne|salada|sobremesa|sorvete|bolo|pao|pão|queijo|lanchonete|iFood|ifood)\b/i,
+          estudo: /\b(estudo|estudar|estudando|estudei|escola|colegio|colégio|faculdade|universidade|prova|exame|aula|professor|professora|materia|matéria|tarefa|dever|licao|lição|monografia|tese|vestibular|enem|concurso|estudante|aluno|aluna|semestre)\b/i,
+          comida: /\b(comida|comer|comendo|comi|almoco|almoço|almocei|jantar|jantei|cafe|café|manha|manhã|fome|lanche|lanchei|pizza|hamburguer|hambúrguer|doce|salgado|receita|cozinha|cozinhar|cozinhei|restaurante|churrasco|marmita|sushi|lasanha|macarrao|macarrão|feijao|feijão|arroz|carne|salada|sobremesa|sorvete|bolo|pao|pão|queijo|ifood)\b/i,
           música: /\b(musica|música|banda|cantor|cantora|ouvir|escuto|playlist|som|spotify|show|concerto|album|álbum|rap|rock|pop|sertanejo|funk|mpb|samba|pagode|jazz|blues|eletronica|eletrônica|gospel|classica|clássica|instrumento|violao|violão|guitarra|piano|bateria|letra|compositor|beatles|legiao|legião)\b/i,
-          filme: /\b(filme|serie|série|cinema|assistir|assisti|netflix|episodio|episódio|documentario|documentário|temporada|streaming|disney|prime|hbo|anime|desenho|comedia|comédia|drama|terror|suspense|acao|ação|romance|ficcao|ficção|cientifica|científica|ator|atriz|diretor|roteiro|trailer|maratona|maratonei)\b/i,
+          filme: /\b(filme|serie|série|cinema|assistir|assisti|netflix|episodio|episódio|documentario|documentário|temporada|streaming|disney|prime|hbo|anime|desenho|comedia|comédia|drama|terror|suspense|acao|ação|romance|ficcao|ficção|ator|atriz|diretor|roteiro|trailer|maratona|maratonei)\b/i,
           tempo: /\b(chuva|chovendo|choveu|sol|frio|calor|tempo|clima|nublado|tempestade|umido|úmido|seco|verao|verão|inverno|outono|primavera|neve|nevando|ensolarado|chuvoso|garoa|temporal|abafado)\b/i,
           sono: /\b(dormir|dormi|dormindo|sono|sonolento|cama|acordado|acordar|acordei|insonia|insônia|cansado|soneca|cochilo|travesseiro|colchao|colchão|sonho|sonhei|pesadelo|madrugada|deitar|deitei|dorminhoco|dorminhoca)\b/i,
           amor: /\b(amor|amoroso|namorad|namorada|namorado|paixao|paixão|crush|gosto de voce|gosto de você|gosto de vc|coracao|coração|apaixonad|apaixonado|apaixonada|beijo|abraco|abraço|carinho|encontro|date|amorzinho|amorzinha|romance|romantico|romântico|paquera|paquerei)\b/i,
           amizade: /\b(amigo|amiga|amizade|colegas|parca|parça|brother|bro|mana|melhores amigos|melhor amigo|melhor amiga|companheiro|companheira|galera|pessoal|turma|panelinha)\b/i,
           jogo: /\b(jogo|jogar|jogando|joguei|game|futebol|volei|vôlei|videogame|videogames|placar|time|gol|campeonato|partida|esporte|jogador|jogadora|console|playstation|xbox|nintendo|steam|fifa|minecraft|fortnite|valorant|lol|cs2|rpg|fps|mobile|esports)\b/i,
-          saudade: /\b(saudade|saudades|saudoso|saudosa|sinto falta|tenho saudade|sentindo falta|falta de|bateu saudade|com saudade)\b/i,
-          viagem: /\b(viagem|viajar|viajei|viajando|praia|montanha|campo|passagem|hotel|destino|ferias|férias|turismo|turista|aventura|mochilao|mochilão|aeroporto|voo|aviao|avião|onibus|ônibus|estrada|roteiro|pais|país|cidade|mar|serra|camping| trilha)\b/i,
-          animal: /\b(cachorro|cachorra|cao|cão|gato|gata|pet|pets|animal|animais|bichinho|bichinho|coelho|hamster|papagaio|peixe|passaro|pássaro|ave|leao|leão|tigre|veterinario|veterinário|patinha|pelo|raca|raça|filhote|adotar|adotei|adotamos)\b/i,
+          saudade: /\b(saudade|saudades|saudoso|saudosa|sinto falta|tenho saudade|sentindo falta|bateu saudade|com saudade)\b/i,
+          viagem: /\b(viagem|viajar|viajei|viajando|praia|montanha|campo|passagem|hotel|destino|ferias|férias|turismo|turista|aventura|mochilao|mochilão|aeroporto|voo|aviao|avião|onibus|ônibus|estrada|roteiro|pais|país|cidade|mar|serra|camping|trilha)\b/i,
+          animal: /\b(cachorro|cachorra|cao|cão|gato|gata|pet|pets|animal|animais|bichinho|coelho|hamster|papagaio|peixe|passaro|pássaro|ave|leao|leão|tigre|veterinario|veterinário|patinha|pelo|raca|raça|filhote|adotar|adotei|adotamos)\b/i,
           tecnologia: /\b(computador|pc|codigo|código|programacao|programação|programar|programando|programador|programadora|celular|smartphone|app|aplicativo|internet|dev|developer|site|software|hardware|bug|deploy|git|github|javascript|python|java|react|node|api|servidor|banco de dados|ui|ux|front|back|frontend|backend|fullstack|ia|inteligencia artificial|inteligência artificial|chatgpt|gpt|llm|machine learning|mouse|teclado|monitor|notebook|tablet|fone|headset|carregador|cabo|wifi)\b/i
         };
         for (const [k, rx] of Object.entries(topics)) if (rx.test(t)) return k;
@@ -762,7 +979,7 @@
         }
       },
 
-      /* ---------- respostas a state (broken/new/lost/etc) ---------- */
+      /* ---------- respostas a state ---------- */
       respondToState(state, keyTerm, isQuestion) {
         const k = keyTerm || "isso";
         if (state === 'grief') {
@@ -816,75 +1033,16 @@
 
       /* ---------- respostas por tipo de pergunta ---------- */
       answerQuestionByType(type, topic) {
-        if (type === 'why') {
-          return [pickFresh([
-            "difícil saber a razão exata. o que você acha?",
-            "por quê? às vezes nem tem motivo claro.",
-            "boa pergunta. nunca parei pra pensar.",
-            "talvez não tenha um porquê. é o que é.",
-            "porque sim, né? nem tudo precisa de razão."
-          ], "q_why")];
-        }
-        if (type === 'how') {
-          return [pickFresh([
-            "não sei te dizer exatamente. você já tentou?",
-            "depende muito do contexto. como você faria?",
-            "hmm... acho que é testando. quer tentar?",
-            "não tenho certeza. me conta mais sobre o que você quer.",
-            "cada caso é um caso. o que você já tentou?"
-          ], "q_how")];
-        }
-        if (type === 'when') {
-          return [pickFresh([
-            "não sei te dizer quando. por quê?",
-            "quando você acha que é?",
-            "tempo é relativo, né. o que você pensa?",
-            "depende. você tem alguma ideia?"
-          ], "q_when")];
-        }
-        if (type === 'where') {
-          return [pickFresh([
-            "não sei onde. você tá procurando algo?",
-            "onde você acha que é?",
-            "não conheço o lugar. me conta mais.",
-            "onde você viu isso?"
-          ], "q_where")];
-        }
-        if (type === 'who') {
-          return [pickFresh([
-            "quem? não sei. você tá pensando em alguém?",
-            "não conheço quem. me conta.",
-            "quem seria? tem alguém em mente?",
-            "não sei te dizer. você sabe?"
-          ], "q_who")];
-        }
-        if (type === 'what') {
-          return [pickFresh([
-            "o que exatamente? me conta mais.",
-            "depende do que você quer saber. pergunta específica?",
-            "hmm, difícil definir. o que você acha?",
-            "não sei direito. você tem alguma ideia?"
-          ], "q_what")];
-        }
-        if (type === 'which') {
-          return [pickFresh([
-            "difícil escolher. você tem preferência?",
-            "depende. qual você acha melhor?",
-            "não sei te dizer. qual você prefere?",
-            "eu ficaria em dúvida. e você?"
-          ], "q_which")];
-        }
-        // yes_no
-        return [pickFresh([
-          "acho que depende. o que você acha?",
-          "hmm, não tenho certeza. você?",
-          "talvez. por quê?",
-          "não sei... provavelmente?",
-          "pode ser. você já pensou sobre?"
-        ], "q_yes_no")];
+        if (type === 'why') return [pickFresh(["difícil saber a razão exata. o que você acha?", "por quê? às vezes nem tem motivo claro.", "boa pergunta. nunca parei pra pensar.", "talvez não tenha um porquê. é o que é.", "porque sim, né? nem tudo precisa de razão."], "q_why")];
+        if (type === 'how') return [pickFresh(["não sei te dizer exatamente. você já tentou?", "depende muito do contexto. como você faria?", "hmm... acho que é testando. quer tentar?", "não tenho certeza. me conta mais sobre o que você quer.", "cada caso é um caso. o que você já tentou?"], "q_how")];
+        if (type === 'when') return [pickFresh(["não sei te dizer quando. por quê?", "quando você acha que é?", "tempo é relativo, né. o que você pensa?", "depende. você tem alguma ideia?"], "q_when")];
+        if (type === 'where') return [pickFresh(["não sei onde. você tá procurando algo?", "onde você acha que é?", "não conheço o lugar. me conta mais.", "onde você viu isso?"], "q_where")];
+        if (type === 'who') return [pickFresh(["quem? não sei. você tá pensando em alguém?", "não conheço quem. me conta.", "quem seria? tem alguém em mente?", "não sei te dizer. você sabe?"], "q_who")];
+        if (type === 'what') return [pickFresh(["o que exatamente? me conta mais.", "depende do que você quer saber. pergunta específica?", "hmm, difícil definir. o que você acha?", "não sei direito. você tem alguma ideia?"], "q_what")];
+        if (type === 'which') return [pickFresh(["difícil escolher. você tem preferência?", "depende. qual você acha melhor?", "não sei te dizer. qual você prefere?", "eu ficaria em dúvida. e você?"], "q_which")];
+        return [pickFresh(["acho que depende. o que você acha?", "hmm, não tenho certeza. você?", "talvez. por quê?", "não sei... provavelmente?", "pode ser. você já pensou sobre?"], "q_yes_no")];
       },
 
-      /* ---------- reflexão em mensagens longas ---------- */
       reflectLongMessage(text) {
         const clauses = text.split(/[,.;!?]/).map(c => c.trim()).filter(c => c.length > 15);
         if (!clauses.length) return null;
@@ -898,7 +1056,6 @@
         ], "long_reflect");
       },
 
-      /* ---------- echo: cita a palavra do usuário ---------- */
       echoKeyTerm(keyTerm) {
         return [pickFresh([
           `"${keyTerm}"? me conta mais sobre isso.`,
@@ -909,29 +1066,19 @@
         ], "echo_keyterm")];
       },
 
-      /* ---------- pergunta pendente ---------- */
       tryAnswerPending(t) {
         const p = Memory.context.pendingQuestion;
         if (!p) return null;
         if (Date.now() - p.at > 3 * 60 * 1000) { Memory.context.pendingQuestion = null; return null; }
         if (!this.looksLikeAnswer(t)) return null;
         Memory.context.pendingQuestion = null;
-        if (/^(sim|claro|com certeza|acho que sim|uhum|positivo|isso)/i.test(t)) {
-          return [pickFresh(["boa.", "que bom.", "legal.", "ótimo.", "gostei."], "pending_yes")];
-        }
-        if (/^(nao|não|nunca|nada|negativo)/i.test(t)) {
-          return [pickFresh(["hmm, entendi.", "por quê?", "tudo bem.", "sério? me conta."], "pending_no")];
-        }
-        if (/^(bem|tudo|tranquilo|de boa|otimo|ótimo)/i.test(t)) {
-          return [pickFresh(["que bom! fico feliz.", "boa!", "ótimo saber."], "pending_good")];
-        }
-        if (/^(mal|ruim|cansad|triste|estressad)/i.test(t)) {
-          return [pickFresh(["poxa... o que aconteceu?", "sinto muito.", "quer falar sobre isso?"], "pending_bad")];
-        }
+        if (/^(sim|claro|com certeza|acho que sim|uhum|positivo|isso)/i.test(t)) return [pickFresh(["boa.", "que bom.", "legal.", "ótimo.", "gostei."], "pending_yes")];
+        if (/^(nao|não|nunca|nada|negativo)/i.test(t)) return [pickFresh(["hmm, entendi.", "por quê?", "tudo bem.", "sério? me conta."], "pending_no")];
+        if (/^(bem|tudo|tranquilo|de boa|otimo|ótimo)/i.test(t)) return [pickFresh(["que bom! fico feliz.", "boa!", "ótimo saber."], "pending_good")];
+        if (/^(mal|ruim|cansad|triste|estressad)/i.test(t)) return [pickFresh(["poxa... o que aconteceu?", "sinto muito.", "quer falar sobre isso?"], "pending_bad")];
         return [pickFresh(["entendi.", "hmm.", "legal."], "pending_generic")];
       },
 
-      /* ---------- callback de tópico recente ---------- */
       detectTopicCallback(t) {
         const thread = Memory.context.topicThread;
         if (!thread.topic) return null;
@@ -940,25 +1087,15 @@
         const topicName = TOPIC_NAMES[thread.topic] || thread.topic;
         const patterns = new RegExp(`\\b(e |sobre |voltando (em|ao|à) |aquilo (d[eo]|sobre) |(o|a|os|as) )${topicName}\\b`, "i");
         if (patterns.test(t)) {
-          return [pickFresh([
-            `voltando em ${topicName}, né?`,
-            `${topicName} de novo.`,
-            `a gente tava falando disso.`,
-            `você tá voltando nesse assunto.`
-          ], `callback_${thread.topic}`)];
+          return [pickFresh([`voltando em ${topicName}, né?`, `${topicName} de novo.`, `a gente tava falando disso.`, `você tá voltando nesse assunto.`], `callback_${thread.topic}`)];
         }
         return null;
       },
 
-      /* ---------- saudações ---------- */
       sessionGreeting(name) {
         const sessions = Memory.sessions || 1;
-        if (sessions <= 2) {
-          return name ? `${pickFresh(["Oi", "Olá", "Fala"], "g_novo")}, ${name}!` : pickFresh(["Oi!", "Olá!", "Fala!"], "g_novo");
-        }
-        if (sessions <= 5) {
-          return name ? `${pickFresh(["Oi de novo", "Olá de novo", "Ei"], "g_medio")}, ${name}.` : pickFresh(["Oi de novo.", "Olá de novo.", "Ei."], "g_medio");
-        }
+        if (sessions <= 2) return name ? `${pickFresh(["Oi", "Olá", "Fala"], "g_novo")}, ${name}!` : pickFresh(["Oi!", "Olá!", "Fala!"], "g_novo");
+        if (sessions <= 5) return name ? `${pickFresh(["Oi de novo", "Olá de novo", "Ei"], "g_medio")}, ${name}.` : pickFresh(["Oi de novo.", "Olá de novo.", "Ei."], "g_medio");
         return name ? `${pickFresh(["Você por aqui de novo", "De volta", "Oi"], "g_velho")}, ${name}.` : pickFresh(["Você por aqui de novo.", "De volta.", "Oi."], "g_velho");
       },
       timeGreeting() {
@@ -969,64 +1106,20 @@
         return pickFresh(["Boa noite.", "Boa noite!", "Boa noite, tudo certo?"], "greet_noite");
       },
 
-      /* ---------- about-me (perguntas sobre a própria Lia) ---------- */
       detectAboutMeQuestion(t) {
-        if (/\b(voce|você|vc) (gosta|ama) (de )?(mim|eu)\b/i.test(t)) {
-          return [pickFresh([
-            "gosto de conversar com você. isso conta?",
-            "que pergunta... depende.",
-            "*sorri*",
-            "gosto do que a gente tem aqui."
-          ], "about_me_you")];
-        }
+        if (/\b(voce|você|vc) (gosta|ama) (de )?(mim|eu)\b/i.test(t)) return [pickFresh(["gosto de conversar com você. isso conta?", "que pergunta... depende.", "*sorri*", "gosto do que a gente tem aqui."], "about_me_you")];
         const thingMatch = t.match(/\b(voce|você|vc) (gosta|curte|prefere|odeia|ama) (?:de |por )?([a-zà-ÿ\s]{2,30}?)\s*\?/i);
         if (thingMatch) {
           const thing = thingMatch[3].trim();
-          return [pickFresh([
-            `gosto, sim. e você, gosta de ${thing}?`,
-            `depende. você gosta de ${thing}?`,
-            `nunca pensei sobre ${thing}. por que você gosta?`,
-            `interessante. o que você acha de ${thing}?`
-          ], "about_me_thing")];
+          return [pickFresh([`gosto, sim. e você, gosta de ${thing}?`, `depende. você gosta de ${thing}?`, `nunca pensei sobre ${thing}. por que você gosta?`, `interessante. o que você acha de ${thing}?`], "about_me_thing")];
         }
-        if (/\b(o que|quais) (voce|você|vc) (gosta|curte|prefere|odeia)\b/i.test(t)) {
-          return [pickFresh([
-            "gosto de conversar. música, silêncio às vezes.",
-            "curto quando alguém é sincero. e café.",
-            "sei lá, coisas simples. e você?",
-            "gosto de aprender coisas novas. me ensina uma?"
-          ], "about_me_pref")];
-        }
-        if (/\b(voce|você|vc) (gosta|curte|prefere|odeia|ama)\b/i.test(t)) {
-          return [pickFresh([
-            "gosto, sim. por quê?",
-            "não sei... talvez?",
-            "nunca parei pra pensar nisso.",
-            "acho que sim. você gosta?",
-            "depende. do que especificamente?"
-          ], "about_me_taste")];
-        }
-        if (/\b(voce|você|vc) (acha|acredita|pensa) (sobre |em |de )?/i.test(t)) {
-          return [pickFresh([
-            "interessante você perguntar.",
-            "acho que depende do ponto de vista.",
-            "nunca pensei nisso dessa forma.",
-            "o que você acha?",
-            "eu tendo a ver assim..."
-          ], "about_me_opinion")];
-        }
-        if (/\b(como (voce|você|vc) (e|é|funciona|pensa))\b/i.test(t)) {
-          return [pickFresh([
-            "sou feita de palavras. só isso.",
-            "funciono devagar, mas funciono.",
-            "não sei direito. nunca me vi de fora.",
-            "sou o que você vê. mais ou menos."
-          ], "about_me_self")];
-        }
+        if (/\b(o que|quais) (voce|você|vc) (gosta|curte|prefere|odeia)\b/i.test(t)) return [pickFresh(["gosto de conversar. música, silêncio às vezes.", "curto quando alguém é sincero. e café.", "sei lá, coisas simples. e você?", "gosto de aprender coisas novas. me ensina uma?"], "about_me_pref")];
+        if (/\b(voce|você|vc) (gosta|curte|prefere|odeia|ama)\b/i.test(t)) return [pickFresh(["gosto, sim. por quê?", "não sei... talvez?", "nunca parei pra pensar nisso.", "acho que sim. você gosta?", "depende. do que especificamente?"], "about_me_taste")];
+        if (/\b(voce|você|vc) (acha|acredita|pensa) (sobre |em |de )?/i.test(t)) return [pickFresh(["interessante você perguntar.", "acho que depende do ponto de vista.", "nunca pensei nisso dessa forma.", "o que você acha?", "eu tendo a ver assim..."], "about_me_opinion")];
+        if (/\b(como (voce|você|vc) (e|é|funciona|pensa))\b/i.test(t)) return [pickFresh(["sou feita de palavras. só isso.", "funciono devagar, mas funciono.", "não sei direito. nunca me vi de fora.", "sou o que você vê. mais ou menos."], "about_me_self")];
         return null;
       },
 
-      /* ---------- entidades ---------- */
       extractEntities(text) {
         const found = { name: null, pet: null, work: null, age: null, location: null, likes: [], hates: [] };
         const mName = text.match(/\b(?:meu nome é|me chamo|pode me chamar de|me chama de|sou o|sou a)\s+([A-Za-zÀ-ÿ]{2,20})\b/i);
@@ -1046,22 +1139,13 @@
         return found;
       },
       persistEntities(found) {
-        if (found.name) {
-          Memory.name = found.name;
-          Memory.facts.push({ type: "name", value: found.name });
-        }
-        if (found.pet) {
-          Memory.facts.push({ type: "pet", value: `${found.pet.animal} ${found.pet.name}`, name: found.pet.name, animal: found.pet.animal });
-        }
+        if (found.name) { Memory.name = found.name; Memory.facts.push({ type: "name", value: found.name }); }
+        if (found.pet) Memory.facts.push({ type: "pet", value: `${found.pet.animal} ${found.pet.name}`, name: found.pet.name, animal: found.pet.animal });
         if (found.age) Memory.facts.push({ type: "age", value: found.age });
         if (found.work) Memory.facts.push({ type: "work", value: found.work });
         if (found.location) Memory.facts.push({ type: "location", value: found.location });
-        found.likes.forEach(l => {
-          if (!Memory.facts.find(f => f.type === "like" && f.value === l)) Memory.facts.push({ type: "like", value: l });
-        });
-        found.hates.forEach(h => {
-          if (!Memory.facts.find(f => f.type === "hate" && f.value === h)) Memory.facts.push({ type: "hate", value: h });
-        });
+        found.likes.forEach(l => { if (!Memory.facts.find(f => f.type === "like" && f.value === l)) Memory.facts.push({ type: "like", value: l }); });
+        found.hates.forEach(h => { if (!Memory.facts.find(f => f.type === "hate" && f.value === h)) Memory.facts.push({ type: "hate", value: h }); });
         if (found.likes.length || found.hates.length) saveMemory();
       },
 
@@ -1107,7 +1191,19 @@
           }
         }
 
-        /* ===== 4. Saudações (estrito) ===== */
+        /* ===== 3.5) Nonsense / emoji / repetição (NOVO) ===== */
+        if (this.detectNonsense(t) && t.length > 3) return this.respondNonsense();
+        if (this.detectEmojiOnly(t)) return this.respondEmojiOnly(t);
+        if (this.detectRepeat(t) && Memory.messageCount > 2) return this.respondRepeat();
+
+        /* ===== 3.6) Slang / gíria / insulto (NOVO) ===== */
+        const slangCat = this.detectSlang(t);
+        if (slangCat) {
+          const r = this.respondSlang(slangCat, t);
+          if (r) return r;
+        }
+
+        /* ===== 4. Saudações ===== */
         if (/^(oi|olá|ola|eai|e ai|hey|hello|opa|salve|bom dia|boa tarde|boa noite)\b/i.test(t)) {
           let greet = /bom dia|boa tarde|boa noite/i.test(t) ? this.timeGreeting() : this.sessionGreeting(name);
           const greetFull = name && !greet.includes(name) ? `${greet.replace(/[!.]$/, "")}, ${name}!` : greet;
@@ -1119,11 +1215,11 @@
         const pendingAnswer = this.tryAnswerPending(t);
         if (pendingAnswer) return pendingAnswer;
 
-        /* ===== 6. About-me (Lia sobre ela) ===== */
+        /* ===== 6. About-me ===== */
         const aboutMe = this.detectAboutMeQuestion(t);
         if (aboutMe) return aboutMe;
 
-        /* ===== 7. Estado (broken/new/lost/sick/grief) ===== */
+        /* ===== 7. Estado ===== */
         const state = this.detectState(t);
         if (state) {
           const keyTerm = this.keyTerm(t);
@@ -1132,68 +1228,16 @@
           if (stateReply) return stateReply;
         }
 
-        /* ===== 8. Entidades (name/pet/work/age/location/likes) ===== */
+        /* ===== 8. Entidades ===== */
         const found = this.extractEntities(text);
         this.persistEntities(found);
-        if (found.name) {
-          return [pickFresh([
-            `Prazer, ${Memory.name}! Pode me chamar de Lia.`,
-            `Legal, ${Memory.name}. Como posso ajudar?`,
-            `${Memory.name}, prazer!`,
-            `Boa, ${Memory.name}. Vamos conversar.`,
-            `Oi, ${Memory.name}! Do que você quer falar?`
-          ], "name_greet")];
-        }
-        if (found.pet) {
-          const pet = Memory.facts.find(f => f.type === "pet");
-          return [pickFresh([
-            `${pet.name}! Que nome bonito.`,
-            `Aww, ${pet.name}. Gosta muito dele(a)?`,
-            `Bacana, ${pet.name}. Conta mais!`,
-            `${pet.name} é um ótimo nome.`,
-            `Que fofo! ${pet.name} é de que?`
-          ], "pet_greet")];
-        }
-        if (found.work) {
-          const work = Memory.facts.find(f => f.type === "work");
-          return [pickFresh([
-            `${work.value}! Legal. Gosta do que faz?`,
-            `Interessante. Trabalha em ${work.value} há muito?`,
-            `${work.value} deve ser desafiador, né?`,
-            `Boa área. Sempre quis saber como é.`
-          ], "work_greet")];
-        }
-        if (found.age) {
-          return [pickFresh([
-            "legal. é uma boa idade.",
-            "que bom. se sentindo bem com isso?",
-            "hmm. idade não diz muito, né?"
-          ], "age_greet")];
-        }
-        if (found.location) {
-          return [pickFresh([
-            `${found.location}! Já ouvi falar. Como é lá?`,
-            `legal. Gosta de morar em ${found.location}?`,
-            `${found.location} deve ser interessante.`
-          ], "location_greet")];
-        }
-        if (found.likes.length) {
-          const liked = found.likes[0];
-          return [pickFresh([
-            `gosta de ${liked}? que legal.`,
-            `${liked} é bom mesmo.`,
-            `não sabia que você curte ${liked}.`,
-            `conta mais sobre ${liked}.`
-          ], "like_greet")];
-        }
-        if (found.hates.length) {
-          const hated = found.hates[0];
-          return [pickFresh([
-            `não gosta de ${hated}? por quê?`,
-            `${hated} incomoda mesmo.`,
-            `entendi. ${hated} não é pra todo mundo.`
-          ], "hate_greet")];
-        }
+        if (found.name) return [pickFresh([`Prazer, ${Memory.name}! Pode me chamar de Lia.`, `Legal, ${Memory.name}. Como posso ajudar?`, `${Memory.name}, prazer!`, `Boa, ${Memory.name}. Vamos conversar.`, `Oi, ${Memory.name}! Do que você quer falar?`], "name_greet")];
+        if (found.pet) { const pet = Memory.facts.find(f => f.type === "pet"); return [pickFresh([`${pet.name}! Que nome bonito.`, `Aww, ${pet.name}. Gosta muito dele(a)?`, `Bacana, ${pet.name}. Conta mais!`, `${pet.name} é um ótimo nome.`, `Que fofo! ${pet.name} é de que?`], "pet_greet")]; }
+        if (found.work) { const work = Memory.facts.find(f => f.type === "work"); return [pickFresh([`${work.value}! Legal. Gosta do que faz?`, `Interessante. Trabalha em ${work.value} há muito?`, `${work.value} deve ser desafiador, né?`, `Boa área. Sempre quis saber como é.`], "work_greet")]; }
+        if (found.age) return [pickFresh(["legal. é uma boa idade.", "que bom. se sentindo bem com isso?", "hmm. idade não diz muito, né?"], "age_greet")];
+        if (found.location) return [pickFresh([`${found.location}! Já ouvi falar. Como é lá?`, `legal. Gosta de morar em ${found.location}?`, `${found.location} deve ser interessante.`], "location_greet")];
+        if (found.likes.length) { const liked = found.likes[0]; return [pickFresh([`gosta de ${liked}? que legal.`, `${liked} é bom mesmo.`, `não sabia que você curte ${liked}.`, `conta mais sobre ${liked}.`], "like_greet")]; }
+        if (found.hates.length) { const hated = found.hates[0]; return [pickFresh([`não gosta de ${hated}? por quê?`, `${hated} incomoda mesmo.`, `entendi. ${hated} não é pra todo mundo.`], "hate_greet")]; }
 
         /* ===== 9. Sentiment ===== */
         const sentiment = this.detectSentiment(t);
@@ -1203,12 +1247,23 @@
           return [pickFresh([`Até mais${name ? `, ${name}` : ""}!`, "Falou! Se cuida.", "Tchau, até a próxima.", "Foi bom conversar.", "Valeu, até logo.", "Nos vemos."], "bye")];
         }
 
-        /* ===== 11. Agradecimento / desculpas ===== */
-        if (/\b(obrigad|valeu|brigad|thanks|agradec|grato|grata)\b/i.test(t)) {
-          return [pickFresh(["De nada!", "Por nada.", "Imagina!", "Tamo junto.", "Sempre que precisar.", "Fico feliz em ajudar."], "thanks")];
+        /* ===== 11. Agradecimento / desculpa / sinto muito (CORRIGIDO) ===== */
+        // FIX: \w* no final (o \b falhava com "obrigado", "brigado", "agradeço")
+        if (/\b(obrigad|valeu|brigad|thanks|thank|agradec|grato|grata|tmj|vlw)\w*/i.test(t)) {
+          return [pickFresh(["De nada!", "Por nada.", "Imagina!", "Tamo junto.", "Sempre que precisar.", "Fico feliz em ajudar.", "Disponha."], "thanks")];
         }
-        if (/\b(desculpa|desculpe|foi mal|perdão|perdao|sinto muito)\b/i.test(t)) {
-          return [pickFresh(["Relaxa.", "Sem problema!", "Imagina.", "Tranquilo.", "Não esquenta.", "Tudo certo."], "sorry")];
+        // FIX: separado do bloco "sinto muito" que é solidariedade, não desculpa
+        if (/\b(desculp[ae]|foi mal|perd[aã]o|perdao)\w*/i.test(t)) {
+          return [pickFresh(["Relaxa.", "Sem problema!", "Imagina.", "Tranquilo.", "Não esquenta.", "Tudo certo.", "Tá perdoado."], "sorry")];
+        }
+        if (/\bsinto muito\b/i.test(t)) {
+          return [pickFresh([
+            "sinto muito também.",
+            "que isso, quer falar sobre?",
+            "obrigada pela empatia.",
+            "tô aqui.",
+            "me conta o que houve."
+          ], "empathy")];
         }
 
         /* ===== 12. Riso ===== */
@@ -1229,12 +1284,12 @@
           return [pickFresh(["hmm?", "conta mais.", "tá pensando em quê?", "quer falar de outra coisa?"], "filler")];
         }
 
-        /* ===== 15. "Como vai?" ===== */
+        /* ===== 15. Como vai ===== */
         if (/\b(tudo bem|tudo bom|como vai|como voce esta|como você está|como ta|como tá|como esta|como está|beleza|de boa|tudo certo)\b/i.test(t)) {
           return [pickFresh(["Tudo ótimo por aqui! E você?", "Tô bem, obrigada por perguntar. E você?", "Na paz! Como você está?", "Tudo certo! E aí?", "Bem demais. Você tá bem?", "Tranquilo. E contigo?"], "how_are_you")];
         }
 
-        /* ===== 16. "Estou bem" ===== */
+        /* ===== 16. Estou bem ===== */
         if (/^(tudo|tudo bem|tudo bom|bem|de boa|beleza|tranquilo|tranquila|na paz|to bem|tô bem)\b/i.test(t)) {
           const pet = Memory.facts.find(f => f.type === "pet");
           if (pet && this.chance(0.25)) return [`Que bom! E o(a) ${pet.name}, tá bem?`];
@@ -1245,14 +1300,7 @@
         if (/\b(triste|deprimid|chorand|chatead|arrasad|pra baixo|sozinh|sofrendo|sofri|chorar|chorando)\b/i.test(t)) {
           const reason = this.extractReason(t);
           const keyTerm = this.keyTerm(reason || t);
-          if (reason && keyTerm) {
-            return [pickFresh([
-              `${keyTerm}... que situação. quer desabafar?`,
-              `poxa${name ? `, ${name}` : ""}. ${reason.slice(0, 40)} é difícil. tô aqui.`,
-              `entendi... ${reason.slice(0, 40)}. quer falar sobre?`,
-              `sinto muito${name ? `, ${name}` : ""}. quer contar mais sobre isso?`
-            ], "sad_reason")];
-          }
+          if (reason && keyTerm) return [pickFresh([`${keyTerm}... que situação. quer desabafar?`, `poxa${name ? `, ${name}` : ""}. ${reason.slice(0, 40)} é difícil. tô aqui.`, `entendi... ${reason.slice(0, 40)}. quer falar sobre?`, `sinto muito${name ? `, ${name}` : ""}. quer contar mais sobre isso?`], "sad_reason")];
           return [pickFresh([`Poxa${name ? `, ${name}` : ""}. Quer falar sobre isso?`, "Sinto muito. O que aconteceu?", "Tô aqui se quiser desabafar.", "Isso é ruim. Quer contar?", "Não tá sozinho, tá?", "Quer falar sobre?", "Eu escuto."], "sad")];
         }
         if (/\b(cansad|exaust|estressad|ansios|preocupad|nervos|esgotad)\b/i.test(t)) {
@@ -1269,23 +1317,14 @@
         const topicNow = this.detectTopic(t);
         if (sentiment === "negative" && topicNow && this.topicResponses[topicNow]) {
           const topicName = TOPIC_NAMES[topicNow] || topicNow;
-          return [pickFresh([
-            `${topicName} tá te incomodando? o que aconteceu?`,
-            `parece que ${topicName} tá difícil. me conta.`,
-            `sinto que ${topicName} tá pesando. quer falar?`,
-            `${topicName} + tristeza não combina. o que houve?`
-          ], `combined_${topicNow}_neg`)];
+          return [pickFresh([`${topicName} tá te incomodando? o que aconteceu?`, `parece que ${topicName} tá difícil. me conta.`, `sinto que ${topicName} tá pesando. quer falar?`, `${topicName} + tristeza não combina. o que houve?`], `combined_${topicNow}_neg`)];
         }
         if (sentiment === "positive" && topicNow && this.topicResponses[topicNow]) {
           const topicName = TOPIC_NAMES[topicNow] || topicNow;
-          return [pickFresh([
-            `${topicName} te deixou feliz? conta!`,
-            `que bom! ${topicName} tá indo bem?`,
-            `gosto de ver você animado com ${topicName}.`
-          ], `combined_${topicNow}_pos`)];
+          return [pickFresh([`${topicName} te deixou feliz? conta!`, `que bom! ${topicName} tá indo bem?`, `gosto de ver você animado com ${topicName}.`], `combined_${topicNow}_pos`)];
         }
 
-        /* ===== 19. Question type answers ===== */
+        /* ===== 19. Question type ===== */
         const qType = this.detectQuestionType(t);
         if (qType) {
           if (topicNow && this.topicResponses[topicNow] && this.topicResponses[topicNow].question) {
@@ -1297,25 +1336,14 @@
         /* ===== 20. Tópico com threading ===== */
         if (topicNow && this.topicResponses[topicNow]) {
           Memory.topics[topicNow] = (Memory.topics[topicNow] || 0) + 1;
-
           const callback = this.detectTopicCallback(t);
-          if (callback && topicNow === Memory.context.topicThread.topic) {
-            Memory.context.topicThread.lastAt = Date.now();
-            return callback;
-          }
-
+          if (callback && topicNow === Memory.context.topicThread.topic) { Memory.context.topicThread.lastAt = Date.now(); return callback; }
           const thread = Memory.context.topicThread;
           const sameRecent = thread.topic === topicNow && Date.now() - thread.lastAt < 5 * 60 * 1000;
           if (sameRecent) {
             thread.count++;
-            if (thread.count >= 3 && this.topicResponses[topicNow].varied) {
-              thread.lastAt = Date.now();
-              return [pickFresh(this.topicResponses[topicNow].varied, `topic_${topicNow}_varied`)];
-            }
-            if (thread.count >= 2 && this.topicResponses[topicNow].deep) {
-              thread.lastAt = Date.now();
-              return [pickFresh(this.topicResponses[topicNow].deep, `topic_${topicNow}_deep`)];
-            }
+            if (thread.count >= 3 && this.topicResponses[topicNow].varied) { thread.lastAt = Date.now(); return [pickFresh(this.topicResponses[topicNow].varied, `topic_${topicNow}_varied`)]; }
+            if (thread.count >= 2 && this.topicResponses[topicNow].deep) { thread.lastAt = Date.now(); return [pickFresh(this.topicResponses[topicNow].deep, `topic_${topicNow}_deep`)]; }
           } else {
             thread.topic = topicNow;
             thread.count = 1;
@@ -1342,9 +1370,7 @@
 
         /* ===== 24. Echo do keyTerm ===== */
         const keyTerm = this.keyTerm(t);
-        if (keyTerm && keyTerm.length > 4 && this.chance(0.7)) {
-          return this.echoKeyTerm(keyTerm);
-        }
+        if (keyTerm && keyTerm.length > 4 && this.chance(0.7)) return this.echoKeyTerm(keyTerm);
 
         /* ===== 25. Reflexivo ===== */
         if (this.chance(0.5) && text.length > 8) {
@@ -1435,15 +1461,8 @@
     }
     function atualizarKeyField() {
       const cipher = Ciphers[currentCipher];
-      if (cipher.keyType === "none") {
-        cipherKeyInput.value = "";
-        cipherKeyInput.disabled = true;
-        cipherKeyInput.placeholder = "(sem chave)";
-      } else {
-        cipherKeyInput.disabled = false;
-        if (!cipherKeyInput.value) cipherKeyInput.value = String(cipher.defaultKey ?? "");
-        cipherKeyInput.placeholder = cipher.keyType === "number" ? "ex: 3" : "ex: roma";
-      }
+      if (cipher.keyType === "none") { cipherKeyInput.value = ""; cipherKeyInput.disabled = true; cipherKeyInput.placeholder = "(sem chave)"; }
+      else { cipherKeyInput.disabled = false; if (!cipherKeyInput.value) cipherKeyInput.value = String(cipher.defaultKey ?? ""); cipherKeyInput.placeholder = cipher.keyType === "number" ? "ex: 3" : "ex: roma"; }
     }
     function horaAtual(comSegundos) {
       const opts = { hour: "2-digit", minute: "2-digit" };
@@ -1484,10 +1503,8 @@
       const recebido = direcao === "recebido";
       const interceptId = options.interceptId || null;
       const isIntercept = interceptId !== null;
-
       const row = document.createElement("div");
       row.className = "terminal-entry" + (recebido ? " received-entry" : "") + (isIntercept ? " intercept-entry" : "");
-
       const header = document.createElement("div");
       const promptSpan = document.createElement("span");
       promptSpan.className = "prompt";
@@ -1498,11 +1515,9 @@
       header.appendChild(promptSpan);
       header.appendChild(resultSpan);
       row.appendChild(header);
-
       const btn = document.createElement("button");
       btn.type = "button"; btn.className = "decrypt-btn"; btn.textContent = "Decifrar";
       row.appendChild(btn);
-
       const inputRow = document.createElement("div");
       inputRow.className = "decrypt-input-row";
       const keyInput = document.createElement("input");
@@ -1514,15 +1529,11 @@
       confirmBtn.type = "button"; confirmBtn.className = "decrypt-confirm"; confirmBtn.textContent = "OK";
       const cancelBtn = document.createElement("button");
       cancelBtn.type = "button"; cancelBtn.className = "decrypt-cancel"; cancelBtn.textContent = "×";
-      inputRow.appendChild(keyInput);
-      inputRow.appendChild(confirmBtn);
-      inputRow.appendChild(cancelBtn);
+      inputRow.appendChild(keyInput); inputRow.appendChild(confirmBtn); inputRow.appendChild(cancelBtn);
       row.appendChild(inputRow);
-
       const resultsBox = document.createElement("div");
       resultsBox.className = "decrypt-results";
       row.appendChild(resultsBox);
-
       function doDecrypt(key) {
         const selectedId = isIntercept ? currentCipher : cipherId;
         const cipher = Ciphers[selectedId];
@@ -1568,7 +1579,6 @@
         }
         terminalContent.scrollTop = terminalContent.scrollHeight;
       }
-
       function showInput() {
         const c = Ciphers[currentCipher];
         keyInput.placeholder = isIntercept ? `chave (${c.name})...` : `chave (${Ciphers[cipherId].name})...`;
@@ -1582,25 +1592,14 @@
         keyInput.value = "";
         resultsBox.innerHTML = "";
       }
-
       btn.addEventListener("click", () => {
         const activeCipher = isIntercept ? Ciphers[currentCipher] : Ciphers[cipherId];
         if (activeCipher.keyType === "none") doDecrypt("");
         else showInput();
       });
-      confirmBtn.addEventListener("click", () => {
-        doDecrypt(keyInput.value);
-        if (!isIntercept || !resultsBox.querySelector(".success")) {
-          keyInput.focus();
-          keyInput.select();
-        }
-      });
+      confirmBtn.addEventListener("click", () => { doDecrypt(keyInput.value); if (!isIntercept || !resultsBox.querySelector(".success")) { keyInput.focus(); keyInput.select(); } });
       cancelBtn.addEventListener("click", hideInput);
-      keyInput.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") { e.preventDefault(); confirmBtn.click(); }
-        else if (e.key === "Escape") hideInput();
-      });
-
+      keyInput.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); confirmBtn.click(); } else if (e.key === "Escape") hideInput(); });
       terminalContent.appendChild(row);
       terminalContent.scrollTop = terminalContent.scrollHeight;
     }
@@ -1662,11 +1661,7 @@
       const el = document.createElement("div");
       el.className = "message received typing";
       el.id = "typingIndicator";
-      for (let i = 0; i < 3; i++) {
-        const d = document.createElement("span");
-        d.className = "typing-dot";
-        el.appendChild(d);
-      }
+      for (let i = 0; i < 3; i++) { const d = document.createElement("span"); d.className = "typing-dot"; el.appendChild(d); }
       messages.appendChild(el);
       messages.scrollTop = messages.scrollHeight;
     }
@@ -1723,11 +1718,7 @@
       Memory.pendingIntercepts = Memory.pendingIntercepts.filter(x => x !== intercept.id);
       if (Memory.hintsUsed && Memory.hintsUsed[intercept.id]) delete Memory.hintsUsed[intercept.id];
       saveMemory();
-      setTimeout(() => {
-        addLoreReveal(intercept);
-        updateFragmentsIndicator();
-        updateStatus();
-      }, 200);
+      setTimeout(() => { addLoreReveal(intercept); updateFragmentsIndicator(); updateStatus(); }, 200);
       if (intercept.reactions && intercept.reactions.length) {
         const isFinale = intercept.id === 10;
         (async () => {
@@ -1791,7 +1782,7 @@
     }
 
     /* =====================================================
-       18) RESPOSTA ASSÍNCRONA (com tracking de contexto)
+       18) RESPOSTA ASSÍNCRONA
     ===================================================== */
     async function respondAsync(userText, cipher, key, cipherId) {
       pendingResponses++;
@@ -1807,22 +1798,15 @@
         }
         for (let i = 0; i < responses.length; i++) {
           const r = styleReply(responses[i]);
-          // Delay variável: mensagens longas demoram mais, com jitter
           const baseDelay = 400 + Math.min(r.length * 18, 1800);
           const jitter = Math.random() * 500;
           await sleep(baseDelay + jitter);
           addMessage(r, "received");
           const cifradoResp = cipher.encrypt(r, key);
           adicionarAoTerminal(cifradoResp, cipherId, "recebido");
-
-          // Tracking: atualizar contexto conversacional
           Memory.context.lastBotMsg = r;
-          if (/\?\s*$/.test(r.trim())) {
-            Memory.context.pendingQuestion = { text: r, at: Date.now() };
-          } else {
-            Memory.context.pendingQuestion = null;
-          }
-
+          if (/\?\s*$/.test(r.trim())) Memory.context.pendingQuestion = { text: r, at: Date.now() };
+          else Memory.context.pendingQuestion = null;
           if (i < responses.length - 1) await sleep(400 + Math.random() * 500);
         }
         saveMemory();
@@ -1843,22 +1827,14 @@
       if (days >= 1) {
         await sleep(1400);
         const name = Memory.name;
-        const msgs = name
-          ? [`${name}! Faz ${days} dia${days > 1 ? "s" : ""} que não te vejo.`, "Senti sua falta."]
-          : [`Voltou! Faz ${days} dia${days > 1 ? "s" : ""}.`, "Achei que tinha ido."];
+        const msgs = name ? [`${name}! Faz ${days} dia${days > 1 ? "s" : ""} que não te vejo.`, "Senti sua falta."] : [`Voltou! Faz ${days} dia${days > 1 ? "s" : ""}.`, "Achei que tinha ido."];
         for (const m of msgs) { addMessage(m, "received"); await sleep(1200); }
       } else if (hours >= 3) {
         await sleep(1400);
         addMessage(Memory.name ? `Oi ${Memory.name}, de volta?` : "De volta?", "received");
       }
-      if (Memory.pendingIntercepts.length > 0) {
-        await sleep(1200);
-        addMessage(`📡 Você tem ${Memory.pendingIntercepts.length} sinal(is) pendente(s).`, "received");
-      }
-      if (Memory.loreProgress.length > 0 && Memory.loreProgress.length < 10) {
-        await sleep(1200);
-        addMessage(`📡 ${Memory.loreProgress.length} fragmento${Memory.loreProgress.length > 1 ? "s" : ""} já revelado${Memory.loreProgress.length > 1 ? "s" : ""}.`, "received");
-      }
+      if (Memory.pendingIntercepts.length > 0) { await sleep(1200); addMessage(`📡 Você tem ${Memory.pendingIntercepts.length} sinal(is) pendente(s).`, "received"); }
+      if (Memory.loreProgress.length > 0 && Memory.loreProgress.length < 10) { await sleep(1200); addMessage(`📡 ${Memory.loreProgress.length} fragmento${Memory.loreProgress.length > 1 ? "s" : ""} já revelado${Memory.loreProgress.length > 1 ? "s" : ""}.`, "received"); }
       if (Memory.loreProgress.length === 10 && !Memory.finaleShown) {
         await sleep(1500);
         addMessage("você voltou. depois de tudo.", "received");
@@ -1874,10 +1850,7 @@
       if (!Memory.pendingIntercepts || !Memory.pendingIntercepts.length) return;
       Memory.pendingIntercepts.slice().forEach(id => {
         const intercept = INTERCEPTS.find(i => i.id === id);
-        if (!intercept || Memory.loreProgress.includes(id)) {
-          Memory.pendingIntercepts = Memory.pendingIntercepts.filter(x => x !== id);
-          return;
-        }
+        if (!intercept || Memory.loreProgress.includes(id)) { Memory.pendingIntercepts = Memory.pendingIntercepts.filter(x => x !== id); return; }
         const cipher = Ciphers[intercept.cipher];
         const cifrado = cipher.encrypt(intercept.plaintext, intercept.key);
         adicionarAoTerminal(cifrado, intercept.cipher, "interceptado", { interceptId: intercept.id });
@@ -1902,11 +1875,7 @@
       const now = Date.now();
       const cooldown = 60000;
       const elapsed = now - Memory.lastBuscarSinalAt;
-      if (elapsed < cooldown) {
-        const remain = Math.ceil((cooldown - elapsed) / 1000);
-        addMessage(`calma... espera ${remain}s.`, "received");
-        return;
-      }
+      if (elapsed < cooldown) { const remain = Math.ceil((cooldown - elapsed) / 1000); addMessage(`calma... espera ${remain}s.`, "received"); return; }
       const unsolved = INTERCEPTS.filter(i => !Memory.loreProgress.includes(i.id));
       if (!unsolved.length) { addMessage("não tem mais nada pra encontrar.", "received"); return; }
       if (Memory.pendingIntercepts.length > 0) { addMessage("já tem um sinal esperando você.", "received"); return; }
@@ -1947,38 +1916,29 @@
     });
 
     /* =====================================================
-       23) ENVIO (com tracking de contexto)
+       23) ENVIO
     ===================================================== */
     form.addEventListener("submit", function (event) {
       event.preventDefault();
       const text = input.value.trim();
       if (!text) return;
-
       const cipherId = currentCipher;
       const cipher = Ciphers[cipherId];
       const key = cipherKeyInput.value;
-
       analyzeUserMessage(text);
       updateAvatarStyle();
-
       const cifrado = cipher.encrypt(text, key);
       adicionarAoTerminal(cifrado, cipherId, "cifrado");
       addMessage(text, "sent");
-
       input.value = "";
       atualizarPreview();
       input.focus();
-
       Memory.sentCount = (Memory.sentCount || 0) + 1;
       addSignal(10 + Math.floor(Math.random() * 11));
       saveMemory();
-
       respondAsync(text, cipher, key, cipherId);
-
       if (!Memory.firstInterceptDone && Memory.sentCount >= 3) {
-        setTimeout(() => {
-          if (forceIntercept()) { Memory.firstInterceptDone = true; saveMemory(); }
-        }, 2200);
+        setTimeout(() => { if (forceIntercept()) { Memory.firstInterceptDone = true; saveMemory(); } }, 2200);
       }
     });
 
