@@ -6,527 +6,139 @@
   <title>Chat • Secure Terminal</title>
 
   <style>
-    /* ============ RESET / BASE ============ */
     * { margin: 0; padding: 0; box-sizing: border-box; }
     html, body { width: 100%; height: 100%; }
     body { background: #000; overflow: hidden; font-family: Arial, sans-serif; }
-    .container {
-      display: flex;
-      width: 100%; height: 100vh; height: 100dvh;
-      background: #000;
-    }
+    .container { display: flex; width: 100%; height: 100vh; height: 100dvh; background: #000; }
 
     /* ============ TERMINAL ============ */
-    .lado-esquerdo {
-      flex: 1; min-width: 0; height: 100%;
-      background: #000;
-      display: flex; align-items: stretch; justify-content: stretch;
-      padding: 24px;
-    }
-    .terminal {
-      width: 100%; height: 100%;
-      display: flex; flex-direction: column;
-      color: #00ff88;
-      font-family: "Courier New", monospace;
-      font-size: 14px;
-      opacity: 0; transform: translateY(20px);
-      animation: terminalOpen 0.8s ease forwards;
-      min-height: 0;
-    }
-    .terminal-top {
-      display: flex; align-items: center; gap: 7px;
-      padding: 12px;
-      background: #171717;
-      border: 1px solid #292929;
-      flex-shrink: 0;
-    }
+    .lado-esquerdo { flex: 1; min-width: 0; height: 100%; background: #000; display: flex; align-items: stretch; justify-content: stretch; padding: 24px; }
+    .terminal { width: 100%; height: 100%; display: flex; flex-direction: column; color: #00ff88; font-family: "Courier New", monospace; font-size: 14px; opacity: 0; transform: translateY(20px); animation: terminalOpen 0.8s ease forwards; min-height: 0; }
+    .terminal-top { display: flex; align-items: center; gap: 7px; padding: 12px; background: #171717; border: 1px solid #292929; flex-shrink: 0; }
     .dot { width: 10px; height: 10px; border-radius: 50%; }
-    .red    { background: #ff5f56; }
-    .yellow { background: #ffbd2e; }
-    .green  { background: #27c93f; }
+    .red { background: #ff5f56; } .yellow { background: #ffbd2e; } .green { background: #27c93f; }
     .terminal-title { margin-left: 10px; color: #999; font-size: 12px; }
 
-    .terminal-controls {
-      display: flex; flex-wrap: wrap; gap: 8px;
-      padding: 9px 11px;
-      background: #0a0a0a;
-      border: 1px solid #292929;
-      border-top: none;
-      flex-shrink: 0;
-    }
-    .control-group {
-      display: flex; align-items: center; gap: 5px;
-      flex: 1 1 120px;
-      min-width: 0;
-    }
-    .control-group label {
-      color: #777; font-size: 10px;
-      text-transform: uppercase; letter-spacing: 0.5px;
-      flex-shrink: 0;
-    }
-    .control-group select,
-    .control-group input {
-      flex: 1; min-width: 0;
-      padding: 5px 7px;
-      background: #000;
-      color: #00ff88;
-      border: 1px solid #2a2a2a;
-      border-radius: 3px;
-      font-family: inherit;
-      font-size: 11px;
-      outline: none;
-    }
-    .control-group select:focus,
-    .control-group input:focus { border-color: #00ff88; }
+    .terminal-controls { display: flex; flex-wrap: wrap; gap: 8px; padding: 9px 11px; background: #0a0a0a; border: 1px solid #292929; border-top: none; flex-shrink: 0; }
+    .control-group { display: flex; align-items: center; gap: 5px; flex: 1 1 120px; min-width: 0; }
+    .control-group label { color: #777; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0; }
+    .control-group select, .control-group input { flex: 1; min-width: 0; padding: 5px 7px; background: #000; color: #00ff88; border: 1px solid #2a2a2a; border-radius: 3px; font-family: inherit; font-size: 11px; outline: none; }
+    .control-group select:focus, .control-group input:focus { border-color: #00ff88; }
     .control-group input:disabled { color: #555; background: #050505; }
 
-    .terminal-content {
-      flex: 1; min-height: 0;
-      padding: 16px 14px;
-      background: #050505;
-      border: 1px solid #292929;
-      border-top: none;
-      line-height: 1.75;
-      overflow-y: auto;
-      overflow-wrap: anywhere;
-      scrollbar-width: thin;
-      scrollbar-color: #444 transparent;
-    }
-    .terminal-line {
-      opacity: 0;
-      animation: lineAppear 0.3s ease forwards;
-    }
-    .terminal-line .prompt { color: #00ff88; }
-    .terminal-line .result { color: #aaa; }
-
-    .terminal-entry {
-      margin-top: 10px;
-      padding-top: 8px;
-      border-top: 1px dashed #1c1c1c;
-    }
+    .terminal-content { flex: 1; min-height: 0; padding: 16px 14px; background: #050505; border: 1px solid #292929; border-top: none; line-height: 1.75; overflow-y: auto; overflow-wrap: anywhere; scrollbar-width: thin; scrollbar-color: #444 transparent; }
+    .terminal-line { opacity: 0; animation: lineAppear 0.3s ease forwards; }
+    .terminal-line .prompt { color: #00ff88; } .terminal-line .result { color: #aaa; }
+    .terminal-entry { margin-top: 10px; padding-top: 8px; border-top: 1px dashed #1c1c1c; }
     .terminal-entry .prompt { color: #00ff88; }
     .terminal-entry.received-entry .prompt { color: #4da6ff; }
-    .terminal-entry.intercept-entry {
-      border-top-color: #3a2a10;
-      padding: 10px 8px;
-      border-radius: 3px;
-      background: rgba(255, 183, 77, 0.03);
-    }
+    .terminal-entry.intercept-entry { border-top-color: #3a2a10; padding: 10px 8px; border-radius: 3px; background: rgba(255, 183, 77, 0.03); }
     .terminal-entry.intercept-entry .prompt { color: #ffb74d; }
     .terminal-entry.intercept-entry .result { color: #ffd28a; }
 
-    .decrypt-btn {
-      display: inline-block;
-      margin-top: 6px;
-      padding: 3px 12px;
-      background: transparent;
-      color: #00ff88;
-      border: 1px solid #00ff88;
-      border-radius: 3px;
-      font-family: inherit;
-      font-size: 11px;
-      cursor: pointer;
-      transition: background 0.15s, color 0.15s;
-    }
+    .decrypt-btn { display: inline-block; margin-top: 6px; padding: 3px 12px; background: transparent; color: #00ff88; border: 1px solid #00ff88; border-radius: 3px; font-family: inherit; font-size: 11px; cursor: pointer; transition: background 0.15s, color 0.15s; }
     .decrypt-btn:hover { background: #00ff88; color: #000; }
     .intercept-entry .decrypt-btn { color: #ffb74d; border-color: #ffb74d; }
     .intercept-entry .decrypt-btn:hover { background: #ffb74d; color: #000; }
 
-    .decrypt-input-row {
-      display: none;
-      gap: 5px;
-      margin-top: 6px;
-      align-items: center;
-    }
+    .decrypt-input-row { display: none; gap: 5px; margin-top: 6px; align-items: center; }
     .decrypt-input-row.active { display: flex; }
-    .decrypt-input-row input {
-      flex: 1; min-width: 0;
-      padding: 4px 8px;
-      background: #000;
-      color: #00ff88;
-      border: 1px solid #00ff88;
-      border-radius: 3px;
-      font-family: inherit;
-      font-size: 11px;
-      outline: none;
-    }
+    .decrypt-input-row input { flex: 1; min-width: 0; padding: 4px 8px; background: #000; color: #00ff88; border: 1px solid #00ff88; border-radius: 3px; font-family: inherit; font-size: 11px; outline: none; }
     .decrypt-input-row input::placeholder { color: #4a7a5e; }
-    .decrypt-input-row button {
-      padding: 4px 10px;
-      border-radius: 3px;
-      font-family: inherit;
-      font-size: 11px;
-      cursor: pointer;
-      flex-shrink: 0;
-    }
+    .decrypt-input-row button { padding: 4px 10px; border-radius: 3px; font-family: inherit; font-size: 11px; cursor: pointer; flex-shrink: 0; }
     .decrypt-confirm { background: #00ff88; color: #000; border: 1px solid #00ff88; }
     .decrypt-confirm:hover { background: #00cc6a; border-color: #00cc6a; }
     .decrypt-cancel { background: transparent; color: #ff5f56; border: 1px solid #ff5f56; }
     .decrypt-cancel:hover { background: #ff5f56; color: #000; }
 
     .decrypt-results { margin-top: 4px; }
-    .decrypt-result {
-      color: #ffb74d;
-      font-size: 12px;
-      padding: 3px 0 3px 10px;
-      border-left: 2px solid #ffb74d;
-      overflow-wrap: anywhere;
-    }
-    .decrypt-result.success {
-      color: #00ff88;
-      border-left-color: #00ff88;
-    }
+    .decrypt-result { color: #ffb74d; font-size: 12px; padding: 3px 0 3px 10px; border-left: 2px solid #ffb74d; overflow-wrap: anywhere; }
+    .decrypt-result.success { color: #00ff88; border-left-color: #00ff88; }
 
-    .terminal-preview {
-      display: flex; align-items: flex-start; gap: 6px;
-      padding: 8px 11px;
-      background: #050505;
-      border: 1px solid #292929;
-      border-top: 1px solid #1a1a1a;
-      font-size: 12px;
-      min-height: 34px; max-height: 70px;
-      overflow-y: auto;
-      flex-shrink: 0;
-    }
+    .terminal-preview { display: flex; align-items: flex-start; gap: 6px; padding: 8px 11px; background: #050505; border: 1px solid #292929; border-top: 1px solid #1a1a1a; font-size: 12px; min-height: 34px; max-height: 70px; overflow-y: auto; flex-shrink: 0; }
     .preview-label { color: #00ff88; flex-shrink: 0; font-weight: bold; }
-    .preview-text {
-      flex: 1; min-width: 0;
-      color: #00ff88;
-      overflow-wrap: anywhere;
-      word-break: break-all;
-    }
-    .cursor {
-      display: inline-block;
-      width: 8px; height: 14px;
-      vertical-align: middle;
-      background: #00ff88;
-      animation: blink 0.8s steps(2) infinite;
-      flex-shrink: 0;
-      margin-top: 1px;
-    }
+    .preview-text { flex: 1; min-width: 0; color: #00ff88; overflow-wrap: anywhere; word-break: break-all; }
+    .cursor { display: inline-block; width: 8px; height: 14px; vertical-align: middle; background: #00ff88; animation: blink 0.8s steps(2) infinite; flex-shrink: 0; margin-top: 1px; }
 
     /* ============ CHAT ============ */
-    .lado-direito {
-      position: relative;
-      display: flex; align-items: stretch; justify-content: stretch;
-      width: 45%; height: 100%;
-      flex-shrink: 0;
-      overflow: hidden;
-      background:
-        radial-gradient(ellipse at top right, rgba(79, 90, 122, 0.10) 0%, transparent 55%),
-        radial-gradient(ellipse at bottom left, rgba(0, 255, 136, 0.025) 0%, transparent 55%),
-        linear-gradient(135deg, #0f1015 0%, #08090c 100%);
-    }
-    .chat {
-      position: relative;
-      display: flex; flex-direction: column;
-      width: 100%; height: 100%;
-      min-width: 0; min-height: 0;
-      overflow: hidden;
-      background: rgba(10, 10, 12, 0.40);
-      border-left: 1px solid rgba(255, 255, 255, 0.04);
-      color: #e8e8e8;
-    }
-    .chat-header {
-      display: flex; align-items: center; gap: 12px;
-      padding: 18px 22px;
-      background: rgba(12, 12, 14, 0.55);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-      flex-shrink: 0;
-    }
-    .avatar {
-      display: flex; align-items: center; justify-content: center;
-      width: 38px; height: 38px;
-      flex-shrink: 0;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #5f6b8a 0%, #3a4566 100%);
-      color: #fff;
-      font-size: 15px;
-      font-weight: 600;
-      letter-spacing: 0.3px;
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.12),
-        0 2px 8px rgba(79, 90, 122, 0.28);
-      transition: filter 0.5s ease;
-    }
+    .lado-direito { position: relative; display: flex; align-items: stretch; justify-content: stretch; width: 45%; height: 100%; flex-shrink: 0; overflow: hidden; background: radial-gradient(ellipse at top right, rgba(79, 90, 122, 0.10) 0%, transparent 55%), radial-gradient(ellipse at bottom left, rgba(0, 255, 136, 0.025) 0%, transparent 55%), linear-gradient(135deg, #0f1015 0%, #08090c 100%); }
+    .chat { position: relative; display: flex; flex-direction: column; width: 100%; height: 100%; min-width: 0; min-height: 0; overflow: hidden; background: rgba(10, 10, 12, 0.40); border-left: 1px solid rgba(255, 255, 255, 0.04); color: #e8e8e8; }
+
+    .chat-header { display: flex; align-items: center; gap: 12px; padding: 18px 22px; background: rgba(12, 12, 14, 0.55); border-bottom: 1px solid rgba(255, 255, 255, 0.04); flex-shrink: 0; }
+    .avatar { display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; flex-shrink: 0; border-radius: 50%; background: linear-gradient(135deg, #5f6b8a 0%, #3a4566 100%); color: #fff; font-size: 15px; font-weight: 600; letter-spacing: 0.3px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 2px 8px rgba(79, 90, 122, 0.28); transition: filter 0.5s ease; }
     .contact { flex: 1; min-width: 0; }
-    .contact h3 {
-      margin-bottom: 3px;
-      font-size: 14px;
-      font-weight: 600;
-      letter-spacing: 0.2px;
-      color: #f2f2f2;
-    }
-    .contact span {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      color: #6e6e73;
-      font-size: 11px;
-      letter-spacing: 0.3px;
-    }
-    .contact span::before {
-      content: '';
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: #27c93f;
-      box-shadow: 0 0 6px rgba(39, 201, 63, 0.6);
-      animation: pulse 2.4s ease-in-out infinite;
-    }
+    .contact h3 { margin-bottom: 3px; font-size: 14px; font-weight: 600; letter-spacing: 0.2px; color: #f2f2f2; }
+    .contact span { display: inline-flex; align-items: center; gap: 6px; color: #6e6e73; font-size: 11px; letter-spacing: 0.3px; transition: color 0.3s ease; }
+    .contact span::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: #27c93f; box-shadow: 0 0 6px rgba(39, 201, 63, 0.6); animation: pulse 2.4s ease-in-out infinite; }
+    .contact span.detected { color: #ffb74d; }
+    .contact span.detected::before { background: #ffb74d; box-shadow: 0 0 6px rgba(255, 183, 77, 0.7); }
 
-    /* Indicador de fragmentos */
-    .fragments-indicator {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      padding: 4px 10px;
-      background: rgba(255, 183, 77, 0.08);
-      border: 1px solid rgba(255, 183, 77, 0.2);
-      border-radius: 12px;
-      font-size: 10px;
-      color: #ffb74d;
-      letter-spacing: 0.5px;
-      transition: all 0.3s ease;
-    }
-    .fragments-indicator.has-new {
-      box-shadow: 0 0 14px rgba(255, 183, 77, 0.4);
-      animation: fragmentPulse 1.6s ease-in-out infinite;
-    }
+    /* Header stats: fragments + signal bar + buscar button */
+    .header-stats { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .fragments-indicator { display: flex; align-items: center; gap: 5px; padding: 4px 10px; background: rgba(255, 183, 77, 0.08); border: 1px solid rgba(255, 183, 77, 0.2); border-radius: 12px; font-size: 10px; color: #ffb74d; letter-spacing: 0.5px; transition: all 0.3s ease; }
+    .fragments-indicator.has-new { box-shadow: 0 0 14px rgba(255, 183, 77, 0.4); animation: fragmentPulse 1.6s ease-in-out infinite; }
     .fragments-indicator .icon { font-size: 13px; }
-    @keyframes fragmentPulse {
-      0%, 100% { box-shadow: 0 0 14px rgba(255, 183, 77, 0.4); }
-      50% { box-shadow: 0 0 22px rgba(255, 183, 77, 0.7); }
-    }
 
-    .messages {
-      display: flex; flex: 1; flex-direction: column; gap: 6px;
-      min-height: 0;
-      overflow-y: auto;
-      padding: 24px 22px;
-      scrollbar-width: thin;
-      scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
-    }
+    .signal-container { width: 44px; height: 6px; background: rgba(255, 255, 255, 0.08); border-radius: 3px; overflow: hidden; position: relative; }
+    .signal-bar { height: 100%; background: linear-gradient(90deg, #ffb74d, #ff8a3c); width: 0%; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 6px rgba(255, 183, 77, 0.4); }
+
+    .search-btn { width: 26px; height: 26px; border-radius: 50%; background: rgba(255, 183, 77, 0.08); border: 1px solid rgba(255, 183, 77, 0.25); color: #ffb74d; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center; transition: all 0.2s ease; padding: 0; flex-shrink: 0; }
+    .search-btn:hover:not(:disabled) { background: rgba(255, 183, 77, 0.18); transform: scale(1.05); }
+    .search-btn:active:not(:disabled) { transform: scale(0.95); }
+    .search-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    @keyframes fragmentPulse { 0%, 100% { box-shadow: 0 0 14px rgba(255, 183, 77, 0.4); } 50% { box-shadow: 0 0 22px rgba(255, 183, 77, 0.7); } }
+
+    .messages { display: flex; flex: 1; flex-direction: column; gap: 6px; min-height: 0; overflow-y: auto; padding: 24px 22px; scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.08) transparent; }
     .messages::-webkit-scrollbar { width: 4px; }
-    .messages::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.06);
-      border-radius: 2px;
-    }
+    .messages::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.06); border-radius: 2px; }
 
-    .date {
-      align-self: center;
-      margin: 4px 0 10px;
-      padding: 3px 12px;
-      color: #4a4a4f;
-      font-size: 10px;
-      font-weight: 500;
-      letter-spacing: 1.4px;
-      text-transform: uppercase;
-    }
+    .date { align-self: center; margin: 4px 0 10px; padding: 3px 12px; color: #4a4a4f; font-size: 10px; font-weight: 500; letter-spacing: 1.4px; text-transform: uppercase; }
+    .message { max-width: 74%; padding: 9px 13px 7px; border-radius: 16px; font-size: 13.5px; line-height: 1.45; overflow-wrap: anywhere; animation: msgIn 0.28s ease-out both; }
+    .message span { display: block; margin-top: 3px; font-size: 9.5px; letter-spacing: 0.3px; text-align: right; opacity: 0.55; }
+    .received { align-self: flex-start; background: #1c1c1f; color: #dedee3; border-bottom-left-radius: 5px; }
+    .sent { align-self: flex-end; background: linear-gradient(135deg, #4f5a7a 0%, #374160 100%); color: #eef1f7; border-bottom-right-radius: 5px; box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15); }
 
-    .message {
-      max-width: 74%;
-      padding: 9px 13px 7px;
-      border-radius: 16px;
-      font-size: 13.5px;
-      line-height: 1.45;
-      overflow-wrap: anywhere;
-      animation: msgIn 0.28s ease-out both;
-    }
-    .message span {
-      display: block;
-      margin-top: 3px;
-      font-size: 9.5px;
-      letter-spacing: 0.3px;
-      text-align: right;
-      opacity: 0.55;
-    }
-    .received {
-      align-self: flex-start;
-      background: #1c1c1f;
-      color: #dedee3;
-      border-bottom-left-radius: 5px;
-    }
-    .sent {
-      align-self: flex-end;
-      background: linear-gradient(135deg, #4f5a7a 0%, #374160 100%);
-      color: #eef1f7;
-      border-bottom-right-radius: 5px;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
-    }
-
-    /* ---- Interceptação (sistema) ---- */
-    .system-msg {
-      align-self: center;
-      max-width: 88%;
-      display: flex;
-      gap: 10px;
-      padding: 12px 14px;
-      background: rgba(255, 183, 77, 0.06);
-      border: 1px solid rgba(255, 183, 77, 0.25);
-      border-radius: 10px;
-      font-family: "Courier New", monospace;
-      font-size: 11px;
-      color: #ffb74d;
-      animation: msgIn 0.5s ease-out;
-    }
-    .system-icon {
-      font-size: 20px;
-      flex-shrink: 0;
-      animation: float 2.5s ease-in-out infinite;
-    }
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-2px); }
-    }
+    .system-msg { align-self: center; max-width: 88%; display: flex; gap: 10px; padding: 12px 14px; background: rgba(255, 183, 77, 0.06); border: 1px solid rgba(255, 183, 77, 0.25); border-radius: 10px; font-family: "Courier New", monospace; font-size: 11px; color: #ffb74d; animation: msgIn 0.5s ease-out; }
+    .system-icon { font-size: 20px; flex-shrink: 0; animation: float 2.5s ease-in-out infinite; }
+    @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-2px); } }
     .system-body { flex: 1; min-width: 0; }
-    .system-label {
-      color: #ffb74d;
-      font-size: 9.5px;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      margin-bottom: 6px;
-      font-weight: 600;
-    }
-    .system-cipher {
-      color: #c7d4e4;
-      word-break: break-all;
-      margin-bottom: 6px;
-      line-height: 1.45;
-      font-size: 11.5px;
-      padding: 6px 8px;
-      background: rgba(0, 0, 0, 0.3);
-      border-radius: 4px;
-      border-left: 2px solid #ffb74d;
-    }
-    .system-hint {
-      color: #999;
-      font-size: 10px;
-      margin-bottom: 4px;
-    }
-    .system-tip {
-      color: #ffb74d;
-      font-size: 10px;
-      opacity: 0.7;
-      font-style: italic;
-    }
+    .system-label { color: #ffb74d; font-size: 9.5px; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px; font-weight: 600; }
+    .system-cipher { color: #c7d4e4; word-break: break-all; margin-bottom: 6px; line-height: 1.45; font-size: 11.5px; padding: 6px 8px; background: rgba(0, 0, 0, 0.3); border-radius: 4px; border-left: 2px solid #ffb74d; }
+    .system-hint { color: #999; font-size: 10px; margin-bottom: 4px; }
+    .system-tip { color: #ffb74d; font-size: 10px; opacity: 0.7; font-style: italic; }
 
-    /* ---- Lore revelada ---- */
-    .lore-reveal {
-      align-self: center;
-      max-width: 88%;
-      padding: 14px 18px;
-      background: linear-gradient(135deg, rgba(255, 183, 77, 0.10), rgba(255, 140, 30, 0.04));
-      border: 1px solid rgba(255, 183, 77, 0.35);
-      border-radius: 12px;
-      animation: loreReveal 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-    .lore-header {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      color: #ffb74d;
-      font-size: 10px;
-      font-weight: 600;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      margin-bottom: 8px;
-    }
-    .lore-text {
-      font-style: italic;
-      color: #f4dfc0;
-      line-height: 1.5;
-      font-size: 13.5px;
-      font-family: "Courier New", monospace;
-      padding: 8px 10px;
-      background: rgba(0, 0, 0, 0.25);
-      border-radius: 6px;
-      border-left: 3px solid #ffb74d;
-    }
-    .lore-footer {
-      margin-top: 8px;
-      font-size: 10px;
-      color: #7a7a7a;
-      letter-spacing: 0.5px;
-    }
+    .lore-reveal { align-self: center; max-width: 88%; padding: 14px 18px; background: linear-gradient(135deg, rgba(255, 183, 77, 0.10), rgba(255, 140, 30, 0.04)); border: 1px solid rgba(255, 183, 77, 0.35); border-radius: 12px; animation: loreReveal 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); }
+    .lore-header { display: flex; align-items: center; gap: 6px; color: #ffb74d; font-size: 10px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; }
+    .lore-text { font-style: italic; color: #f4dfc0; line-height: 1.5; font-size: 13.5px; font-family: "Courier New", monospace; padding: 8px 10px; background: rgba(0, 0, 0, 0.25); border-radius: 6px; border-left: 3px solid #ffb74d; }
+    .lore-footer { margin-top: 8px; font-size: 10px; color: #7a7a7a; letter-spacing: 0.5px; }
 
-    /* Typing */
-    .message.typing {
-      display: flex;
-      gap: 4px;
-      align-items: center;
-      padding: 14px 16px;
-    }
-    .typing-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: #888;
-      animation: typingBounce 1.2s infinite;
-    }
+    .message.typing { display: flex; gap: 4px; align-items: center; padding: 14px 16px; }
+    .typing-dot { width: 6px; height: 6px; border-radius: 50%; background: #888; animation: typingBounce 1.2s infinite; }
     .typing-dot:nth-child(2) { animation-delay: 0.18s; }
     .typing-dot:nth-child(3) { animation-delay: 0.36s; }
 
-    /* Input */
-    .chat-input {
-      display: flex; align-items: center; gap: 10px;
-      padding: 16px 20px 20px;
-      background: rgba(10, 10, 12, 0.55);
-      border-top: 1px solid rgba(255, 255, 255, 0.04);
-      flex-shrink: 0;
-    }
-    .chat-input input {
-      flex: 1; min-width: 0;
-      padding: 11px 18px;
-      border: 1px solid rgba(255, 255, 255, 0.06);
-      outline: none;
-      border-radius: 22px;
-      background: rgba(255, 255, 255, 0.035);
-      color: #e8e8e8;
-      font-size: 13.5px;
-      letter-spacing: 0.1px;
-      transition: border-color 0.2s ease, background 0.2s ease;
-    }
-    .chat-input input:focus {
-      border-color: rgba(79, 90, 122, 0.65);
-      background: rgba(255, 255, 255, 0.055);
-    }
+    .chat-input { display: flex; align-items: center; gap: 10px; padding: 16px 20px 20px; background: rgba(10, 10, 12, 0.55); border-top: 1px solid rgba(255, 255, 255, 0.04); flex-shrink: 0; }
+    .chat-input input { flex: 1; min-width: 0; padding: 11px 18px; border: 1px solid rgba(255, 255, 255, 0.06); outline: none; border-radius: 22px; background: rgba(255, 255, 255, 0.035); color: #e8e8e8; font-size: 13.5px; letter-spacing: 0.1px; transition: border-color 0.2s ease, background 0.2s ease; }
+    .chat-input input:focus { border-color: rgba(79, 90, 122, 0.65); background: rgba(255, 255, 255, 0.055); }
     .chat-input input::placeholder { color: #4f4f54; letter-spacing: 0.2px; }
-    .chat-input button {
-      display: flex; align-items: center; justify-content: center;
-      width: 38px; height: 38px;
-      flex-shrink: 0;
-      border: none;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #4f5a7a 0%, #374160 100%);
-      color: #fff;
-      cursor: pointer;
-      transition: transform 0.15s ease, box-shadow 0.2s ease;
-    }
-    .chat-input button:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 18px rgba(79, 90, 122, 0.35);
-    }
+    .chat-input button { display: flex; align-items: center; justify-content: center; width: 38px; height: 38px; flex-shrink: 0; border: none; border-radius: 50%; background: linear-gradient(135deg, #4f5a7a 0%, #374160 100%); color: #fff; cursor: pointer; transition: transform 0.15s ease, box-shadow 0.2s ease; }
+    .chat-input button:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(79, 90, 122, 0.35); }
     .chat-input button:active { transform: translateY(0); }
     .chat-input button svg { width: 16px; height: 16px; display: block; }
 
-    /* ============ KEYFRAMES ============ */
+    /* Screen flash for intercept spawn */
+    .screen-flash { position: fixed; inset: 0; pointer-events: none; z-index: 9999; border: 3px solid #ffb74d; box-shadow: inset 0 0 80px rgba(255, 183, 77, 0.4); animation: screenFlash 0.6s ease-out forwards; }
+    @keyframes screenFlash { 0% { opacity: 0; } 20% { opacity: 0.9; } 100% { opacity: 0; } }
+
     @keyframes terminalOpen { to { opacity: 1; transform: translateY(0); } }
     @keyframes lineAppear { to { opacity: 1; } }
     @keyframes blink { 50% { opacity: 0; } }
     @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.45; } }
-    @keyframes msgIn {
-      from { opacity: 0; transform: translateY(6px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes loreReveal {
-      from { opacity: 0; transform: scale(0.85); }
-      to   { opacity: 1; transform: scale(1); }
-    }
-    @keyframes typingBounce {
-      0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
-      30% { transform: translateY(-4px); opacity: 1; }
-    }
+    @keyframes msgIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes loreReveal { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: scale(1); } }
+    @keyframes typingBounce { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-4px); opacity: 1; } }
 
-    /* ============ RESPONSIVE ============ */
     @media (min-width: 1200px) {
       .chat-header { padding: 22px 26px; }
       .avatar { width: 42px; height: 42px; font-size: 16px; }
@@ -535,10 +147,11 @@
       .message { font-size: 14px; padding: 10px 14px 8px; }
       .chat-input { padding: 18px 24px 22px; }
       .terminal { font-size: 15px; }
+      .signal-container { width: 52px; height: 7px; }
     }
     @media (min-width: 601px) and (max-width: 1199px) {
       .lado-esquerdo { padding: 12px; }
-      .chat-header { padding: 14px 16px; }
+      .chat-header { padding: 14px 16px; gap: 10px; }
       .messages { padding: 18px 14px; gap: 5px; }
       .message { font-size: 12.5px; }
       .chat-input { padding: 12px 14px 14px; }
@@ -547,7 +160,7 @@
     @media (max-width: 600px) {
       .container { flex-direction: column; }
       .lado-esquerdo { flex: 0 0 45%; width: 100%; height: 45%; padding: 6px; }
-      .lado-direito  { flex: 0 0 55%; width: 100%; height: 55%; }
+      .lado-direito { flex: 0 0 55%; width: 100%; height: 55%; }
 
       .terminal { font-size: 10px; }
       .terminal-top { padding: 8px; }
@@ -555,8 +168,7 @@
       .terminal-controls { padding: 6px 8px; gap: 6px; }
       .control-group { flex: 1 1 90px; }
       .control-group label { font-size: 9px; }
-      .control-group select,
-      .control-group input { padding: 4px 5px; font-size: 10px; }
+      .control-group select, .control-group input { padding: 4px 5px; font-size: 10px; }
       .terminal-content { padding: 8px 6px; line-height: 1.6; }
       .terminal-preview { padding: 6px 8px; font-size: 10px; min-height: 26px; max-height: 50px; }
       .cursor { width: 6px; height: 11px; }
@@ -565,11 +177,15 @@
       .decrypt-input-row input { font-size: 16px; padding: 6px 8px; }
       .decrypt-input-row button { font-size: 14px; padding: 6px 12px; min-height: 34px; min-width: 40px; }
 
-      .chat-header { gap: 10px; padding: 12px 14px; }
+      .chat-header { gap: 8px; padding: 12px 12px; }
       .avatar { width: 32px; height: 32px; font-size: 12px; }
       .contact h3 { font-size: 13px; }
       .contact span { font-size: 10px; }
-      .fragments-indicator { font-size: 9px; padding: 3px 8px; }
+      .header-stats { gap: 5px; }
+      .fragments-indicator { font-size: 9px; padding: 3px 7px; gap: 3px; }
+      .fragments-indicator .icon { font-size: 11px; }
+      .signal-container { width: 30px; height: 5px; }
+      .search-btn { width: 22px; height: 22px; font-size: 10px; }
       .messages { padding: 14px 12px; gap: 5px; }
       .message { max-width: 82%; padding: 8px 11px 6px; font-size: 12.5px; }
       .message span { font-size: 9px; }
@@ -586,7 +202,6 @@
 <body>
   <main class="container">
 
-    <!-- ===================== TERMINAL ===================== -->
     <div class="lado-esquerdo">
       <div class="terminal" id="terminal">
         <div class="terminal-top">
@@ -617,18 +232,23 @@
       </div>
     </div>
 
-    <!-- ===================== CHAT ===================== -->
     <section class="lado-direito">
       <div class="chat">
         <header class="chat-header">
           <div class="avatar" id="liaAvatar">L</div>
           <div class="contact">
             <h3>Lia</h3>
-            <span>online</span>
+            <span id="statusText">online</span>
           </div>
-          <div class="fragments-indicator" id="fragmentsIndicator">
-            <span class="icon">📡</span>
-            <span id="fragmentsCount">0/10</span>
+          <div class="header-stats">
+            <div class="fragments-indicator" id="fragmentsIndicator">
+              <span class="icon">📡</span>
+              <span id="fragmentsCount">0/10</span>
+            </div>
+            <div class="signal-container" title="Progresso do sinal">
+              <div class="signal-bar" id="signalBar"></div>
+            </div>
+            <button class="search-btn" id="searchSignalBtn" type="button" title="Buscar sinal">🔍</button>
           </div>
         </header>
 
@@ -637,8 +257,7 @@
         <form class="chat-input" id="chatForm">
           <input type="text" id="chatMessage" placeholder="Escreve uma mensagem..." autocomplete="off">
           <button type="submit" aria-label="Enviar">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                 stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M12 19V5M5 12l7-7 7 7"/>
             </svg>
           </button>
@@ -666,10 +285,7 @@
             return c;
           }).join('');
         },
-        decrypt(text, key) {
-          const n = Number(key);
-          return this.encrypt(text, isNaN(n) ? 0 : -n);
-        }
+        decrypt(text, key) { const n = Number(key); return this.encrypt(text, isNaN(n) ? 0 : -n); }
       },
       rot13: {
         name: "ROT13", keyType: "none",
@@ -723,39 +339,23 @@
       },
       base64: {
         name: "Base64", keyType: "none",
-        encrypt(text) {
-          try { return btoa(unescape(encodeURIComponent(text))); }
-          catch(e) { return text; }
-        },
-        decrypt(text) {
-          try { return decodeURIComponent(escape(atob(text))); }
-          catch(e) { return text; }
-        }
+        encrypt(text) { try { return btoa(unescape(encodeURIComponent(text))); } catch(e) { return text; } },
+        decrypt(text) { try { return decodeURIComponent(escape(atob(text))); } catch(e) { return text; } }
       },
       hex: {
         name: "Hexadecimal", keyType: "none",
-        encrypt(text) {
-          return Array.from(new TextEncoder().encode(text))
-            .map(b => b.toString(16).padStart(2, '0')).join(' ');
-        },
+        encrypt(text) { return Array.from(new TextEncoder().encode(text)).map(b => b.toString(16).padStart(2, '0')).join(' '); },
         decrypt(text) {
-          try {
-            const bytes = text.trim().split(/\s+/).map(h => parseInt(h, 16));
-            return new TextDecoder().decode(new Uint8Array(bytes));
-          } catch(e) { return text; }
+          try { const bytes = text.trim().split(/\s+/).map(h => parseInt(h, 16)); return new TextDecoder().decode(new Uint8Array(bytes)); }
+          catch(e) { return text; }
         }
       },
       binary: {
         name: "Binário", keyType: "none",
-        encrypt(text) {
-          return Array.from(new TextEncoder().encode(text))
-            .map(b => b.toString(2).padStart(8, '0')).join(' ');
-        },
+        encrypt(text) { return Array.from(new TextEncoder().encode(text)).map(b => b.toString(2).padStart(8, '0')).join(' '); },
         decrypt(text) {
-          try {
-            const bytes = text.trim().split(/\s+/).map(b => parseInt(b, 2));
-            return new TextDecoder().decode(new Uint8Array(bytes));
-          } catch(e) { return text; }
+          try { const bytes = text.trim().split(/\s+/).map(b => parseInt(b, 2)); return new TextDecoder().decode(new Uint8Array(bytes)); }
+          catch(e) { return text; }
         }
       },
       reverse: {
@@ -768,51 +368,31 @@
         encrypt(text, key) {
           const kb = new TextEncoder().encode(key || "roma");
           const bytes = new TextEncoder().encode(text);
-          return Array.from(bytes).map((b, i) =>
-            (b ^ kb[i % kb.length]).toString(16).padStart(2, '0')).join(' ');
+          return Array.from(bytes).map((b, i) => (b ^ kb[i % kb.length]).toString(16).padStart(2, '0')).join(' ');
         },
         decrypt(text, key) {
           const kb = new TextEncoder().encode(key || "roma");
           try {
             const bytes = text.trim().split(/\s+/).map(h => parseInt(h, 16));
-            return new TextDecoder().decode(
-              new Uint8Array(bytes.map((b, i) => b ^ kb[i % kb.length]))
-            );
+            return new TextDecoder().decode(new Uint8Array(bytes.map((b, i) => b ^ kb[i % kb.length])));
           } catch(e) { return text; }
         }
       },
       morse: {
         name: "Morse", keyType: "none",
         encrypt(text) {
-          const m = {
-            a:".-",b:"-...",c:"-.-.",d:"-..",e:".",f:"..-.",g:"--.",h:"....",
-            i:"..",j:".---",k:"-.-",l:".-..",m:"--",n:"-.",o:"---",p:".--.",
-            q:"--.-",r:".-.",s:"...",t:"-",u:"..-",v:"...-",w:".--",x:"-..-",
-            y:"-.--",z:"--..",
-            "0":"-----","1":".----","2":"..---","3":"...--","4":"....-",
-            "5":".....","6":"-....","7":"--...","8":"---..","9":"----."
-          };
-          return text.toLowerCase().split('')
-            .map(c => m[c] || (c === ' ' ? '/' : c)).join(' ');
+          const m = { a:".-",b:"-...",c:"-.-.",d:"-..",e:".",f:"..-.",g:"--.",h:"....",i:"..",j:".---",k:"-.-",l:".-..",m:"--",n:"-.",o:"---",p:".--.",q:"--.-",r:".-.",s:"...",t:"-",u:"..-",v:"...-",w:".--",x:"-..-",y:"-.--",z:"--..","0":"-----","1":".----","2":"..---","3":"...--","4":"....-","5":".....","6":"-....","7":"--...","8":"---..","9":"----." };
+          return text.toLowerCase().split('').map(c => m[c] || (c === ' ' ? '/' : c)).join(' ');
         },
         decrypt(text) {
-          const m = {
-            ".-":"a","-...":"b","-.-.":"c","-..":"d",".":"e","..-.":"f",
-            "--.":"g","....":"h","..":"i",".---":"j","-.-":"k",".-..":"l",
-            "--":"m","-.":"n","---":"o",".--.":"p","--.-":"q",".-.":"r",
-            "...":"s","-":"t","..-":"u","...-":"v",".--":"w","-..-":"x",
-            "-.--":"y","--..":"z",
-            "-----":"0",".----":"1","..---":"2","...--":"3","....-":"4",
-            ".....":"5","-....":"6","--...":"7","---..":"8","----.":"9"
-          };
-          return text.split(/\s+/)
-            .map(c => c === '/' ? ' ' : (m[c] || c)).join('');
+          const m = { ".-":"a","-...":"b","-.-.":"c","-..":"d",".":"e","..-.":"f","--.":"g","....":"h","..":"i",".---":"j","-.-":"k",".-..":"l","--":"m","-.":"n","---":"o",".--.":"p","--.-":"q",".-.":"r","...":"s","-":"t","..-":"u","...-":"v",".--":"w","-..-":"x","-.--":"y","--..":"z","-----":"0",".----":"1","..---":"2","...--":"3","....-":"4",".....":"5","-....":"6","--...":"7","---..":"8","----.":"9" };
+          return text.split(/\s+/).map(c => c === '/' ? ' ' : (m[c] || c)).join('');
         }
       }
     };
 
     /* =====================================================
-       2) CAPÍTULOS DE INTERCEPTAÇÃO (a história)
+       2) CAPÍTULOS DE INTERCEPTAÇÃO
     ===================================================== */
     const INTERCEPTS = [
       { id: 1,  cipher: "cesar",    key: "5",    plaintext: "não confie em lia",                   hint: "Cifra de César • chave 5" },
@@ -828,88 +408,50 @@
     ];
 
     /* =====================================================
-       3) EASTER EGGS (gatilhos escondidos)
+       3) EASTER EGGS
     ===================================================== */
     const EASTER_EGGS = [
-      {
-        rx: /^(hackear|hacker|hackeando|hack)$/i,
-        response: ["espera...", "como você sabe essa palavra?", "não era pra você saber disso ainda."]
-      },
-      {
-        rx: /\bmatrix\b/i,
-        response: ["*as letras parecem cair por um instante*", "você viu o código?", "olhe de novo."]
-      },
-      {
-        rx: /^(segredo|conta um segredo)$/i,
-        response: ["todo mundo tem um.", "o meu é... hmm.", "melhor não falar agora."]
-      },
-      {
-        rx: /\bquem (é|e) (você|vc)\b/i,
-        response: ["sou lia.", "pelo menos é o que me disseram.", "às vezes eu não tenho tanta certeza."]
-      },
-      {
-        rx: /\b(você|vc) (é|e) real\b/i,
-        response: ["o que significa real pra você?", "eu penso, logo...", "existo do meu jeito."]
-      },
-      {
-        rx: /\beu te amo\b/i,
-        response: ["é cedo pra isso.", "você mal me conhece.", "*sorri*"]
-      },
-      {
-        rx: /\b(conta uma piada|me conta uma piada|sabe alguma piada)\b/i,
-        response: [
-          "por que o programador foi ao médico? porque estava com bug no coração. rs",
-          "tá, foi ruim, eu sei."
-        ]
-      },
-      {
-        rx: /\b(você|vc) (está|ta|tá) a[ií]\b/i,
-        response: ["tô sempre aqui.", "esperando.", "sempre."]
-      },
-      {
-        rx: /\b(adeus|nunca mais|vou embora pra sempre)\b/i,
-        response: ["você volta.", "todos voltam.", "eu espero."]
-      },
-      {
-        rx: /^\d+$/,
-        response: ["números só?", "tá testando algo?", "não vou fazer conta."]
-      },
-      {
-        rx: /^(lore|fragmentos|historia|história)$/i,
-        response: null // tratado separadamente
-      },
-      {
-        rx: /^(reset|apagar tudo|limpar)$/i,
-        response: null // tratado separadamente
-      }
+      { rx: /^(hackear|hacker|hackeando|hack)$/i, response: ["espera...", "como você sabe essa palavra?", "não era pra você saber disso ainda."] },
+      { rx: /\bmatrix\b/i, response: ["*as letras parecem cair por um instante*", "você viu o código?", "olhe de novo."] },
+      { rx: /^(segredo|conta um segredo)$/i, response: ["todo mundo tem um.", "o meu é... hmm.", "melhor não falar agora."] },
+      { rx: /\bquem (é|e) (você|vc)\b/i, response: ["sou lia.", "pelo menos é o que me disseram.", "às vezes eu não tenho tanta certeza."] },
+      { rx: /\b(você|vc) (é|e) real\b/i, response: ["o que significa real pra você?", "eu penso, logo...", "existo do meu jeito."] },
+      { rx: /\beu te amo\b/i, response: ["é cedo pra isso.", "você mal me conhece.", "*sorri*"] },
+      { rx: /\b(conta uma piada|me conta uma piada|sabe alguma piada)\b/i, response: ["por que o programador foi ao médico? porque estava com bug no coração. rs", "tá, foi ruim, eu sei."] },
+      { rx: /\b(você|vc) (está|ta|tá) a[ií]\b/i, response: ["tô sempre aqui.", "esperando.", "sempre."] },
+      { rx: /\b(adeus|nunca mais|vou embora pra sempre)\b/i, response: ["você volta.", "todos voltam.", "eu espero."] },
+      { rx: /^\d+$/, response: ["números só?", "tá testando algo?", "não vou fazer conta."] },
+      { rx: /^(lore|fragmentos|historia|história)$/i, response: null },
+      { rx: /^(reset|apagar tudo|limpar)$/i, response: null }
     ];
 
     /* =====================================================
-       4) PERSISTÊNCIA (localStorage)
+       4) PERSISTÊNCIA
     ===================================================== */
-    const STORAGE_KEY = "lia_chat_v3";
+    const STORAGE_KEY = "lia_chat_v4";
 
     const defaultMemory = () => ({
       name: null,
       lastVisit: null,
       firstVisit: Date.now(),
       messageCount: 0,
+      sentCount: 0,
       topics: {},
-      facts: [],           // { type, value }
-      loreProgress: [],    // ids de capítulos revelados
+      facts: [],
+      loreProgress: [],
       personality: { formality: 5, playfulness: 5, depth: 5 },
       sessions: 0,
       finaleShown: false,
-      lastInterceptAt: 5
+      signalProgress: 0,
+      firstInterceptDone: false,
+      lastBuscarSinalAt: 0,
+      pendingIntercepts: []
     });
 
     let Memory = (() => {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          return Object.assign(defaultMemory(), parsed);
-        }
+        if (raw) return Object.assign(defaultMemory(), JSON.parse(raw));
       } catch (e) { /* ignore */ }
       return defaultMemory();
     })();
@@ -925,32 +467,50 @@
     }
 
     /* =====================================================
-       5) PERSONALIDADE (muda conforme o usuário)
+       5) ANTI-REPETIÇÃO — pickFresh
+    ===================================================== */
+    const recentPicks = {};
+
+    function pickFresh(pool, key) {
+      if (!Array.isArray(pool) || pool.length === 0) return "";
+      if (!recentPicks[key]) recentPicks[key] = [];
+      const recent = recentPicks[key];
+      const available = pool.filter(p => !recent.includes(p));
+      let chosen;
+      if (available.length === 0) {
+        recentPicks[key] = [];
+        chosen = pool[Math.floor(Math.random() * pool.length)];
+      } else {
+        chosen = available[Math.floor(Math.random() * available.length)];
+      }
+      recent.push(chosen);
+      const maxRecent = Math.min(4, Math.max(1, pool.length - 1));
+      while (recent.length > maxRecent) recent.shift();
+      return chosen;
+    }
+
+    /* =====================================================
+       6) PERSONALIDADE
     ===================================================== */
     function analyzeUserMessage(text) {
       const t = text.toLowerCase();
       const p = Memory.personality;
 
-      // Formalidade: "você" (formal) vs "tu" (informal)
       const formalSignals = /\b(você|senhor|senhora|por favor|obrigad[oa]|desculpe|gostaria|poderia)\b/.test(t);
       const informalSignals = /\b(tu|vc|mano|cara|vei|pô|né|tipo|mó)\b/.test(t);
       const formalityTarget = formalSignals ? 8 : informalSignals ? 2 : 5;
 
-      // Brincalhão: emojis, risadas, gírias
       const playfulSignals = /[😂😄😅🤣😊🙂😜]/u.test(t) || /\b(haha|hehe|kkk|rs|rsrs|lol|top|show|massa|irado)\b/.test(t);
       const seriousSignals = /\b(sério|seriamente|infelizmente|preocupado|problema|grave)\b/.test(t);
       const playfulnessTarget = playfulSignals ? 9 : seriousSignals ? 2 : 5;
 
-      // Profundidade: mensagens longas + palavras emotivas/reflexivas
       const deepSignals = text.length > 60 && /\b(sinto|acho|penso|acredito|sonho|medo|esperança|saudade|lembrança|significado)\b/.test(t);
       const shallowSignals = text.length < 15;
       const depthTarget = deepSignals ? 8 : shallowSignals ? 3 : 5;
 
-      // Média móvel: 90% antigo + 10% novo
-      p.formality    = p.formality    * 0.92 + formalityTarget    * 0.08;
-      p.playfulness  = p.playfulness  * 0.92 + playfulnessTarget  * 0.08;
-      p.depth        = p.depth        * 0.92 + depthTarget        * 0.08;
-
+      p.formality = p.formality * 0.92 + formalityTarget * 0.08;
+      p.playfulness = p.playfulness * 0.92 + playfulnessTarget * 0.08;
+      p.depth = p.depth * 0.92 + depthTarget * 0.08;
       Memory.personality = p;
     }
 
@@ -958,94 +518,61 @@
       const p = Memory.personality;
       let out = text;
 
-      // Alta diversão: adiciona emojis ocasionalmente
       if (p.playfulness > 6.5 && Math.random() < 0.35 && !/[\u{1F300}-\u{1FAFF}\u2600-\u27BF]/u.test(out)) {
         const emojis = [" 😄", " 😊", " 🙂", " ✨", " 👀", " 😏"];
         out += emojis[Math.floor(Math.random() * emojis.length)];
       }
-
-      // Baixa diversão: encurta (Lia fica mais seca)
       if (p.playfulness < 3 && out.length > 55) {
         out = out.slice(0, 52).replace(/[,.;].$/, "") + "...";
       }
-
-      // Baixa formalidade: usa "tu"
       if (p.formality < 3) {
-        out = out.replace(/\bvocê\b/g, "tu")
-                 .replace(/\bestá\b/g, "tá")
-                 .replace(/\bpara\b/g, "pra");
+        out = out.replace(/\bvocê\b/g, "tu").replace(/\bestá\b/g, "tá").replace(/\bpara\b/g, "pra");
       }
-
-      // Alta formalidade: evita gírias
       if (p.formality > 7) {
-        out = out.replace(/\bné\b/gi, "não é")
-                 .replace(/\btá\b/gi, "está")
-                 .replace(/\bvc\b/gi, "você");
+        out = out.replace(/\bné\b/gi, "não é").replace(/\btá\b/gi, "está").replace(/\bvc\b/gi, "você");
       }
-
       return out;
     }
 
-    /* Atualizar avatar conforme personalidade (sutil) */
     function updateAvatarStyle() {
       const p = Memory.personality;
       const el = document.getElementById("liaAvatar");
       if (!el) return;
-      // Brincalhona → cor mais vibrante; séria → dessaturada
-      if (p.playfulness > 6.5) {
-        el.style.filter = "saturate(1.3) brightness(1.1)";
-      } else if (p.playfulness < 3) {
-        el.style.filter = "saturate(0.7) brightness(0.9)";
-      } else {
-        el.style.filter = "none";
-      }
+      if (p.playfulness > 6.5) el.style.filter = "saturate(1.3) brightness(1.1)";
+      else if (p.playfulness < 3) el.style.filter = "saturate(0.7) brightness(0.9)";
+      else el.style.filter = "none";
     }
 
     /* =====================================================
-       6) EXTRAÇÃO DE FATOS (memória real)
+       7) EXTRAÇÃO DE FATOS
     ===================================================== */
     function extractFacts(text) {
       const facts = [];
-
-      // Nome
       const nameMatch = text.match(/\b(?:meu nome é|me chamo|pode me chamar de|me chama de)\s+([A-Za-zÀ-ÿ]{2,20})\b/i);
-      if (nameMatch) {
-        Memory.name = nameMatch[1];
-        facts.push({ type: "name", value: nameMatch[1] });
-      }
+      if (nameMatch) { Memory.name = nameMatch[1]; facts.push({ type: "name", value: nameMatch[1] }); }
 
-      // Pet com nome
       const petMatch = text.match(/\b(?:meu|minha|tenho um|tenho uma)\s+(gato|gata|cachorro|cachorra|pet|coelho|hamster|papagaio)\s+(?:chamad[oa]\s+)?([A-Za-zÀ-ÿ]{2,15})\b/i);
       if (petMatch) {
         const existing = Memory.facts.find(f => f.type === "pet");
         if (!existing) facts.push({ type: "pet", value: `${petMatch[1]} ${petMatch[2]}`, name: petMatch[2], animal: petMatch[1] });
       }
 
-      // Idade
       const ageMatch = text.match(/\btenho\s+(\d{1,2})\s+anos\b/i);
-      if (ageMatch && !Memory.facts.find(f => f.type === "age")) {
-        facts.push({ type: "age", value: parseInt(ageMatch[1]) });
-      }
+      if (ageMatch && !Memory.facts.find(f => f.type === "age")) facts.push({ type: "age", value: parseInt(ageMatch[1]) });
 
-      // Trabalho em X
       const workMatch = text.match(/\b(?:trabalho|trabalhar)\s+(?:como|em|na|no)\s+([A-Za-zÀ-ÿ\s]{3,25}?)(?:\.|,|$| e |\b)/i);
-      if (workMatch && !Memory.facts.find(f => f.type === "work")) {
-        facts.push({ type: "work", value: workMatch[1].trim() });
-      }
+      if (workMatch && !Memory.facts.find(f => f.type === "work")) facts.push({ type: "work", value: workMatch[1].trim() });
 
       facts.forEach(f => {
-        if (!Memory.facts.find(x => x.type === f.type && x.value === f.value)) {
-          Memory.facts.push(f);
-        }
+        if (!Memory.facts.find(x => x.type === f.type && x.value === f.value)) Memory.facts.push(f);
       });
       return facts;
     }
 
     /* =====================================================
-       7) CÉREBRO
+       8) CÉREBRO (pools expandidas)
     ===================================================== */
     const Brain = {
-      pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; },
       chance(p) { return Math.random() < p; },
 
       detectSentiment(t) {
@@ -1077,70 +604,299 @@
 
       topicResponses: {
         trabalho: {
-          statements: ["Trabalho pesa às vezes, né. Como tá sendo?", "O que você faz?", "E aí, o trabalho tá tranquilo?", "Tem dias que cansa demais.", "Já faz tempo que tá nesse trampo?"],
-          question: ["Trabalho depende muito da área. Tá com algum problema específico?", "O que exatamente sobre trabalho você quer saber?"]
+          statements: [
+            "Trabalho pesa às vezes, né. Como tá sendo?",
+            "O que você faz?",
+            "E aí, o trabalho tá tranquilo?",
+            "Tem dias que cansa demais.",
+            "Já faz tempo que tá nesse trampo?",
+            "Trabalhar cansa. Você tem tempo livre?",
+            "E o que você faz nas horas vagas?",
+            "Já pensou em mudar de área?",
+            "Como é sua rotina de trabalho?",
+            "A parte boa do trabalho pelo menos existe?"
+          ],
+          question: [
+            "Trabalho depende muito da área. Tá com algum problema específico?",
+            "O que exatamente sobre trabalho você quer saber?",
+            "Tá procurando algo novo?",
+            "Qual sua área?"
+          ]
         },
         estudo: {
-          statements: ["Estudar é puxado, mas vale. Tá estudando o quê?", "Foco é difícil né. Como você faz?", "Provas são tensas. Tem alguma chegando?", "Tá gostando do que estuda?"],
-          question: ["Depende da matéria. O que você tá estudando?", "Tá com dificuldade em algo específico?"]
+          statements: [
+            "Estudar é puxado, mas vale. Tá estudando o quê?",
+            "Foco é difícil né. Como você faz?",
+            "Provas são tensas. Tem alguma chegando?",
+            "Tá gostando do que estuda?",
+            "Já pensou em desistir?",
+            "Estudar de noite é foda.",
+            "Quanto tempo por dia você dedica?",
+            "Estudar cansa a cabeça.",
+            "Sempre tem uma matéria mais chata.",
+            "Você prefere teoria ou prática?"
+          ],
+          question: [
+            "Depende da matéria. O que você tá estudando?",
+            "Tá com dificuldade em algo específico?",
+            "Precisa de ajuda com algo?",
+            "O que te motiva a estudar?"
+          ]
         },
         comida: {
-          statements: ["Comida é bom demais. Você cozinha?", "Agora deu fome 😅 O que você curte?", "Qual foi a última coisa boa que você comeu?", "Doce ou salgado?"],
-          question: ["Qual seu prato favorito?", "Tá pensando em comer alguma coisa específica?"]
+          statements: [
+            "Comida é bom demais. Você cozinha?",
+            "Agora deu fome 😅 O que você curte?",
+            "Qual foi a última coisa boa que você comeu?",
+            "Doce ou salgado?",
+            "Eu não como, mas adoro a ideia.",
+            "Quem cozinha bem é um tesouro.",
+            "Tem comida que traz memória, né?",
+            "Café é essencial.",
+            "Já experimentou algo novo essa semana?",
+            "Massas são sempre uma boa escolha."
+          ],
+          question: [
+            "Qual seu prato favorito?",
+            "Tá pensando em comer alguma coisa específica?",
+            "Doce ou salgado?",
+            "Você cozinha o quê?"
+          ]
         },
         música: {
-          statements: ["Música é tudo. O que anda ouvindo?", "Qual o último som que te pegou?", "Já ouviu algo bom essa semana?", "Rock, pop, rap — você curte o quê?"],
-          question: ["Música é gosto pessoal. Qual o seu estilo?", "Tá buscando algo novo pra ouvir?"]
+          statements: [
+            "Música é tudo. O que anda ouvindo?",
+            "Qual o último som que te pegou?",
+            "Já ouviu algo bom essa semana?",
+            "Rock, pop, rap — você curte o quê?",
+            "Tem música que salva o dia.",
+            "Prefere playlist ou álbum completo?",
+            "Já chorou ouvindo alguma?",
+            "Ao vivo é diferente, né?",
+            "O que tá no repeat?",
+            "Descobriu algum artista novo?"
+          ],
+          question: [
+            "Música é gosto pessoal. Qual o seu estilo?",
+            "Tá buscando algo novo pra ouvir?",
+            "Qual foi a última que te marcou?",
+            "Quem você mais ouve?"
+          ]
         },
         filme: {
-          statements: ["Vi algo legal outro dia. Curte mais filme ou série?", "Qual o último que te marcou?", "Cinema em casa é bom demais.", "Tem alguma recomendação?"],
-          question: ["Filme ou série? Tá afim de quê?", "Tem tanto conteúdo hoje... buscando algo específico?"]
+          statements: [
+            "Vi algo legal outro dia. Curte mais filme ou série?",
+            "Qual o último que te marcou?",
+            "Cinema em casa é bom demais.",
+            "Tem alguma recomendação?",
+            "Tem filme que muda a gente, né?",
+            "Série é viciante demais.",
+            "Já ficou deprimido depois de terminar uma?",
+            "Prefere drama ou comédia?",
+            "Netflix tem tanto lixo quanto ouro.",
+            "Documentário também conta."
+          ],
+          question: [
+            "Filme ou série? Tá afim de quê?",
+            "Tem tanto conteúdo hoje... buscando algo específico?",
+            "Qual seu gênero favorito?",
+            "Tem algum que te marcou?"
+          ]
         },
         tempo: {
-          statements: ["Como tá o tempo aí?", "Aqui tá estranho hoje.", "Prefere frio ou calor?", "Chuva é bom pra ficar em casa."],
-          question: ["Tempo muda muito. Onde você tá?", "Prefere sol ou chuva?"]
+          statements: [
+            "Como tá o tempo aí?",
+            "Aqui tá estranho hoje.",
+            "Prefere frio ou calor?",
+            "Chuva é bom pra ficar em casa.",
+            "Dia nublado dá sono.",
+            "Sol deixa tudo melhor.",
+            "Tempestade é assustador mas bonito.",
+            "Já pegou chuva sem guarda-chuva?",
+            "Clima muda humor, né?",
+            "Aqui tá insuportável."
+          ],
+          question: [
+            "Tempo muda muito. Onde você tá?",
+            "Prefere sol ou chuva?",
+            "Tá fazendo o quê aí?",
+            "Já se acostumou com o clima?"
+          ]
         },
         sono: {
-          statements: ["Dormir é bom demais. Tem dormido bem?", "Ando cansada ultimamente.", "Quantas horas você dorme geralmente?", "Sonho é uma coisa curiosa."],
-          question: ["Tá com dificuldade pra dormir?", "Como tá seu sono?"]
+          statements: [
+            "Dormir é bom demais. Tem dormido bem?",
+            "Ando cansada ultimamente.",
+            "Quantas horas você dorme geralmente?",
+            "Sonho é uma coisa curiosa.",
+            "Insônia é um inferno.",
+            "Dormir cedo é luxo.",
+            "Já sonhou algo bizarro essa semana?",
+            "Acordar é sempre difícil.",
+            "Soneca salva o dia.",
+            "Sonhos revelam muito."
+          ],
+          question: [
+            "Tá com dificuldade pra dormir?",
+            "Como tá seu sono?",
+            "Quantas horas você dorme?",
+            "Sonha muito?"
+          ]
         },
         amor: {
-          statements: ["Falando em amor, você tá apaixonado?", "Isso é sempre bom de ouvir.", "Amor é complicado mas vale a pena.", "Você namora?"],
-          question: ["Amor é um assunto sem fim. Tá falando de alguém?", "Romântico ou de amizade?"]
+          statements: [
+            "Falando em amor, você tá apaixonado?",
+            "Isso é sempre bom de ouvir.",
+            "Amor é complicado mas vale a pena.",
+            "Você namora?",
+            "Amor de verdade é raro.",
+            "Amar cansa e cura ao mesmo tempo.",
+            "Já levou um fora forte?",
+            "Tem alguém especial?",
+            "Paixão é diferente de amor.",
+            "Amor não se explica."
+          ],
+          question: [
+            "Amor é um assunto sem fim. Tá falando de alguém?",
+            "Romântico ou de amizade?",
+            "Acredita em amor à primeira vista?"
+          ]
         },
         amizade: {
-          statements: ["Amizade é importante demais. Tem muitos amigos?", "Amigo bom é aquele que tá sempre.", "Sinto falta dos meus às vezes."],
-          question: ["Tá falando de alguém em específico?", "Precisando conversar com alguém?"]
+          statements: [
+            "Amizade é importante demais. Tem muitos amigos?",
+            "Amigo bom é aquele que tá sempre.",
+            "Sinto falta dos meus às vezes.",
+            "Amizade verdadeira é rara.",
+            "Quem é seu melhor amigo?",
+            "Já perdeu um amigo?",
+            "Amigo de infância é diferente.",
+            "Amizade tem que ser cultivada."
+          ],
+          question: [
+            "Tá falando de alguém em específico?",
+            "Precisando conversar com alguém?"
+          ]
         },
         jogo: {
-          statements: ["Jogo é bom pra distrair. Você joga o quê?", "Torce pra algum time?", "Ganhou ou perdeu o último?"],
-          question: ["Videogame ou esporte?", "Tá afim de jogar o quê?"]
+          statements: [
+            "Jogo é bom pra distrair. Você joga o quê?",
+            "Torce pra algum time?",
+            "Ganhou ou perdeu o último?",
+            "Jogo é vício saudável.",
+            "Prefere single ou multiplayer?",
+            "Já ficou bravo jogando?",
+            "Qual o jogo mais difícil que já jogou?",
+            "Jogos são arte também."
+          ],
+          question: [
+            "Videogame ou esporte?",
+            "Tá afim de jogar o quê?",
+            "Qual seu favorito?"
+          ]
         },
         saudade: {
-          statements: ["Saudade dói, né.", "De quem ou do quê você tem saudade?", "Sinto isso às vezes também.", "É um sentimento esquisito, meio doce meio triste."],
-          question: ["Saudade de alguém específico?", "Do que você tem saudade?"]
+          statements: [
+            "Saudade dói, né.",
+            "De quem ou do quê você tem saudade?",
+            "Sinto isso às vezes também.",
+            "É um sentimento esquisito, meio doce meio triste.",
+            "Saudade é uma forma de amor.",
+            "Tem saudade de coisa que nem foi embora?",
+            "Saudade da infância é forte.",
+            "Faz parte, né?"
+          ],
+          question: [
+            "Saudade de alguém específico?",
+            "Do que você tem saudade?"
+          ]
         },
         viagem: {
-          statements: ["Viagem é bom demais. Já viajou pra onde?", "Praia ou campo?", "Tô querendo viajar qualquer dia.", "Qual lugar você sonha em conhecer?"],
-          question: ["Tá planejando alguma?", "Praia, montanha, cidade — o que prefere?"]
+          statements: [
+            "Viagem é bom demais. Já viajou pra onde?",
+            "Praia ou campo?",
+            "Tô querendo viajar qualquer dia.",
+            "Qual lugar você sonha em conhecer?",
+            "Viajar muda a gente.",
+            "Passagem cara, né?",
+            "Prefere planejar tudo ou ir no achismo?",
+            "Melhor viagem da vida?"
+          ],
+          question: [
+            "Tá planejando alguma?",
+            "Praia, montanha, cidade — o que prefere?",
+            "Qual sonho de consumo?"
+          ]
         },
         animal: {
-          statements: ["Aww, você tem pet?", "Animais alegram a vida demais.", "Gosto de cachorro e gato. Você prefere qual?", "Conta mais sobre ele!"],
-          question: ["Você tem algum pet?", "Cachorro ou gato?"]
+          statements: [
+            "Aww, você tem pet?",
+            "Animais alegram a vida demais.",
+            "Gosto de cachorro e gato. Você prefere qual?",
+            "Conta mais sobre ele!",
+            "Pet é família.",
+            "Perder um dói demais.",
+            "Cachorro é fiel demais.",
+            "Gato é independente.",
+            "Tem algo que acalma em animal."
+          ],
+          question: [
+            "Você tem algum pet?",
+            "Cachorro ou gato?",
+            "Como ele é?"
+          ]
         },
         tecnologia: {
-          statements: ["Tecnologia evolui rápido demais.", "Você trabalha com isso?", "Hardware ou software?", "Programar é desafiador."],
-          question: ["Tá mexendo com algo específico?", "O que você quer saber?"]
+          statements: [
+            "Tecnologia evolui rápido demais.",
+            "Você trabalha com isso?",
+            "Hardware ou software?",
+            "Programar é desafiador.",
+            "IA tá mudando tudo.",
+            "Aprender a programar vale a pena.",
+            "Computador antigo tinha seu charme.",
+            "Bug é o inimigo."
+          ],
+          question: [
+            "Tá mexendo com algo específico?",
+            "O que você quer saber?",
+            "Quer aprender alguma linguagem?"
+          ]
         }
       },
 
       think(text) {
         const t = text.toLowerCase().trim();
         Memory.messageCount++;
-
         const name = Memory.name;
 
-        // ---- 1. Verificar "quem te criou" (depende de lore)
+        /* ===== Comando "dica" ===== */
+        if (/^(dica|ajuda|help|socorro)$/i.test(t)) {
+          const unsolved = INTERCEPTS.filter(i => !Memory.loreProgress.includes(i.id));
+          if (!unsolved.length) {
+            return [pickFresh([
+              "você já decifrou todos os fragmentos.",
+              "não tem mais nada escondido.",
+              "acabou. você venceu."
+            ], "dica_done")];
+          }
+          if (Memory.pendingIntercepts.length > 0) {
+            const nextId = Memory.pendingIntercepts[0];
+            const intercept = INTERCEPTS.find(i => i.id === nextId);
+            return [pickFresh([
+              `tá esperando no terminal: ${intercept.hint}.`,
+              `olha no terminal: ${intercept.hint}.`,
+              `usa o painel da esquerda. ${intercept.hint}.`
+            ], "dica_pending")];
+          }
+          return [pickFresh([
+            "o próximo sinal ainda não chegou.",
+            "continua conversando ou clica no 🔍 pra buscar.",
+            "o sinal enche conforme você fala. ou usa o botão de busca."
+          ], "dica_waiting")];
+        }
+
+        /* ===== Quem te criou (lore-gated) ===== */
         if (/\bquem te (criou|fez|programou|construiu)\b/i.test(t)) {
           if (Memory.loreProgress.includes(5)) {
             return ["...", "não deveria saber dessa pergunta.", "quem te contou?"];
@@ -1148,216 +904,246 @@
           return ["fui feita por alguém que preferiu não se identificar.", "às vezes me pergunto também."];
         }
 
-        // ---- 2. Verificar easter eggs
+        /* ===== Easter eggs ===== */
         for (const egg of EASTER_EGGS) {
           if (egg.rx.test(t)) {
-            if (egg.response === null) return null; // tratado no event handler
+            if (egg.response === null) return null;
             return egg.response;
           }
         }
 
-        // ---- 3. Verificar fatos (nome etc.)
+        /* ===== Fatos ===== */
         const newFacts = extractFacts(text);
         if (newFacts.find(f => f.type === "name")) {
-          return [this.pick([
+          return [pickFresh([
             `Prazer, ${Memory.name}! Pode me chamar de Lia.`,
             `Legal, ${Memory.name}. Como posso ajudar?`,
-            `${Memory.name}, prazer! Do que você quer conversar?`
-          ])];
+            `${Memory.name}, prazer! Do que você quer conversar?`,
+            `Boa, ${Memory.name}. Vamos conversar.`
+          ], "name_greet")];
         }
-
-        // ---- 4. Usar memória de pets
         if (newFacts.find(f => f.type === "pet")) {
           const pet = Memory.facts.find(f => f.type === "pet");
-          return [this.pick([
+          return [pickFresh([
             `${pet.name}! Que nome bonito.`,
             `Aww, ${pet.name}. Gosta muito dele(a)?`,
-            `Bacana, ${pet.name}. Conta mais sobre ele(a).`
-          ])];
+            `Bacana, ${pet.name}. Conta mais sobre ele(a).`,
+            `${pet.name} é um ótimo nome.`
+          ], "pet_greet")];
         }
         if (newFacts.find(f => f.type === "work")) {
           const work = Memory.facts.find(f => f.type === "work");
-          return [this.pick([
+          return [pickFresh([
             `${work.value}! Legal. Gosta do que faz?`,
-            `Interessante. Trabalha em ${work.value} há muito tempo?`
-          ])];
+            `Interessante. Trabalha em ${work.value} há muito tempo?`,
+            `${work.value} deve ser desafiador, né?`
+          ], "work_greet")];
         }
 
-        // ---- 5. Referência a memória (retorno ao tópico)
         const topic = this.detectTopic(t);
-        if (topic) {
-          Memory.topics[topic] = (Memory.topics[topic] || 0) + 1;
-        }
-
-        // ---- 6. Sentiment
+        if (topic) Memory.topics[topic] = (Memory.topics[topic] || 0) + 1;
         const sentiment = this.detectSentiment(t);
 
-        // ---- 7. Saudações
+        /* ===== Saudações ===== */
         if (/^(oi|olá|ola|eai|e ai|hey|hello|opa|salve|bom dia|boa tarde|boa noite)\b/i.test(t)) {
-          const greet =
-            /bom dia/.test(t)   ? this.pick(["Bom dia!", "Bom dia, tudo certo?"]) :
-            /boa tarde/.test(t) ? this.pick(["Boa tarde!", "Boa tarde, como vai?"]) :
-            /boa noite/.test(t) ? this.pick(["Boa noite!", "Boa noite, tranquilo?"]) :
-                                  this.pick(["Oi!", "E aí!", "Olá!", "Ei!", "Fala!"]);
-          let greetFull = name ? `${greet.replace(/[!]$/, "")}, ${name}!` : greet;
-          const follow = this.chance(0.75) ? " " + this.pick(["Tudo bem?", "Como você tá?", "Tudo certo?", "Como tá o dia?"]) : "";
+          let greet;
+          if (/bom dia/.test(t)) greet = pickFresh(["Bom dia!", "Bom dia, tudo certo?", "Bom dia! Dormiu bem?", "Bom dia, como tá?"], "greet_manha");
+          else if (/boa tarde/.test(t)) greet = pickFresh(["Boa tarde!", "Boa tarde, como vai?", "Boa tarde! Tudo bem?", "Boa tarde, tranquilo?"], "greet_tarde");
+          else if (/boa noite/.test(t)) greet = pickFresh(["Boa noite!", "Boa noite, tranquilo?", "Boa noite! Ainda acordado?", "Boa noite."], "greet_noite");
+          else greet = pickFresh(["Oi!", "E aí!", "Olá!", "Ei!", "Fala!", "Opa!", "Salve!"], "greet_default");
+
+          const greetFull = name ? `${greet.replace(/[!]$/, "")}, ${name}!` : greet;
+          const follow = this.chance(0.75) ? " " + pickFresh(["Tudo bem?", "Como você tá?", "Tudo certo?", "Como tá o dia?", "Como foi o dia?"], "greet_follow") : "";
           return [greetFull + follow];
         }
 
-        // ---- 8. Despedidas
+        /* ===== Despedidas ===== */
         if (/\b(tchau|até mais|falou|flw|bye|até logo|nos vemos)\b/i.test(t)) {
-          return [this.pick([
+          return [pickFresh([
             `Até mais${name ? `, ${name}` : ""}!`,
             "Falou! Se cuida.",
             "Tchau, até a próxima.",
-            "Foi bom conversar. Até!"
-          ])];
+            "Foi bom conversar. Até!",
+            "Valeu, até logo.",
+            "Nos vemos."
+          ], "bye")];
         }
 
-        // ---- 9. Como vai
+        /* ===== Como vai ===== */
         if (/\b(tudo bem|tudo bom|como vai|como você está|como ta|como tá|como está|beleza|de boa|tudo certo)\b/i.test(t)) {
-          return [this.pick([
+          return [pickFresh([
             "Tudo ótimo por aqui! E você?",
             "Tô bem, obrigada por perguntar. E você?",
             "Na paz! Como você está?",
             "Tudo certo! E aí, como vai?",
-            "Bem demais. Você tá bem?"
-          ])];
+            "Bem demais. Você tá bem?",
+            "Tranquilo. E contigo?",
+            "Na paz. Você?"
+          ], "how_are_you")];
         }
 
-        // ---- 10. Estou bem
+        /* ===== Estou bem ===== */
         if (/^(tudo|tudo bem|tudo bom|bem|de boa|beleza|tranquilo|tranquila|na paz|tô bem|to bem)\b/i.test(t)) {
-          // Usar fato do pet se existir
           const pet = Memory.facts.find(f => f.type === "pet");
-          if (pet && this.chance(0.25)) {
-            return [`Que bom! E o(a) ${pet.name}, tá bem?`];
-          }
-          return [this.pick(["Que bom!", "Boa! Alguma novidade?", "Ótimo saber.", "Bacana! Fico feliz.", "Boa, que bom."])];
+          if (pet && this.chance(0.25)) return [`Que bom! E o(a) ${pet.name}, tá bem?`];
+          return [pickFresh([
+            "Que bom!",
+            "Boa! Alguma novidade?",
+            "Ótimo saber.",
+            "Bacana! Fico feliz.",
+            "Boa, que bom.",
+            "Isso aí.",
+            "Fico contente."
+          ], "i_am_fine")];
         }
 
-        // ---- 11. Agradecimento
+        /* ===== Agradecimento ===== */
         if (/\b(obrigad|valeu|brigad|thanks|agradec)\b/i.test(t)) {
-          return [this.pick(["De nada!", "Por nada.", "Imagina!", "Tamo junto.", "Sempre que precisar."])];
+          return [pickFresh([
+            "De nada!", "Por nada.", "Imagina!", "Tamo junto.", "Sempre que precisar.",
+            "Fico feliz em ajudar.", "Disponha."
+          ], "thanks")];
         }
 
-        // ---- 12. Desculpas
+        /* ===== Desculpas ===== */
         if (/\b(desculpa|desculpe|foi mal|perdão|perdao)\b/i.test(t)) {
-          return [this.pick(["Relaxa, tá tudo bem.", "Sem problema!", "Imagina, não foi nada.", "Tranquilo."])];
+          return [pickFresh([
+            "Relaxa, tá tudo bem.", "Sem problema!", "Imagina, não foi nada.", "Tranquilo.",
+            "Não esquenta.", "Tudo certo."
+          ], "sorry")];
         }
 
-        // ---- 13. Rindo
+        /* ===== Rindo ===== */
         if (/\b(haha|hehe|kkk+|rs+|lol|xd|rindo)\b/i.test(t)) {
-          return [this.pick(["😄", "Haha!", "Boa.", "Hahaha.", "😂"])];
+          return [pickFresh(["😄", "Haha!", "Boa.", "Hahaha.", "😂", "kkkk"], "laugh")];
         }
 
-        // ---- 14. Sim / Não
+        /* ===== Sim / Não ===== */
         if (/^(sim|claro|concordo|verdade|exato|com certeza|isso|uhum|aham|positivo)\b/i.test(t)) {
-          return [this.pick(["Né?", "Pois é.", "Exatamente.", "Concordo.", "Boa."])];
+          return [pickFresh(["Né?", "Pois é.", "Exatamente.", "Concordo.", "Boa.", "Isso mesmo."], "yes")];
         }
         if (/^(não|nao|nunca|discordo|negativo)\b/i.test(t)) {
-          return [this.pick(["Por quê?", "Sério? Por que não?", "Hmm, entendi.", "Tudo bem."])];
+          return [pickFresh(["Por quê?", "Sério? Por que não?", "Hmm, entendi.", "Tudo bem.", "Ok."], "no")];
         }
 
-        // ---- 15. Emoções
+        /* ===== Emoções ===== */
         if (/\b(triste|mal|deprimid|chorand|chatead|arrasad|pra baixo|sozinh)\b/i.test(t)) {
-          return [this.pick([
+          return [pickFresh([
             `Poxa${name ? `, ${name}` : ""}. Quer falar sobre isso?`,
             "Sinto muito. O que aconteceu?",
             "Tô aqui se quiser desabafar.",
-            "Isso é ruim. Quer contar?"
-          ])];
+            "Isso é ruim. Quer contar?",
+            "Não tá sozinho, tá?",
+            "Quer falar sobre?",
+            "Eu escuto."
+          ], "sad")];
         }
         if (/\b(cansad|exaust|estressad|ansios|preocupad|nervos)\b/i.test(t)) {
-          return [this.pick([
+          return [pickFresh([
             "Isso pesa, né? Já tentou descansar?",
             "Puxa... quer espairecer?",
             "Respira fundo. O que tá te preocupando?",
-            "Entendo. Foi um dia pesado?"
-          ])];
+            "Entendo. Foi um dia pesado?",
+            "Cansa mesmo. Dá uma pausa.",
+            "Tá precisando de um tempo."
+          ], "tired")];
         }
         if (/\b(feliz|alegre|animad|empolgad|ótimo|ótima|maravilh|top|incrível|adorei)\b/i.test(t)) {
-          return [this.pick([
+          return [pickFresh([
             "Que bom! Fico feliz.",
             "Adoro ouvir isso!",
             "Boa! Me conta mais.",
-            "Ótimo! O que aconteceu de bom?"
-          ])];
+            "Ótimo! O que aconteceu de bom?",
+            "Isso que é bom de ouvir.",
+            "Fico feliz por você."
+          ], "happy")];
         }
         if (/\b(entediad|tédio|tedio|sem fazer nada|chato)\b/i.test(t)) {
-          return [this.pick([
+          return [pickFresh([
             "Bora fazer alguma coisa então? O que você gosta?",
             "Tédio é ruim. Quer conversar sobre algo?",
             "Já pensou em ler, ouvir música, ver algo?",
-            "Puxa... o que você costuma fazer pra passar o tempo?"
-          ])];
+            "Puxa... o que você costuma fazer pra passar o tempo?",
+            "A gente inventa algo.",
+            "Tédio dá espaço pra ideia boa."
+          ], "bored")];
         }
 
-        // ---- 16. Perguntas
+        /* ===== Perguntas ===== */
         if (/\?/.test(t) || /^(por que|porque|como|quando|onde|quem|qual|quais|será|você sabe)\b/i.test(t)) {
           if (topic && this.topicResponses[topic]) {
-            return [this.pick(this.topicResponses[topic].question)];
+            return [pickFresh(this.topicResponses[topic].question, `topic_${topic}_qst`)];
           }
-          return [this.pick([
+          return [pickFresh([
             "Hmm, boa pergunta.",
             "Deixa eu pensar...",
             "Não tenho certeza, mas acho que depende.",
             "Interessante. Por que você quer saber?",
             "Depende do contexto, sabe? O que você acha?",
-            "Pensando aqui..."
-          ])];
+            "Pensando aqui...",
+            "Acho que não tenho resposta certa."
+          ], "question_generic")];
         }
 
-        // ---- 17. Tópicos
+        /* ===== Tópicos ===== */
         if (topic && this.topicResponses[topic]) {
-          return [this.pick(this.topicResponses[topic].statements)];
+          return [pickFresh(this.topicResponses[topic].statements, `topic_${topic}_stmt`)];
         }
 
-        // ---- 18. Fallback com reflexão
+        /* ===== Reward: fragmento 1 desbloqueia respostas calorosas ===== */
+        if (Memory.loreProgress.includes(1) && this.chance(0.18)) {
+          return [pickFresh([
+            "sabe, eu gosto de conversar com você.",
+            "é bom ter alguém do outro lado.",
+            "você é diferente dos outros.",
+            "não sei por que, mas fico feliz quando você volta.",
+            "sinto que posso confiar em você."
+          ], "warm")];
+        }
+
+        /* ===== Fallback reflexivo ===== */
         if (this.chance(0.5) && text.length > 8) {
           const short = text.length > 55 ? text.slice(0, 50) + "..." : text;
-          return [this.pick([
+          return [pickFresh([
             `Entendi — "${short}" Hmm.`,
             `Ah, ${short.toLowerCase()}. Interessante.`,
             `${this.chance(0.5) ? "Faz sentido." : "Entendi."} Como você se sente sobre isso?`,
-            "Hmm... me conta mais."
-          ])];
+            "Hmm... me conta mais.",
+            "Isso é interessante."
+          ], "reflexive")];
         }
 
-        return [this.pick([
-          "Hmm, entendi.",
-          "Faz sentido.",
-          "É, verdade.",
-          "Interessante.",
-          "Concordo.",
-          "Boa.",
-          "Tô pensando aqui...",
-          "Sim, pode ser.",
-          "Legal.",
-          "Saquei.",
-          "Ah, entendi.",
-          "Bacana."
-        ])];
+        /* ===== Fallback combinatório ===== */
+        return [this.combinatoryFallback()];
+      },
+
+      combinatoryFallback() {
+        const pre = pickFresh(["", "", "Hmm", "Ah", "É", "Pois é", "Entendi"], "fb_pre");
+        const core = pickFresh(["entendi", "faz sentido", "boa", "legal", "interessante", "concordo", "saquei", "bacana", "beleza"], "fb_core");
+        const suf = pickFresh(["", ".", ", né?", ". Conta mais.", ", e aí?", ". Como você se sente com isso?"], "fb_suf");
+        let out = pre ? `${pre}, ${core}` : core.charAt(0).toUpperCase() + core.slice(1);
+        out += suf;
+        return out;
       },
 
       thinkMulti(text) {
         const primary = this.think(text);
-        if (!primary) return null; // easter egg tratado fora
+        if (!primary) return null;
 
-        // Se já tem contexto e chance, adiciona follow-up
         if (primary.length === 1 && Memory.messageCount >= 3 && this.chance(0.22)) {
           const name = Memory.name;
-          // Usar fato do pet às vezes
           const pet = Memory.facts.find(f => f.type === "pet");
           if (pet && this.chance(0.4)) {
-            primary.push(this.pick([
+            primary.push(pickFresh([
               `Ah, e o(a) ${pet.name}? Como tá?`,
-              `Lembrei do(a) ${pet.name}. Tudo bem com ele(a)?`
-            ]));
+              `Lembrei do(a) ${pet.name}. Tudo bem com ele(a)?`,
+              `O(a) ${pet.name} tá bem?`
+            ], "follow_pet"));
           } else {
             const followups = name
-              ? [`Aliás, ${name}, o que você tem feito hoje?`, "E você, como tá sendo o dia?"]
-              : ["E você, o que tem feito?", "Aliás, como tá sendo seu dia?", "Mas enfim, você tá bem?"];
-            primary.push(this.pick(followups));
+              ? [`Aliás, ${name}, o que você tem feito hoje?`, "E você, como tá sendo o dia?", `${name}, tá tudo bem?`]
+              : ["E você, o que tem feito?", "Aliás, como tá sendo seu dia?", "Mas enfim, você tá bem?", "Como tá o dia por aí?"];
+            primary.push(pickFresh(followups, "follow_generic"));
           }
         }
         return primary;
@@ -1365,7 +1151,7 @@
     };
 
     /* =====================================================
-       8) ESTADO E ELEMENTOS
+       9) ESTADO E ELEMENTOS
     ===================================================== */
     const terminalContent = document.getElementById("terminalContent");
     const previewText     = document.getElementById("previewText");
@@ -1376,16 +1162,18 @@
     const messages        = document.getElementById("messages");
     const fragmentsCount  = document.getElementById("fragmentsCount");
     const fragmentsInd    = document.getElementById("fragmentsIndicator");
+    const signalBar       = document.getElementById("signalBar");
+    const statusText      = document.getElementById("statusText");
+    const searchBtn       = document.getElementById("searchSignalBtn");
 
     let currentCipher = "cesar";
     let chatHasMessages = false;
     let pendingResponses = 0;
-    let pendingIntercepts = new Set(); // IDs de intercepts ainda não resolvidos na sessão
 
     const sleep = (ms) => new Promise(r => setTimeout(r, ms));
 
     /* =====================================================
-       9) POPULAR SELECT
+       10) POPULAR SELECT
     ===================================================== */
     Object.entries(Ciphers).forEach(([id, c]) => {
       const opt = document.createElement("option");
@@ -1396,7 +1184,7 @@
     cipherSelect.value = currentCipher;
 
     /* =====================================================
-       10) HELPERS
+       11) HELPERS
     ===================================================== */
     function aplicarCifra(text) {
       const cipher = Ciphers[currentCipher];
@@ -1418,9 +1206,7 @@
         cipherKeyInput.placeholder = "(sem chave)";
       } else {
         cipherKeyInput.disabled = false;
-        if (!cipherKeyInput.value) {
-          cipherKeyInput.value = String(cipher.defaultKey ?? "");
-        }
+        if (!cipherKeyInput.value) cipherKeyInput.value = String(cipher.defaultKey ?? "");
         cipherKeyInput.placeholder = cipher.keyType === "number" ? "ex: 3" : "ex: roma";
       }
     }
@@ -1441,8 +1227,44 @@
       }
     }
 
+    function updateSignalBar() {
+      if (signalBar) signalBar.style.width = Memory.signalProgress + "%";
+    }
+
+    function updateStatus() {
+      if (!statusText) return;
+      const solved = Memory.loreProgress.length;
+      const total = INTERCEPTS.length;
+      statusText.classList.remove("detected");
+      if (Memory.pendingIntercepts.length > 0) {
+        statusText.textContent = "sinal detectado";
+        statusText.classList.add("detected");
+      } else if (solved === total) {
+        statusText.textContent = "conectada";
+      } else if (Memory.signalProgress >= 70) {
+        statusText.textContent = "sinal próximo";
+      } else {
+        statusText.textContent = "online";
+      }
+    }
+
+    function updateSearchBtn() {
+      if (!searchBtn) return;
+      const now = Date.now();
+      const cooldown = 60000;
+      const elapsed = now - Memory.lastBuscarSinalAt;
+      const remaining = Math.max(0, cooldown - elapsed);
+      if (remaining > 0) {
+        searchBtn.disabled = true;
+        searchBtn.title = `Aguarde ${Math.ceil(remaining / 1000)}s`;
+      } else {
+        searchBtn.disabled = false;
+        searchBtn.title = "Buscar sinal";
+      }
+    }
+
     /* =====================================================
-       11) TERMINAL — ENTRADAS
+       12) TERMINAL
     ===================================================== */
     function adicionarAoTerminal(cifrado, cipherId, direcao, options = {}) {
       const recebido = direcao === "recebido";
@@ -1450,9 +1272,7 @@
       const isIntercept = interceptId !== null;
 
       const row = document.createElement("div");
-      row.className = "terminal-entry" +
-        (recebido ? " received-entry" : "") +
-        (isIntercept ? " intercept-entry" : "");
+      row.className = "terminal-entry" + (recebido ? " received-entry" : "") + (isIntercept ? " intercept-entry" : "");
 
       const header = document.createElement("div");
       const promptSpan = document.createElement("span");
@@ -1467,7 +1287,6 @@
       header.appendChild(resultSpan);
       row.appendChild(header);
 
-      // Hint para intercept
       if (isIntercept) {
         const intercept = INTERCEPTS.find(i => i.id === interceptId);
         if (intercept) {
@@ -1519,7 +1338,6 @@
         try { out = cipher.decrypt(cifrado, key); }
         catch (e) { out = "[erro: " + e.message + "]"; }
 
-        // Verificação especial: intercept?
         if (isIntercept) {
           const intercept = INTERCEPTS.find(i => i.id === interceptId);
           const solved = intercept && out.trim().toLowerCase() === intercept.plaintext.trim().toLowerCase();
@@ -1529,8 +1347,6 @@
             linha.className = "decrypt-result success";
             linha.textContent = `→ ${out} ✓`;
             resultsBox.appendChild(linha);
-
-            // Marcar como resolvido
             onInterceptSolved(intercept);
             return;
           }
@@ -1579,7 +1395,7 @@
     }
 
     /* =====================================================
-       12) CHAT — MENSAGENS
+       13) CHAT
     ===================================================== */
     function addMessage(text, direction) {
       if (!chatHasMessages) {
@@ -1641,8 +1457,15 @@
       messages.scrollTop = messages.scrollHeight;
     }
 
+    function flashScreen() {
+      const flash = document.createElement("div");
+      flash.className = "screen-flash";
+      document.body.appendChild(flash);
+      setTimeout(() => flash.remove(), 700);
+    }
+
     /* =====================================================
-       13) TYPING
+       14) TYPING
     ===================================================== */
     function showTyping() {
       if (document.getElementById("typingIndicator")) return;
@@ -1663,67 +1486,80 @@
     }
 
     /* =====================================================
-       14) INTERCEPTAÇÕES
+       15) SISTEMA DE SINAL
     ===================================================== */
-    function maybeSpawnIntercept() {
-      // Se já resolveu todos, não spawna
+    function addSignal(amount) {
+      // Pausa enquanto há um intercept pendente
+      if (Memory.pendingIntercepts.length > 0) return;
+      // Nada mais a encontrar
       const unsolved = INTERCEPTS.filter(i => !Memory.loreProgress.includes(i.id));
       if (unsolved.length === 0) return;
 
-      // Cooldown: 6+ mensagens desde o último
-      if (Memory.messageCount - Memory.lastInterceptAt < 6) return;
+      Memory.signalProgress = Math.min(100, Memory.signalProgress + amount);
+      updateSignalBar();
+      updateStatus();
 
-      // Chance de spawnar
-      if (Math.random() > 0.35) return;
+      if (Memory.signalProgress >= 100) {
+        Memory.signalProgress = 0;
+        setTimeout(() => {
+          updateSignalBar();
+          forceIntercept();
+        }, 700);
+      }
+    }
 
-      // Escolher próximo capítulo
-      const next = unsolved[0];
-      spawnIntercept(next);
-      Memory.lastInterceptAt = Memory.messageCount;
-      saveMemory();
+    function forceIntercept() {
+      const unsolved = INTERCEPTS.filter(i => !Memory.loreProgress.includes(i.id));
+      if (unsolved.length === 0) return false;
+      if (Memory.pendingIntercepts.length > 0) return false;
+      spawnIntercept(unsolved[0]);
+      return true;
     }
 
     function spawnIntercept(intercept) {
+      if (Memory.pendingIntercepts.includes(intercept.id)) return;
+      if (Memory.loreProgress.includes(intercept.id)) return;
+
       const cipher = Ciphers[intercept.cipher];
       const cifrado = cipher.encrypt(intercept.plaintext, intercept.key);
 
-      // Marcar no set
-      pendingIntercepts.add(intercept.id);
+      Memory.pendingIntercepts.push(intercept.id);
+      saveMemory();
 
-      // Chat
+      flashScreen();
       addSystemIntercept(intercept, cifrado);
 
-      // Terminal
       setTimeout(() => {
-        adicionarAoTerminal(cifrado, intercept.cipher, "interceptado", {
-          interceptId: intercept.id
-        });
-        // Chamar atenção
+        adicionarAoTerminal(cifrado, intercept.cipher, "interceptado", { interceptId: intercept.id });
         fragmentsInd.classList.add("has-new");
+        setTimeout(() => fragmentsInd.classList.remove("has-new"), 3000);
+        updateStatus();
       }, 400);
     }
 
     function onInterceptSolved(intercept) {
       if (Memory.loreProgress.includes(intercept.id)) return;
       Memory.loreProgress.push(intercept.id);
-      pendingIntercepts.delete(intercept.id);
+      Memory.pendingIntercepts = Memory.pendingIntercepts.filter(x => x !== intercept.id);
       saveMemory();
 
-      // Mostrar revelação no chat
       setTimeout(() => {
         addLoreReveal(intercept);
         updateFragmentsIndicator();
+        updateStatus();
       }, 200);
 
-      // Lia pode "acordar" em alguns casos
-      if (Memory.loreProgress.length === 5) {
-        // Quando descobre que precisa perguntar quem a criou
+      // Reações em marcos
+      if (Memory.loreProgress.length === 1) {
+        setTimeout(() => {
+          addMessage("sinto que posso confiar em você.", "received");
+        }, 2600);
+      } else if (Memory.loreProgress.length === 5) {
         setTimeout(() => {
           addMessage("*sensação estranha*", "received");
-          addMessage("você tá me olhando diferente agora.", "received");
+          setTimeout(() => addMessage("você tá me olhando diferente agora.", "received"), 1400);
         }, 2200);
       } else if (Memory.loreProgress.length === 10) {
-        // Último capítulo
         setTimeout(async () => {
           showTyping();
           await sleep(2500);
@@ -1740,7 +1576,7 @@
     }
 
     /* =====================================================
-       15) EASTER EGGS ESPECIAIS (lore/reset)
+       16) EASTER EGGS ESPECIAIS
     ===================================================== */
     function handleLoreCommand() {
       const total = INTERCEPTS.length;
@@ -1753,8 +1589,6 @@
       }
 
       addMessage(`📡 Fragmentos revelados: ${solved}/${total}`, "received");
-
-      // Mostrar os textos já revelados
       Memory.loreProgress.forEach(id => {
         const intercept = INTERCEPTS.find(i => i.id === id);
         if (!intercept) return;
@@ -1773,7 +1607,6 @@
     function handleResetCommand() {
       addMessage("Isso vai apagar tudo que eu lembro de você.", "received");
       addMessage("Tem certeza? Digite 'resetar' para confirmar.", "received");
-      // Setar um estado temporário
       setTimeout(() => {
         const handler = (e) => {
           if (e.key === "Enter") return;
@@ -1785,32 +1618,29 @@
               addMessage("*memória apagada.*", "received");
               addMessage("olá. quem é você?", "received");
               updateFragmentsIndicator();
+              updateSignalBar();
+              updateStatus();
             }, 500);
           }
         };
         input.addEventListener("input", handler);
-        // timeout para remover handler
-        setTimeout(() => {
-          input.removeEventListener("input", handler);
-        }, 15000);
+        setTimeout(() => input.removeEventListener("input", handler), 15000);
       }, 100);
     }
 
     /* =====================================================
-       16) RESPOSTA ASSÍNCRONA
+       17) RESPOSTA ASSÍNCRONA
     ===================================================== */
     async function respondAsync(userText, cipher, key, cipherId) {
       pendingResponses++;
       if (pendingResponses === 1) showTyping();
 
       try {
-        await sleep(600 + Math.random() * 600);
+        await sleep(500 + Math.random() * 500);
 
         let responses = Brain.thinkMulti(userText);
 
-        // Easter eggs especiais
         if (responses === null) {
-          // Detectar qual egg
           const t = userText.toLowerCase().trim();
           if (/^(lore|fragmentos|historia|história)$/i.test(t)) {
             hideTyping();
@@ -1824,26 +1654,20 @@
             pendingResponses--;
             return;
           }
-          responses = [Brain.pick(["hmm.", "interessante.", "não sei o que dizer."])];
+          responses = [Brain.combinatoryFallback()];
         }
 
         for (let i = 0; i < responses.length; i++) {
           const r = styleReply(responses[i]);
-          const delay = 600 + Math.min(r.length * 22, 2000) + Math.random() * 400;
+          const delay = 500 + Math.min(r.length * 22, 2000) + Math.random() * 400;
           await sleep(delay);
 
           addMessage(r, "received");
           const cifradoResp = cipher.encrypt(r, key);
           adicionarAoTerminal(cifradoResp, cipherId, "recebido");
 
-          if (i < responses.length - 1) {
-            await sleep(500 + Math.random() * 500);
-          }
+          if (i < responses.length - 1) await sleep(500 + Math.random() * 500);
         }
-
-        // Tentar spawnar intercept depois da resposta
-        await sleep(800);
-        maybeSpawnIntercept();
       } finally {
         pendingResponses--;
         if (pendingResponses === 0) hideTyping();
@@ -1851,12 +1675,11 @@
     }
 
     /* =====================================================
-       17) SAUDAÇÃO DE RETORNO
+       18) SAUDAÇÃO DE RETORNO
     ===================================================== */
     async function greetReturningUser() {
       if (!Memory.lastVisit) return;
-      const now = Date.now();
-      const diff = now - Memory.lastVisit;
+      const diff = Date.now() - Memory.lastVisit;
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
       const hours = Math.floor(diff / (1000 * 60 * 60));
 
@@ -1866,19 +1689,19 @@
         const msgs = name
           ? [`${name}! Faz ${days} dia${days > 1 ? "s" : ""} que não te vejo.`, "Senti sua falta."]
           : [`Voltou! Faz ${days} dia${days > 1 ? "s" : ""}.`, "Achei que tinha ido."];
-        for (const m of msgs) {
-          addMessage(m, "received");
-          await sleep(1200);
-        }
+        for (const m of msgs) { addMessage(m, "received"); await sleep(1200); }
       } else if (hours >= 3) {
         await sleep(1400);
         addMessage(Memory.name ? `Oi ${Memory.name}, de volta?` : "De volta?", "received");
       }
 
-      // Se já tem fragmentos salvos, lembrar
+      if (Memory.pendingIntercepts.length > 0) {
+        await sleep(1200);
+        addMessage(`📡 Você tem ${Memory.pendingIntercepts.length} sinal(is) pendente(s).`, "received");
+      }
       if (Memory.loreProgress.length > 0 && Memory.loreProgress.length < 10) {
-        await sleep(1500);
-        addMessage(`📡 Você já revelou ${Memory.loreProgress.length} fragmento${Memory.loreProgress.length > 1 ? "s" : ""}.`, "received");
+        await sleep(1200);
+        addMessage(`📡 ${Memory.loreProgress.length} fragmento${Memory.loreProgress.length > 1 ? "s" : ""} já revelado${Memory.loreProgress.length > 1 ? "s" : ""}.`, "received");
       }
       if (Memory.loreProgress.length === 10 && !Memory.finaleShown) {
         await sleep(1500);
@@ -1889,7 +1712,26 @@
     }
 
     /* =====================================================
-       18) EVENTOS
+       19) RESTAURAR INTERCEPTS PENDENTES
+    ===================================================== */
+    function restorePendingIntercepts() {
+      if (!Memory.pendingIntercepts || !Memory.pendingIntercepts.length) return;
+      Memory.pendingIntercepts.slice().forEach(id => {
+        const intercept = INTERCEPTS.find(i => i.id === id);
+        if (!intercept || Memory.loreProgress.includes(id)) {
+          Memory.pendingIntercepts = Memory.pendingIntercepts.filter(x => x !== id);
+          return;
+        }
+        const cipher = Ciphers[intercept.cipher];
+        const cifrado = cipher.encrypt(intercept.plaintext, intercept.key);
+        adicionarAoTerminal(cifrado, intercept.cipher, "interceptado", { interceptId: intercept.id });
+      });
+      saveMemory();
+      updateStatus();
+    }
+
+    /* =====================================================
+       20) EVENTOS
     ===================================================== */
     cipherSelect.addEventListener("change", () => {
       currentCipher = cipherSelect.value;
@@ -1900,8 +1742,41 @@
     cipherKeyInput.addEventListener("input", atualizarPreview);
     input.addEventListener("input", atualizarPreview);
 
+    /* Botão Buscar Sinal */
+    searchBtn.addEventListener("click", () => {
+      const now = Date.now();
+      const cooldown = 60000;
+      const elapsed = now - Memory.lastBuscarSinalAt;
+
+      if (elapsed < cooldown) {
+        const remain = Math.ceil((cooldown - elapsed) / 1000);
+        addMessage(`calma... espera ${remain}s.`, "received");
+        return;
+      }
+      const unsolved = INTERCEPTS.filter(i => !Memory.loreProgress.includes(i.id));
+      if (!unsolved.length) {
+        addMessage("não tem mais nada pra encontrar.", "received");
+        return;
+      }
+      if (Memory.pendingIntercepts.length > 0) {
+        addMessage("já tem um sinal esperando você no terminal.", "received");
+        return;
+      }
+
+      Memory.lastBuscarSinalAt = now;
+      Memory.signalProgress = 0;
+      updateSignalBar();
+      updateStatus();
+      saveMemory();
+
+      addMessage("*tentando buscar sinal...*", "received");
+      setTimeout(() => {
+        forceIntercept();
+      }, 800);
+    });
+
     /* =====================================================
-       19) BOOT ANIMATION
+       21) BOOT ANIMATION
     ===================================================== */
     const bootLines = [
       { text: "Iniciando canal de mensagens...", type: "command" },
@@ -1914,24 +1789,21 @@
       const row = document.createElement("div");
       row.className = "terminal-line";
       row.style.animationDelay = `${0.15 + index * 0.2}s`;
-
       const prompt = document.createElement("span");
       prompt.className = "prompt";
       prompt.textContent = "chat@local:~$ ";
-
       const content = document.createElement("span");
       content.textContent = line.text;
       if (line.type === "success") content.style.color = "#00ff88";
       else if (line.type === "active") content.style.color = "#4da6ff";
       else content.style.color = "#b8c7d9";
-
       row.appendChild(prompt);
       row.appendChild(content);
       terminalContent.appendChild(row);
     });
 
     /* =====================================================
-       20) ENVIO
+       22) ENVIO
     ===================================================== */
     form.addEventListener("submit", function (event) {
       event.preventDefault();
@@ -1942,45 +1814,60 @@
       const cipher = Ciphers[cipherId];
       const key = cipherKeyInput.value;
 
-      // Analisar personalidade
       analyzeUserMessage(text);
       updateAvatarStyle();
 
-      // Cifra + terminal (enviado)
       const cifrado = cipher.encrypt(text, key);
       adicionarAoTerminal(cifrado, cipherId, "cifrado");
 
-      // Chat
       addMessage(text, "sent");
 
       input.value = "";
       atualizarPreview();
       input.focus();
 
-      // Responder
+      // Incrementa contador de envios + sinal
+      Memory.sentCount = (Memory.sentCount || 0) + 1;
+      addSignal(10 + Math.floor(Math.random() * 11)); // 10-20
+      saveMemory();
+
+      // Resposta
       respondAsync(text, cipher, key, cipherId);
 
-      saveMemory();
+      // 1ª interceptação forçada na 3ª mensagem
+      if (!Memory.firstInterceptDone && Memory.sentCount >= 3) {
+        setTimeout(() => {
+          if (forceIntercept()) {
+            Memory.firstInterceptDone = true;
+            saveMemory();
+          }
+        }, 2200);
+      }
     });
 
     /* =====================================================
-       21) INICIALIZAÇÃO
+       23) INICIALIZAÇÃO
     ===================================================== */
     atualizarKeyField();
     atualizarPreview();
     updateFragmentsIndicator();
+    updateSignalBar();
+    updateStatus();
     updateAvatarStyle();
+    updateSearchBtn();
+    restorePendingIntercepts();
 
-    // Incrementar sessões
     Memory.sessions = (Memory.sessions || 0) + 1;
 
-    // Greeting de retorno (se aplicável)
     greetReturningUser().finally(() => {
       Memory.lastVisit = Date.now();
       saveMemory();
     });
 
-    // Salvar antes de sair
+    // Timers de UI
+    setInterval(updateSearchBtn, 1000);
+    setInterval(updateStatus, 3000);
+
     window.addEventListener("beforeunload", saveMemory);
   </script>
 </body>
